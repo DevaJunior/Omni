@@ -1,0 +1,43 @@
+:root {
+    /* Colors */
+    --primary: #5d5fef;
+    --primary-hover: #4a4cd6;
+    --secondary: #a5a6f6;
+    --background: #ffffff;
+    --text-main: #1a1a1a;
+    --text-muted: #666666;
+    --border-color: #f0f0f0;
+    --card-bg: #f8f9fa;
+
+    /* Spacing (Relative) */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 4rem;
+
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+
+    /* Transitions */
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}

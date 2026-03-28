@@ -1,0 +1,115 @@
+.rizo-container {
+  padding: var(--spacing-8) var(--spacing-6);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: var(--spacing-8);
+}
+
+.page-header h1 {
+  font-size: var(--text-3xl);
+  color: var(--color-text-title);
+  margin: var(--spacing-2) 0 var(--spacing-4);
+  letter-spacing: -0.5px;
+}
+
+.page-header p {
+  color: var(--color-text-muted);
+}
+
+.rizo-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-6);
+}
+
+.saas-card {
+  background: var(--color-bg-card);
+  padding: var(--spacing-8);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-base);
+}
+
+.fuzzy-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.form-group label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-strong);
+  margin-bottom: var(--spacing-2);
+  display: block;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+  box-sizing: border-box;
+  transition: var(--transition-fast);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-strong);
+}
+
+.input-box input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-card);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.pill-btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  margin-top: var(--spacing-4);
+}
+
+.pill-btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+}
+
+.pill-btn-primary:disabled {
+  background-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.result-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 300px;
+}
+
+.empty-state {
+  color: var(--color-text-muted);
+}
+
+.efficiency-value {
+  font-size: var(--text-5xl);
+  font-weight: var(--font-extrabold);
+  color: var(--color-primary);
+  margin: var(--spacing-4) 0;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .rizo-content { grid-template-columns: 1fr; }
+}
