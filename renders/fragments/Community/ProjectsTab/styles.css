@@ -1,0 +1,156 @@
+.cmmt-projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cmmt-project-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.8rem;
+  transition: var(--transition);
+  border-left: 4px solid var(--primary);
+}
+
+.cmmt-project-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+
+.cmmt-project-closed {
+  border-left-color: #d1d5db;
+  opacity: 0.8;
+}
+
+.cmmt-project-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cmmt-project-type {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cmmt-project-status {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.cmmt-status-open {
+  background: #e6f9ed;
+  color: #059669;
+}
+
+.cmmt-status-closed {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.cmmt-project-title {
+  font-size: 1.3rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.cmmt-project-institution {
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 1.2rem;
+}
+
+.cmmt-project-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.2rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.cmmt-project-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cmmt-project-desc {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.cmmt-project-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.cmmt-project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cmmt-project-tag-item {
+  background: #f0f0f5;
+  color: var(--primary);
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.cmmt-btn-apply {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cmmt-btn-apply:hover {
+  background: var(--primary-hover);
+}
+
+@media (max-width: 600px) {
+  .cmmt-project-footer {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .cmmt-btn-apply {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 320px) {
+  .cmmt-project-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
