@@ -136,10 +136,24 @@
   background: var(--primary-hover);
 }
 
+/* =========================================
+   RESPONSIVIDADE (Projects Tab)
+========================================= */
+@media (max-width: 768px) {
+  .cmmt-project-card {
+    padding: 1.5rem;
+  }
+}
+
 @media (max-width: 600px) {
+  .cmmt-project-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
   .cmmt-project-footer {
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.5rem;
   }
   .cmmt-btn-apply {
     width: 100%;
@@ -147,10 +161,27 @@
   }
 }
 
-@media (max-width: 320px) {
+@media (max-width: 480px) {
+  .cmmt-project-title {
+    font-size: 1.15rem;
+  }
+  .cmmt-project-institution {
+    font-size: 0.9rem;
+  }
   .cmmt-project-meta {
     flex-direction: column;
-    align-items: flex-start;
     gap: 0.5rem;
+  }
+  .cmmt-project-desc {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .cmmt-project-type, .cmmt-project-status {
+    font-size: 0.7rem;
+  }
+  .cmmt-project-tag-item {
+    font-size: 0.75rem;
   }
 }

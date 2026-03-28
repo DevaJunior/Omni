@@ -56,18 +56,30 @@ const Community: React.FC = () => {
       <div className="cmmt-layout">
         <main className="cmmt-feed-section">
           <div className="cmmt-tabs">
-            <button className={`cmmt-tab ${activeTab === 'articles' ? 'cmmt-active' : ''}`} onClick={() => setActiveTab('articles')} > Pesquisas
+            <button
+              className={`cmmt-tab ${activeTab === 'articles' ? 'cmmt-active' : ''}`} 
+              onClick={() => setActiveTab('articles')} 
+            > 
+              Pesquisas 
             </button>
-            <button className={`cmmt-tab ${activeTab === 'feed' ? 'cmmt-active' : ''}`} onClick={() => setActiveTab('feed')} > Discussões
+            <button
+              className={`cmmt-tab ${activeTab === 'feed' ? 'cmmt-active' : ''}`} 
+              onClick={() => setActiveTab('feed')} 
+            > 
+              Discussões 
             </button>
-            <button className={`cmmt-tab ${activeTab === 'projects' ? 'cmmt-active' : ''}`} onClick={() => setActiveTab('projects')} > Projetos e Oportunidades
+            <button
+              className={`cmmt-tab ${activeTab === 'projects' ? 'cmmt-active' : ''}`} 
+              onClick={() => setActiveTab('projects')} 
+            > 
+              Projetos e Oportunidades 
             </button>
           </div>
 
           {activeTab === 'projects' && <ProjectsTab />}
           {activeTab === 'articles' && <ArticlesTab />}
           {activeTab === 'feed' && <FeedTab />}
-
+          
         </main>
 
         <aside className="cmmt-sidebar">

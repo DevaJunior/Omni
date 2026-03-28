@@ -1,8 +1,15 @@
-/* Container Principal */
+/* Container Principal - Blindado contra overflow */
 .cmmt-container {
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
   padding: var(--spacing-md) var(--spacing-sm) var(--spacing-lg);
+  overflow-x: hidden; /* Impede scroll horizontal da página toda */
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* Header Institucional */
@@ -12,6 +19,7 @@
   align-items: center;
   text-align: center;
   padding: 3rem 0;
+  width: 100%;
 }
 
 .cmmt-brand {
@@ -40,6 +48,7 @@
   line-height: 1.5;
   color: var(--text-main);
   margin-bottom: 3rem;
+  width: 100%;
 }
 
 .cmmt-partners-list {
@@ -50,6 +59,7 @@
   color: #999;
   font-weight: 500;
   font-size: 1rem;
+  width: 100%;
 }
 
 /* Toolbar de Busca */
@@ -57,6 +67,7 @@
   display: flex;
   gap: 1rem;
   max-width: 900px;
+  width: 100%;
   margin: 0 auto 4rem auto;
 }
 
@@ -69,6 +80,7 @@
   border-radius: var(--radius-sm);
   padding: 0 1rem;
   transition: var(--transition);
+  min-width: 0;
 }
 
 .cmmt-search-bar:focus-within {
@@ -119,10 +131,13 @@
   grid-template-columns: 1fr 350px;
   gap: 2rem;
   align-items: start;
+  width: 100%;
+  max-width: 100%;
 }
 
 .cmmt-feed-section {
   width: 100%;
+  min-width: 0; /* Crucial: impede filhos de estourar a largura do grid */
 }
 
 /* Tabs */
@@ -133,6 +148,9 @@
   margin-bottom: 2rem;
   overflow-x: auto;
   white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  width: 100%;
 }
 
 .cmmt-tabs::-webkit-scrollbar {
@@ -175,6 +193,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
 }
 
 .cmmt-sidebar-widget {
@@ -182,6 +201,8 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .cmmt-widget-header {
@@ -248,15 +269,20 @@
   justify-content: center;
   font-weight: 700;
   font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .cmmt-user-details {
   flex: 1;
+  min-width: 0;
 }
 
 .cmmt-user-details h5 {
   font-size: 0.95rem;
   color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cmmt-user-details span {
@@ -274,6 +300,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
+  flex-shrink: 0;
 }
 
 .cmmt-btn-follow:hover {
@@ -281,24 +308,28 @@
   color: white;
 }
 
-/* Responsividade Layout Base */
+/* =========================================
+   RESPONSIVIDADE (Layout Base)
+========================================= */
 @media (max-width: 1024px) {
   .cmmt-layout {
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
-  .cmmt-promo-text {
-    font-size: 1.3rem;
-  }
-
   .cmmt-layout {
     grid-template-columns: 1fr;
   }
-
+  .cmmt-header {
+    padding: 2rem 0;
+  }
+  .cmmt-promo-text {
+    font-size: 1.3rem;
+  }
   .cmmt-sidebar {
-    order: -1;
+    margin-top: 2rem;
   }
 }
 
@@ -306,23 +337,32 @@
   .cmmt-toolbar {
     flex-direction: column;
   }
-  
   .cmmt-btn-outline-icon {
     width: 100%;
     justify-content: center;
     padding: 1rem;
   }
-
   .cmmt-partners-list {
     gap: 1.5rem;
   }
 }
 
+@media (max-width: 480px) {
+  .cmmt-container {
+    padding: var(--spacing-md) 10px; /* Reduz espaçamento na tela pequena */
+  }
+  .cmmt-brand h1 {
+    font-size: 2.2rem;
+  }
+  .cmmt-promo-text {
+    font-size: 1.15rem;
+  }
+}
+
 @media (max-width: 320px) {
   .cmmt-brand h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
-  
   .cmmt-tab {
     font-size: 0.95rem;
   }

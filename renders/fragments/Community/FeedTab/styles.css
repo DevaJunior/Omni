@@ -92,6 +92,15 @@
   margin-left: auto;
 }
 
+/* =========================================
+   RESPONSIVIDADE (Feed Tab)
+========================================= */
+@media (max-width: 768px) {
+  .cmmt-post-card {
+    padding: 1.2rem;
+  }
+}
+
 @media (max-width: 600px) {
   .cmmt-post-actions {
     flex-wrap: wrap;
@@ -99,5 +108,29 @@
   }
   .cmmt-share {
     margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .cmmt-post-header {
+    align-items: flex-start;
+  }
+  .cmmt-author-info h4 {
+    font-size: 1rem;
+  }
+  .cmmt-post-body p {
+    font-size: 0.9rem;
+  }
+  .cmmt-action-btn {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .cmmt-post-tag-item {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
   }
 }
