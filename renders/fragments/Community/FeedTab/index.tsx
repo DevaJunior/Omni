@@ -1,8 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, MessageSquare, Share2 } from 'lucide-react';
 import './styles.css';
 
 const FeedTab: React.FC = () => {
+  const navigate = useNavigate();
+
   const posts = [
     {
       id: 1,
@@ -39,6 +42,11 @@ const FeedTab: React.FC = () => {
     }
   ];
 
+  const handleOpenThread = (id: number) => {
+    // Rota que será criada para a página de detalhes/thread da discussão
+    navigate(`/discussion/${id}`);
+  };
+
   return (
     <div className="cmmt-posts-list">
       {posts.map(post => (
@@ -64,7 +72,10 @@ const FeedTab: React.FC = () => {
             <button className="cmmt-action-btn">
               <Heart size={18} /> {post.likes}
             </button>
-            <button className="cmmt-action-btn">
+            <button 
+              className="cmmt-action-btn"
+              onClick={() => handleOpenThread(post.id)}
+            >
               <MessageSquare size={18} /> {post.comments} Comentários
             </button>
             <button className="cmmt-action-btn cmmt-share">

@@ -1,8 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Briefcase, FileText, MapPin, Calendar, ExternalLink } from 'lucide-react';
 import './styles.css';
 
 const ProjectsTab: React.FC = () => {
+  const navigate = useNavigate();
+
   const projectsList = [
     {
       id: 101,
@@ -42,6 +45,11 @@ const ProjectsTab: React.FC = () => {
     }
   ];
 
+  const handleViewProject = (id: number) => {
+    // Rota que será criada para a página de detalhes do projeto/vaga
+    navigate(`/project/${id}`); 
+  };
+
   return (
     <div className="cmmt-projects-list">
       {projectsList.map(project => (
@@ -70,7 +78,10 @@ const ProjectsTab: React.FC = () => {
               ))}
             </div>
             {project.status === 'Aberto' && (
-              <button className="cmmt-btn-apply">
+              <button 
+                className="cmmt-btn-apply"
+                onClick={() => handleViewProject(project.id)}
+              >
                 Acessar Detalhes <ExternalLink size={16} />
               </button>
             )}

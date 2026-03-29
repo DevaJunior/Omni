@@ -6,10 +6,10 @@ import {
   Users,
 } from 'lucide-react';
 import './styles.css';
-import ProjectsTab from '../../../fragments/Community/ProjectsTab';
-import ArticlesTab from '../../../fragments/Community/ArticlesTab';
-import FeedTab from '../../../fragments/Community/FeedTab';
-import Footer from '../../../menus/Footer';
+import ProjectsTab from '../../../../fragments/Community/ProjectsTab';
+import ArticlesTab from '../../../../fragments/Community/ArticlesTab';
+import FeedTab from '../../../../fragments/Community/FeedTab';
+import Footer from '../../../../menus/Footer';
 
 const Community: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'articles'>('articles');

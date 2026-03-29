@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BookOpen, Calendar, Users, Download, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import './styles.css';
 
@@ -9,6 +10,7 @@ type SortOption = 'recent' | 'impact' | 'likes';
 
 const ArticlesTab: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortOption>('recent');
+  const navigate = useNavigate();
 
   const featuredArticles = [
     {
@@ -75,6 +77,11 @@ const ArticlesTab: React.FC = () => {
     return b.id - a.id;
   });
 
+  // Função centralizada para navegação de detalhes do artigo
+  const handleViewArticle = (id: number) => {
+    navigate(`/article/${id}`);
+  };
+
   return (
     <div className="cmmt-articles-wrapper">
 
@@ -97,7 +104,12 @@ const ArticlesTab: React.FC = () => {
               <div className="cmmt-visual-info">
                 <h4>{article.title}</h4>
                 <p>{article.desc}</p>
-                <button className="cmmt-btn-read-more">Leia mais &rarr;</button>
+                <button 
+                  className="cmmt-btn-read-more"
+                  onClick={() => handleViewArticle(article.id)}
+                >
+                  Leia mais &rarr;
+                </button>
               </div>
             </article>
           ))}
@@ -176,7 +188,10 @@ const ArticlesTab: React.FC = () => {
                         <Download size={16} /> PDF
                       </button>
                     )}
-                    <button className="cmmt-btn-primary-read">
+                    <button 
+                      className="cmmt-btn-primary-read"
+                      onClick={() => handleViewArticle(article.id)}
+                    >
                       Ler Artigo <ExternalLink size={16} />
                     </button>
                   </div>
