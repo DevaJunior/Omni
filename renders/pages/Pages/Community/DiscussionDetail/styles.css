@@ -1,0 +1,554 @@
+/* Container Base */
+.disc-detail-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--spacing-sm) var(--spacing-lg);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.disc-btn-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 2rem;
+  transition: var(--transition);
+}
+
+.disc-btn-back:hover {
+  color: var(--primary);
+  transform: translateX(-4px);
+}
+
+/* Layout Principal */
+.disc-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* =========================================
+   COLUNA PRINCIPAL: THREAD
+========================================= */
+.disc-main-content {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Post Original Destaque */
+.disc-original-post {
+  background: white;
+  border: 1px solid var(--primary); /* Destaque no post original */
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(93, 95, 239, 0.05);
+}
+
+.disc-post-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.disc-author-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f0f0f5;
+}
+
+.disc-author-info {
+  flex: 1;
+}
+
+.disc-author-info h4 {
+  font-size: 1.15rem;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+}
+
+.disc-author-info span {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.disc-btn-more {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.disc-btn-more:hover {
+  background: #f0f0f5;
+  color: var(--text-main);
+}
+
+.disc-post-body p {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  word-break: break-word;
+}
+
+.disc-post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.disc-tag {
+  background: #f0f0f5;
+  color: var(--primary);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.disc-post-actions {
+  display: flex;
+  gap: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.disc-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.disc-action-btn:hover {
+  color: var(--primary);
+}
+
+.disc-action-btn.active-state {
+  color: var(--primary);
+}
+
+.disc-share {
+  margin-left: auto;
+}
+
+/* Área de Resposta */
+.disc-reply-box {
+  display: flex;
+  gap: 1.5rem;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.disc-reply-avatar-placeholder {
+  width: 48px;
+  height: 48px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.disc-reply-input-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.disc-reply-input-wrapper textarea {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: var(--transition);
+}
+
+.disc-reply-input-wrapper textarea:focus {
+  border-color: var(--primary);
+}
+
+.disc-reply-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.disc-reply-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.disc-btn-send {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.disc-btn-send:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+.disc-btn-send:not(:disabled):hover {
+  background: var(--primary-hover);
+}
+
+.disc-divider {
+  border: 0;
+  height: 1px;
+  background: var(--border-color);
+  margin: 2rem 0;
+}
+
+/* Árvore de Comentários */
+.disc-comments-title {
+  font-size: 1.2rem;
+  color: var(--text-main);
+  margin-bottom: 1.5rem;
+}
+
+.disc-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.disc-comment-item {
+  display: flex;
+  gap: 1rem;
+  background: transparent;
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.disc-comment-item:hover {
+  background: #f8faff;
+}
+
+.disc-comment-item.author-highlight {
+  border-left: 3px solid var(--primary);
+  background: #fcfcff;
+}
+
+.disc-comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.disc-comment-content {
+  flex: 1;
+}
+
+.disc-comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.disc-comment-author-info h4 {
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.disc-author-badge {
+  background: #eef2ff;
+  color: var(--primary);
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.disc-comment-author-info span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.disc-comment-text {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.disc-comment-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.disc-action-btn-small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.disc-action-btn-small:hover {
+  color: var(--primary);
+}
+
+/* =========================================
+   BARRA LATERAL (AUTOR & TRENDS)
+========================================= */
+.disc-sidebar {
+  width: 100%;
+}
+
+.disc-sticky-wrapper {
+  position: sticky;
+  top: 100px; 
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.disc-widget {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Perfil do Autor */
+.disc-author-widget {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.disc-author-cover {
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(to right, #a5a6f6, #5d5fef);
+}
+
+.disc-author-profile-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid white;
+  object-fit: cover;
+  margin-top: -40px;
+  background: white;
+}
+
+.disc-author-widget-info {
+  padding: 1rem 1.5rem 1.5rem;
+  text-align: center;
+  width: 100%;
+}
+
+.disc-author-widget-info h3 {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+}
+
+.disc-author-widget-info p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.disc-author-stats {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.disc-author-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.disc-author-stats strong {
+  font-size: 1.1rem;
+  color: var(--text-main);
+}
+
+.disc-author-stats span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.disc-btn-follow-full {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: white;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 0.8rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.disc-btn-follow-full:hover {
+  background: #f8faff;
+}
+
+/* Tags Relacionadas */
+.disc-widget h3 {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 1.2rem;
+}
+
+.disc-related-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.disc-tag-outline {
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.disc-tag-outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+@media (max-width: 1024px) {
+  .disc-detail-layout {
+    grid-template-columns: 1fr 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .disc-detail-layout {
+    grid-template-columns: 1fr;
+  }
+  .disc-sticky-wrapper {
+    position: static;
+  }
+  .disc-sidebar {
+    order: -1; /* Traz o autor pro topo no mobile */
+  }
+}
+
+@media (max-width: 600px) {
+  .disc-post-actions {
+    gap: 1rem;
+  }
+  .disc-share {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .disc-reply-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .disc-btn-send {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .disc-detail-container {
+    padding: var(--spacing-sm) 10px;
+  }
+  .disc-original-post {
+    padding: 1.5rem;
+  }
+  .disc-post-header {
+    align-items: flex-start;
+  }
+  .disc-author-info h4 {
+    font-size: 1.05rem;
+  }
+  .disc-post-body p {
+    font-size: 1rem;
+  }
+  .disc-comment-item {
+    padding: 0.5rem 0;
+  }
+}
