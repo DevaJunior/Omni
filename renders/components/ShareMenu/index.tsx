@@ -11,7 +11,7 @@ type ShareMenuProps = {
 };
 
 const ShareMenu: React.FC<ShareMenuProps> = ({ url, text, image, }) => {
-  
+
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -70,12 +70,7 @@ const ShareMenu: React.FC<ShareMenuProps> = ({ url, text, image, }) => {
 
   return (
     <div className="share-wrapper" ref={menuRef}>
-      <button
-        className="cmmt-action-btn share-trigger-btn"
-        onClick={() => setOpen(!open)}
-      >
-        <FiShare2 size={18} /> Compartilhar
-      </button>
+      <button className="cmmt-action-btn share-trigger-btn" onClick={() => setOpen(!open)} > <FiShare2 size={18} /> </button>
 
       {open && (
         <div className="share-dropdown">

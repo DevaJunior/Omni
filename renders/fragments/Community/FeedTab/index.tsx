@@ -52,7 +52,7 @@ const FeedTab: React.FC = () => {
   return (
     <div className="cmmt-posts-list">
       {posts.map(post => (
-        <article key={post.id} className="cmmt-post-card" onClick={() => handleOpenThread(post.id)}>
+        <article key={post.id} className="cmmt-post-card">
           <div className="cmmt-post-header">
             <img src={post.avatar} alt={post.author} className="cmmt-author-avatar" />
             <div className="cmmt-author-info">
