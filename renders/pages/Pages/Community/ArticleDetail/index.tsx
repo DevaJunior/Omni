@@ -15,26 +15,40 @@ import './styles.css';
 
 const ArticleDetail: React.FC = () => {
   const navigate = useNavigate();
-  // Aqui você capturaria o ID pela rota para buscar no backend. 
+  // Capturando o ID pela rota para buscar os dados corretos
   const { id } = useParams();
 
-  // Dados mockados simulando o retorno de um artigo específico
-  const article = {
-    id: 201,
-    title: "Modelagem P-Fuzzy Aplicada na Fitorremediação de Ambientes Aquáticos",
-    authors: "Ribeiro, H. M.; Costa, A. L.; Silva, M.",
-    institutions: "Departamento de Biotecnologia, Universidade Federal de Alfenas (UNIFAL-MG)",
-    journal: "Journal of Environmental Biotechnology",
-    date: "Outubro, 2025",
-    doi: "10.1016/j.jenvbio.2025.10.005",
-    abstract: "Este artigo propõe uma nova abordagem baseada na lógica P-Fuzzy para otimizar e prever a eficiência da rizofiltração no tratamento de efluentes contaminados por metais pesados. Os resultados demonstram um aumento significativo na acurácia da análise laboratorial em comparação com métodos tradicionais de modelagem linear. O estudo detalha a construção das funções de pertinência e a aplicação prática em biorreatores em escala de bancada.",
-    tags: ["Fitorremediação", "Lógica P-Fuzzy", "Tratamento de Efluentes", "Biotecnologia Ambiental"],
-    stats: {
-      views: 1245,
-      downloads: 340,
-      citations: 12
+  // Banco de dados mockado simulando o backend
+  const articlesDatabase = [
+    {
+      id: "201", // Convertendo para string para facilitar o match com o useParams
+      title: "Modelagem P-Fuzzy Aplicada na Fitorremediação de Ambientes Aquáticos",
+      authors: "Ribeiro, H. M.; Costa, A. L.; Silva, M.",
+      institutions: "Departamento de Biotecnologia, Universidade Federal de Alfenas (UNIFAL-MG)",
+      journal: "Journal of Environmental Biotechnology",
+      date: "Outubro, 2025",
+      doi: "10.1016/j.jenvbio.2025.10.005",
+      abstract: "Este artigo propõe uma nova abordagem baseada na lógica P-Fuzzy para otimizar e prever a eficiência da rizofiltração no tratamento de efluentes contaminados por metais pesados. Os resultados demonstram um aumento significativo na acurácia da análise laboratorial em comparação com métodos tradicionais de modelagem linear. O estudo detalha a construção das funções de pertinência e a aplicação prática em biorreatores em escala de bancada.",
+      tags: ["Fitorremediação", "Lógica P-Fuzzy", "Tratamento de Efluentes", "Biotecnologia Ambiental"],
+      stats: { views: 1245, downloads: 340, citations: 12 }
+    },
+    {
+      id: "202",
+      title: "Desenvolvimento de Interfaces Web para Automação de Equipamentos em Bioinformática",
+      authors: "Mendes, R.; Oliveira, P.",
+      institutions: "Centro de Pesquisa Tecnológica (CPT)",
+      journal: "Simpósio Internacional de Tecnologia e Saúde (SITS)",
+      date: "Agosto, 2025",
+      doi: "10.1109/SITS.2025.998877",
+      abstract: "Apresenta a arquitetura de software utilizando React e TypeScript para a criação de painéis de controle em tempo real para biorreatores industriais. Discute-se o gerenciamento de estado complexo e a responsividade de componentes científicos.",
+      tags: ["React", "Automação", "Biorreatores"],
+      stats: { views: 890, downloads: 150, citations: 4 }
     }
-  };
+  ];
+
+  // APLICAÇÃO CORRETA DO 'id': 
+  // Buscando o artigo correspondente ao ID da URL. Se não encontrar (fallback), pega o primeiro.
+  const article = articlesDatabase.find(art => art.id === id) || articlesDatabase[0];
 
   return (
     <div className="art-detail-container">
