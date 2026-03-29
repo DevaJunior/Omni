@@ -1,10 +1,5 @@
-import React, { useState } from 'react';
-import {
-  Search,
-  Filter,
-  TrendingUp,
-  Users,
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Filter, TrendingUp, Users } from 'lucide-react';
 import './styles.css';
 import ProjectsTab from '../../../../fragments/Community/ProjectsTab';
 import ArticlesTab from '../../../../fragments/Community/ArticlesTab';
@@ -12,7 +7,28 @@ import FeedTab from '../../../../fragments/Community/FeedTab';
 import Footer from '../../../../menus/Footer';
 
 const Community: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'articles'>('articles');
+  // 1. Estado inicial busca na memória do navegador a última aba, ou usa 'articles' como padrão
+  const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'articles'>(
+    (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'articles') || 'articles'
+  );
+
+  // 2. Restaura o scroll exatamente onde o usuário estava
+  useEffect(() => {
+    const savedScroll = sessionStorage.getItem('omni_scroll_pos');
+    if (savedScroll) {
+      // O setTimeout garante que o React monte a aba antes de rolar a página
+      setTimeout(() => {
+        window.scrollTo({ top: parseInt(savedScroll, 10), behavior: 'instant' });
+        sessionStorage.removeItem('omni_scroll_pos'); // Limpa a memória após usar
+      }, 50);
+    }
+  }, [activeTab]);
+
+  // Função para trocar de aba e salvar na memória
+  const handleTabChange = (tab: 'projects' | 'feed' | 'articles') => {
+    setActiveTab(tab);
+    sessionStorage.setItem('omni_current_tab', tab);
+  };
 
   const trendingTopics = [
     "Análise de Dados Complexos",
@@ -60,19 +76,19 @@ const Community: React.FC = () => {
             <div className="cmmt-tabs">
               <button
                 className={`cmmt-tab ${activeTab === 'articles' ? 'cmmt-active' : ''}`}
-                onClick={() => setActiveTab('articles')}
+                onClick={() => handleTabChange('articles')}
               >
                 Pesquisas
               </button>
               <button
                 className={`cmmt-tab ${activeTab === 'feed' ? 'cmmt-active' : ''}`}
-                onClick={() => setActiveTab('feed')}
+                onClick={() => handleTabChange('feed')}
               >
                 Discussões
               </button>
               <button
                 className={`cmmt-tab ${activeTab === 'projects' ? 'cmmt-active' : ''}`}
-                onClick={() => setActiveTab('projects')}
+                onClick={() => handleTabChange('projects')}
               >
                 Projetos e Oportunidades
               </button>

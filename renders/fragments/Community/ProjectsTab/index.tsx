@@ -46,8 +46,9 @@ const ProjectsTab: React.FC = () => {
   ];
 
   const handleViewProject = (id: number) => {
-    // Rota que será criada para a página de detalhes do projeto/vaga
-    navigate(`/project/${id}`); 
+    // Salva scroll antes de ir pro detalhe
+    sessionStorage.setItem('omni_scroll_pos', window.scrollY.toString());
+    navigate(`/project/${id}`);
   };
 
   return (

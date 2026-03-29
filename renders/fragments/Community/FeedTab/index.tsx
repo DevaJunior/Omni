@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, MessageSquare, Share2 } from 'lucide-react';
+import { Heart, MessageSquare } from 'lucide-react';
 import './styles.css';
+import ShareMenu from './../../../components/ShareMenu/index';
 
 const FeedTab: React.FC = () => {
   const navigate = useNavigate();
@@ -43,14 +44,15 @@ const FeedTab: React.FC = () => {
   ];
 
   const handleOpenThread = (id: number) => {
-    // Rota que será criada para a página de detalhes/thread da discussão
+    // Salva scroll antes de ir pro detalhe
+    sessionStorage.setItem('omni_scroll_pos', window.scrollY.toString());
     navigate(`/discussion/${id}`);
   };
 
   return (
     <div className="cmmt-posts-list">
       {posts.map(post => (
-        <article key={post.id} className="cmmt-post-card">
+        <article key={post.id} className="cmmt-post-card" onClick={() => handleOpenThread(post.id)}>
           <div className="cmmt-post-header">
             <img src={post.avatar} alt={post.author} className="cmmt-author-avatar" />
             <div className="cmmt-author-info">
@@ -72,15 +74,19 @@ const FeedTab: React.FC = () => {
             <button className="cmmt-action-btn">
               <Heart size={18} /> {post.likes}
             </button>
-            <button 
-              className="cmmt-action-btn"
-              onClick={() => handleOpenThread(post.id)}
-            >
+            <button className="cmmt-action-btn cmmt-comments-btn" onClick={() => handleOpenThread(post.id)} >
               <MessageSquare size={18} /> {post.comments} Comentários
             </button>
-            <button className="cmmt-action-btn cmmt-share">
+            {/* <button className="cmmt-action-btn cmmt-share">
               <Share2 size={18} /> Compartilhar
-            </button>
+            </button> */}
+            <div className="cmmt-share">
+              <ShareMenu
+                image={post.avatar}
+                url={`${window.location.origin}/discussion/${post.id}`}
+                text={`Confira a publicação de ${post.author} na Omni!`}
+              />
+            </div>
           </div>
         </article>
       ))}

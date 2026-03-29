@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Calendar, 
-  Briefcase, 
-  FileText, 
-  CheckCircle2, 
+import {
+  ArrowLeft,
+  MapPin,
+  Calendar,
+  Briefcase,
+  FileText,
+  CheckCircle2,
   Send,
   Building2,
   DollarSign,
@@ -98,7 +98,7 @@ const ProjectDetail: React.FC = () => {
 
   return (
     <div className="prj-detail-container">
-      
+
       {/* Botão de Voltar */}
       <button className="prj-btn-back" onClick={() => navigate('/community')}>
         <ArrowLeft size={20} />
@@ -106,10 +106,10 @@ const ProjectDetail: React.FC = () => {
       </button>
 
       <div className="prj-detail-layout">
-        
+
         {/* COLUNA PRINCIPAL: DESCRIÇÃO DO PROJETO */}
         <main className="prj-main-content">
-          
+
           <header className="prj-header">
             <div className="prj-header-meta">
               <span className="prj-type-badge">
@@ -120,9 +120,9 @@ const ProjectDetail: React.FC = () => {
                 {project.status}
               </span>
             </div>
-            
+
             <h1 className="prj-title">{project.title}</h1>
-            
+
             <div className="prj-institution">
               <Building2 size={20} className="prj-icon-muted" />
               <h2>{project.institution}</h2>
@@ -172,10 +172,10 @@ const ProjectDetail: React.FC = () => {
         {/* BARRA LATERAL: CARD DE RESUMO E AÇÃO (STICKY) */}
         <aside className="prj-sidebar">
           <div className="prj-sticky-wrapper">
-            
+
             <div className="prj-summary-card">
               <h3>Resumo da Oportunidade</h3>
-              
+
               <div className="prj-summary-info">
                 <div className="prj-info-row">
                   <MapPin size={20} className="prj-icon-muted" />
@@ -184,7 +184,7 @@ const ProjectDetail: React.FC = () => {
                     <span>{project.location}</span>
                   </div>
                 </div>
-                
+
                 <div className="prj-info-row">
                   <Calendar size={20} className="prj-icon-muted" />
                   <div>

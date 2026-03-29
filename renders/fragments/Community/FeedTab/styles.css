@@ -10,10 +10,15 @@
   border-radius: var(--radius-md);
   padding: 1.5rem;
   transition: var(--transition);
+  cursor: pointer;
 }
 
 .cmmt-post-card:hover {
   box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.cmmt-post-card:hover .cmmt-comments-btn {
+  color: var(--primary);
 }
 
 .cmmt-post-header {

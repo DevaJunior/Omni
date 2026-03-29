@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Heart, 
-  MessageSquare, 
-  Share2, 
-  MoreHorizontal, 
+import {
+  ArrowLeft,
+  Heart,
+  MessageSquare,
+  Share2,
+  MoreHorizontal,
   Send,
   UserPlus
 } from 'lucide-react';
@@ -106,7 +106,7 @@ const DiscussionDetail: React.FC = () => {
 
   return (
     <div className="disc-detail-container">
-      
+
       {/* Botão de Voltar */}
       <button className="disc-btn-back" onClick={() => navigate('/community')}>
         <ArrowLeft size={20} />
@@ -114,10 +114,10 @@ const DiscussionDetail: React.FC = () => {
       </button>
 
       <div className="disc-detail-layout">
-        
+
         {/* COLUNA PRINCIPAL: THREAD DE DISCUSSÃO */}
         <main className="disc-main-content">
-          
+
           {/* Post Original */}
           <article className="disc-original-post">
             <div className="disc-post-header">
@@ -155,7 +155,7 @@ const DiscussionDetail: React.FC = () => {
           <div className="disc-reply-box">
             <div className="disc-reply-avatar-placeholder">Você</div>
             <div className="disc-reply-input-wrapper">
-              <textarea 
+              <textarea
                 placeholder="Adicione à discussão com seus conhecimentos..."
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
@@ -163,7 +163,7 @@ const DiscussionDetail: React.FC = () => {
               />
               <div className="disc-reply-footer">
                 <span className="disc-reply-hint">Seja respeitoso e científico.</span>
-                <button 
+                <button
                   className="disc-btn-send"
                   disabled={replyText.trim().length === 0}
                 >
@@ -178,7 +178,7 @@ const DiscussionDetail: React.FC = () => {
           {/* Árvore de Comentários */}
           <div className="disc-comments-section">
             <h3 className="disc-comments-title">Respostas ({discussion.replies.length})</h3>
-            
+
             <div className="disc-comments-list">
               {discussion.replies.length === 0 ? (
                 <p style={{ color: 'var(--text-muted)' }}>Seja o primeiro a responder esta discussão!</p>
@@ -211,7 +211,7 @@ const DiscussionDetail: React.FC = () => {
         {/* BARRA LATERAL: AUTOR E TRENDS */}
         <aside className="disc-sidebar">
           <div className="disc-sticky-wrapper">
-            
+
             {/* Sobre o Autor */}
             <div className="disc-widget disc-author-widget">
               <div className="disc-author-cover"></div>

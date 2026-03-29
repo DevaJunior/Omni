@@ -1,0 +1,113 @@
+/* Container Base */
+.share-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Botão Gatilho (Herda estilos de cmmt-action-btn se existir no pai, mas garante base aqui) */
+.share-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted, #6b7280);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 0;
+}
+
+.share-trigger-btn:hover {
+  color: var(--primary, #5d5fef);
+}
+
+/* Dropdown Box */
+.share-dropdown {
+  position: absolute;
+  bottom: 100%; /* Abre para cima por padrão para não quebrar layout de rodapés de cards */
+  right: 0;
+  margin-bottom: 8px;
+  background: white;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: var(--radius-md, 12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  z-index: 100;
+  animation: slideUpFade 0.2s ease-out forwards;
+}
+
+/* Itens do Dropdown */
+.share-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.8rem 1rem;
+  text-decoration: none;
+  color: var(--text-main, #1f2937);
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-sm, 8px);
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.share-dropdown-item:hover {
+  background: #f8faff;
+  color: var(--primary, #5d5fef);
+}
+
+.share-dropdown-item svg {
+  color: var(--text-muted, #6b7280);
+  transition: color 0.2s ease;
+}
+
+.share-dropdown-item:hover svg {
+  color: var(--primary, #5d5fef);
+}
+
+/* Divisor */
+.share-divider {
+  border: 0;
+  height: 1px;
+  background: var(--border-color, #e5e7eb);
+  margin: 0.5rem 0;
+}
+
+/* Estados de Sucesso (Copy) */
+.share-success-text {
+  color: #059669;
+  font-weight: 600;
+}
+
+.share-dropdown-item .share-success-icon {
+  color: #059669;
+}
+
+/* Animação suave */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade Mobile */
+@media (max-width: 600px) {
+  .share-dropdown {
+    right: auto;
+    left: 0; /* Alinha à esquerda em telas menores para não vazar da tela */
+  }
+}

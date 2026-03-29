@@ -77,8 +77,9 @@ const ArticlesTab: React.FC = () => {
     return b.id - a.id;
   });
 
-  // Função centralizada para navegação de detalhes do artigo
   const handleViewArticle = (id: number) => {
+    // 3. Salva a posição exata da tela antes de navegar
+    sessionStorage.setItem('omni_scroll_pos', window.scrollY.toString());
     navigate(`/article/${id}`);
   };
 
