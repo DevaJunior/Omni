@@ -223,8 +223,9 @@
 
 /* --- SERVICES SECTION --- */
 .services-section {
-  padding: 6rem 0;
+  padding: 2rem 0 3rem 0;
   text-align: center;
+  /* border: solid 1px red; */
 }
 
 .services-header {
@@ -290,7 +291,7 @@
 
 /* --- FOOTER PROMO --- */
 .footer-promo {
-  padding: 5rem 0;
+  padding: 2.5rem 0;
   text-align: center;
 }
 

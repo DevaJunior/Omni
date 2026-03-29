@@ -2,7 +2,7 @@
 .cmmt-articles-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 1rem;
   width: 100%;
   min-width: 0;
 }

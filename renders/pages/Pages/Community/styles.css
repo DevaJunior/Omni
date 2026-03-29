@@ -192,8 +192,10 @@
 .cmmt-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.8rem;
   width: 100%;
+  padding: 1rem;
+  padding: 3rem 0 0 0;
 }
 
 .cmmt-sidebar-widget {
@@ -203,6 +205,10 @@
   padding: 1.5rem;
   width: 100%;
   box-sizing: border-box;
+}
+
+.cmmt-sidebar .cmmt-sidebar-widget:nth-child(1) {
+  margin-top: 0.4rem;
 }
 
 .cmmt-widget-header {
