@@ -77,15 +77,13 @@ const FeedTab: React.FC = () => {
             <button className="cmmt-action-btn cmmt-comments-btn" onClick={() => handleOpenThread(post.id)} >
               <MessageSquare size={18} /> {post.comments} Comentários
             </button>
-            {/* <button className="cmmt-action-btn cmmt-share">
-              <Share2 size={18} /> Compartilhar
-            </button> */}
+            {/* <div className="cmmt-share">
+              <ShareMenu image={post.avatar} text={`Confira a publicação de ${post.author} na Omni!`}
+                url={`${window.location.origin}/discussion/${post.id}`} />
+            </div> */}
             <div className="cmmt-share">
-              <ShareMenu
-                image={post.avatar}
-                url={`${window.location.origin}/discussion/${post.id}`}
-                text={`Confira a publicação de ${post.author} na Omni!`}
-              />
+              <ShareMenu text={`Confira a publicação de ${post.author} na Omni!`}
+                url={`${window.location.origin}/discussion/${post.id}`} />
             </div>
           </div>
         </article>

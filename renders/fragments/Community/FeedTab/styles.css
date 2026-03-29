@@ -14,7 +14,7 @@
 }
 
 .cmmt-post-card:hover {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .cmmt-post-card:hover .cmmt-comments-btn {
@@ -107,27 +107,33 @@
 }
 
 @media (max-width: 600px) {
+
   .cmmt-post-actions {
     flex-wrap: wrap;
     gap: 1rem;
   }
+
   .cmmt-share {
-    margin-left: 0;
+    /* margin-left: 0;
     width: 100%;
-    justify-content: flex-start;
+    justify-content: flex-start; */
   }
+
 }
 
 @media (max-width: 480px) {
   .cmmt-post-header {
     align-items: flex-start;
   }
+
   .cmmt-author-info h4 {
     font-size: 1rem;
   }
+
   .cmmt-post-body p {
     font-size: 0.9rem;
   }
+
   .cmmt-action-btn {
     font-size: 0.85rem;
   }

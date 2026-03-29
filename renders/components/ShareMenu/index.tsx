@@ -74,8 +74,7 @@ const ShareMenu: React.FC<ShareMenuProps> = ({ url, text, image, }) => {
 
       {open && (
         <div className="share-dropdown">
-
-          {/* APLICAÇÃO DA PROPRIEDADE 'IMAGE' - Preview visual do link condicional */}
+          
           {image && (
             <div className="share-image-preview">
               <img src={image} alt="Preview do compartilhamento" />
@@ -88,21 +87,10 @@ const ShareMenu: React.FC<ShareMenuProps> = ({ url, text, image, }) => {
             </button>
           )}
 
-          <a className="share-dropdown-item" href={shareLinks.whatsapp} target="_blank" rel="noreferrer">
-            <FaWhatsapp size={16} /> WhatsApp
-          </a>
-
-          <a className="share-dropdown-item" href={shareLinks.facebook} target="_blank" rel="noreferrer">
-            <FaFacebook size={16} /> Facebook
-          </a>
-
-          <a className="share-dropdown-item" href={shareLinks.linkedin} target="_blank" rel="noreferrer">
-            <FaLinkedin size={16} /> LinkedIn
-          </a>
-
-          <a className="share-dropdown-item" href={shareLinks.twitter} target="_blank" rel="noreferrer">
-            <FaTwitter size={16} /> X (Twitter)
-          </a>
+          {/* <a className="share-dropdown-item" href={shareLinks.whatsapp} target="_blank" rel="noreferrer"> <FaWhatsapp size={16} /> WhatsApp </a>
+          <a className="share-dropdown-item" href={shareLinks.facebook} target="_blank" rel="noreferrer"> <FaFacebook size={16} /> Facebook </a>
+          <a className="share-dropdown-item" href={shareLinks.linkedin} target="_blank" rel="noreferrer"> <FaLinkedin size={16} /> LinkedIn </a>
+          <a className="share-dropdown-item" href={shareLinks.twitter} target="_blank" rel="noreferrer"> <FaTwitter size={16} /> X (Twitter) </a> */}
 
           <hr className="share-divider" />
 
