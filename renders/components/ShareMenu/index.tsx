@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 // Importando de diferentes pacotes dentro do react-icons
 import { FiShare2, FiCopy, FiCheck } from "react-icons/fi";
-import { FaWhatsapp, FaFacebook, FaLinkedin, FaTwitter } from "react-icons/fa";
 import './styles.css';
 
 type ShareMenuProps = {
@@ -16,8 +15,7 @@ const ShareMenu: React.FC<ShareMenuProps> = ({ url, text, image, }) => {
   const [copied, setCopied] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const encodedUrl = encodeURIComponent(url);
-  // Se 'text' existir, codifica. Se não, usa string vazia para não sujar o link.
+  /*const encodedUrl = encodeURIComponent(url);
   const encodedText = text ? encodeURIComponent(text) : "";
 
   const shareLinks = {
@@ -31,7 +29,7 @@ const ShareMenu: React.FC<ShareMenuProps> = ({ url, text, image, }) => {
     twitter: text
       ? `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`
       : `https://twitter.com/intent/tweet?url=${encodedUrl}`,
-  };
+  };*/
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
