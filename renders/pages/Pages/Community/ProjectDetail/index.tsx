@@ -16,6 +16,7 @@ import './styles.css';
 
 const ProjectDetail: React.FC = () => {
   const navigate = useNavigate();
+  // Capturando o ID da rota
   const { id } = useParams();
 
   // Banco de dados mockado simulando o backend para Projetos
@@ -67,10 +68,32 @@ const ProjectDetail: React.FC = () => {
         "Escrever testes automatizados para os componentes."
       ],
       tags: ["Mestrado", "React", "TypeScript", "Bioinformática"]
+    },
+    {
+      id: "103",
+      title: "Chamada de Artigos: Controle de Qualidade em Laboratórios",
+      institution: "Revista Científica Omni",
+      type: "Publicação",
+      location: "Submissão Online",
+      deadline: "Encerrado",
+      status: "Fechado",
+      coordinator: "Comitê Editorial Omni",
+      grant: null,
+      description: "Edição especial focada na interseção entre tecnologia da informação e processos laboratoriais, englobando biologia, química e controle de qualidade de vacinas. Buscamos artigos originais e revisões sistemáticas.",
+      requirements: [
+        "Artigos não publicados em outros meios.",
+        "Aderência ao template padrão de formatação IEEE.",
+        "Foco na área de qualidade laboratorial e sistemas inteligentes."
+      ],
+      responsibilities: [
+        "Submissão do manuscrito via portal.",
+        "Ajustes conforme retorno dos revisores paritários (Peer Review)."
+      ],
+      tags: ["Artigo", "Controle de Qualidade", "Publicação"]
     }
   ];
 
-  // Busca o projeto pelo ID da URL ou pega o primeiro como fallback
+  // APLICAÇÃO CORRETA DO 'id': Busca o projeto correspondente ao ID da URL.
   const project = projectsDatabase.find(p => p.id === id) || projectsDatabase[0];
 
   return (

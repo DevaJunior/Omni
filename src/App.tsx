@@ -1,10 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './values/tokens.css';
-import Navbar from './../renders/menus/Navbar/index';
+import Navbar from './../renders/menus/Navbar';
 import Home from './..//renders/pages/Pages/Home';
 import Community from './../renders/pages/Pages/Community/Community';
-import ArticleDetail from './../renders/pages/Pages/Community/ArticleDetail/index';
+import ArticleDetail from './../renders/pages/Pages/Community/ArticleDetail';
+import ProjectDetail from './../renders/pages/Pages/Community/ProjectDetail';
+import DiscussionDetail from './../renders/pages/Pages/Community/DiscussionDetail';
 
 // Placeholder para as outras páginas que desenvolveremos
 const Lab = () => <div style={{ padding: '100px' }}>Área de Ferramentas Laboratoriais</div>;
@@ -23,6 +25,8 @@ const App: React.FC = () => {
           <Route path="/results" element={<div>Resultados de Pesquisa</div>} />
 
           <Route path="/article/:id" element={<ArticleDetail />} />
+          <Route path="/project/:id" element={<ProjectDetail />} />
+          <Route path="/discussion/:id" element={<DiscussionDetail />} />
 
         </Routes>
       </main>

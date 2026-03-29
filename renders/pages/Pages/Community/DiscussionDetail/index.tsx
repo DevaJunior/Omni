@@ -13,6 +13,7 @@ import './styles.css';
 
 const DiscussionDetail: React.FC = () => {
   const navigate = useNavigate();
+  // Capturando o ID da rota
   const { id } = useParams();
 
   const [replyText, setReplyText] = useState('');
@@ -38,7 +39,8 @@ const DiscussionDetail: React.FC = () => {
           avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150",
           time: "Há 1 hora",
           content: "Dra. Helena, trabalho excelente! No nosso laboratório tentamos aplicar lógica fuzzy clássica (Mamdani), mas tivemos problemas com a explosão de regras devido à inclusão da temperatura da água. Como vocês lidaram com as variáveis de entrada múltiplas no modelo P-Fuzzy?",
-          likes: 5
+          likes: 5,
+          isAuthor: false
         },
         {
           id: "r2",
@@ -48,7 +50,7 @@ const DiscussionDetail: React.FC = () => {
           time: "Há 45 minutos",
           content: "Carlos, exatamente por isso migramos para o P-Fuzzy! Ao atribuir probabilidades às regras em vez de tratá-las como absolutas, conseguimos reduzir o conjunto de regras em quase 60%, mantendo a acurácia. Vou te enviar o link do repositório no GitHub por mensagem direta.",
           likes: 8,
-          isAuthor: true // Tag para destacar que é o autor do tópico respondendo
+          isAuthor: true
         },
         {
           id: "r3",
@@ -57,13 +59,49 @@ const DiscussionDetail: React.FC = () => {
           avatar: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=150",
           time: "Há 10 minutos",
           content: "Resultados muito promissores. Nosso departamento de P&D tem interesse em conhecer mais sobre essa modelagem para aplicação em escala piloto.",
-          likes: 2
+          likes: 2,
+          isAuthor: false
+        }
+      ]
+    },
+    {
+      id: "2",
+      author: "Laboratório Genesis",
+      role: "Instituição Parceira",
+      avatar: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=150",
+      time: "Há 5 horas",
+      content: "Estamos com duas bolsas abertas para iniciação científica na área de bioinformática e análise de dados genômicos. O projeto envolve o desenvolvimento de pipelines automatizados. Interessados, confiram o edital anexado.",
+      tags: ["#Bolsas", "#Bioinformática", "#Genômica"],
+      likes: 89,
+      commentsCount: 0,
+      replies: []
+    },
+    {
+      id: "3",
+      author: "Marcos Silva",
+      role: "Doutorando em Microbiologia",
+      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150",
+      time: "Há 1 dia",
+      content: "Dúvida técnica: Qual a melhor biblioteca em Python atualmente para plotar os gráficos de superfície de inferência fuzzy quando temos mais de 4 variáveis de entrada no nosso sistema laboratorial? Tenho usado o scikit-fuzzy, mas sinto falta de algumas customizações.",
+      tags: ["#Python", "#Modelagem", "#Dúvida"],
+      likes: 15,
+      commentsCount: 1,
+      replies: [
+        {
+          id: "r4",
+          author: "Dra. Helena Ribeiro",
+          role: "Pesquisadora em Biorremediação",
+          avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
+          time: "Há 2 horas",
+          content: "Oi Marcos, o scikit-fuzzy realmente sofre com gráficos de superfície multidimensionais. Sugiro dar uma olhada na biblioteca 'matplotlib' nativa operando com cortes seccionais em 3D usando os eixos de contorno, fica bem mais claro visualmente.",
+          likes: 3,
+          isAuthor: false
         }
       ]
     }
   ];
 
-  // Fallback para o primeiro item se o ID não for encontrado
+  // APLICAÇÃO CORRETA DO 'id': Busca a thread correspondente ao ID da URL.
   const discussion = discussionsDatabase.find(d => d.id === id) || discussionsDatabase[0];
 
   return (
@@ -142,26 +180,30 @@ const DiscussionDetail: React.FC = () => {
             <h3 className="disc-comments-title">Respostas ({discussion.replies.length})</h3>
             
             <div className="disc-comments-list">
-              {discussion.replies.map(reply => (
-                <div key={reply.id} className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
-                  <img src={reply.avatar} alt={reply.author} className="disc-comment-avatar" />
-                  <div className="disc-comment-content">
-                    <div className="disc-comment-header">
-                      <div className="disc-comment-author-info">
-                        <h4>{reply.author} {reply.isAuthor && <span className="disc-author-badge">Autor</span>}</h4>
-                        <span>{reply.role} • {reply.time}</span>
+              {discussion.replies.length === 0 ? (
+                <p style={{ color: 'var(--text-muted)' }}>Seja o primeiro a responder esta discussão!</p>
+              ) : (
+                discussion.replies.map(reply => (
+                  <div key={reply.id} className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
+                    <img src={reply.avatar} alt={reply.author} className="disc-comment-avatar" />
+                    <div className="disc-comment-content">
+                      <div className="disc-comment-header">
+                        <div className="disc-comment-author-info">
+                          <h4>{reply.author} {reply.isAuthor && <span className="disc-author-badge">Autor</span>}</h4>
+                          <span>{reply.role} • {reply.time}</span>
+                        </div>
+                      </div>
+                      <p className="disc-comment-text">{reply.content}</p>
+                      <div className="disc-comment-actions">
+                        <button className="disc-action-btn-small">
+                          <Heart size={14} /> {reply.likes}
+                        </button>
+                        <button className="disc-action-btn-small">Responder</button>
                       </div>
                     </div>
-                    <p className="disc-comment-text">{reply.content}</p>
-                    <div className="disc-comment-actions">
-                      <button className="disc-action-btn-small">
-                        <Heart size={14} /> {reply.likes}
-                      </button>
-                      <button className="disc-action-btn-small">Responder</button>
-                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </main>
