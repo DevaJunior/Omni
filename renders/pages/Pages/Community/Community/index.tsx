@@ -19,6 +19,7 @@ const ALL_LABS = [
   { id: '8', name: "EcoSys Research" },
 ];
 
+
 const Community: React.FC = () => {
   const navigate = useNavigate();
   
