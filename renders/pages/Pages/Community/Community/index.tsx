@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, TrendingUp, Users, AlertCircle, X } from 'lucide-react';
 import './styles.css';
 import ProjectsTab from '../../../../fragments/Community/ProjectsTab';
@@ -42,14 +42,16 @@ const Community: React.FC = () => {
     sessionStorage.setItem('omni_current_tab', tab);
   };
 
-  // 1. LÓGICA DE PARCEIROS ALEATÓRIOS (Sempre 5)
-  const randomLabs = useMemo(() => {
+  // 1. LÓGICA DE PARCEIROS ALEATÓRIOS (Lazy Initializer)
+  // Passamos uma função para o useState. O React roda isso apenas UMA VEZ na montagem.
+  // Fica 100% puro, não gera renders em cascata e o linter fica feliz!
+  const [randomLabs] = useState(() => {
     const shuffled = [...ALL_LABS].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, 5);
-  }, []);
+  });
 
   // 2. ESTADOS DO FILTRO E BARRA DE BUSCA INTELIGENTE
-  const [searchFilter, setSearchFilter] = useState<string>(''); // Vazio significa "FILTRO" padrão
+  const [searchFilter, setSearchFilter] = useState<string>(''); 
   const [searchValue, setSearchValue] = useState<string>('');
   const [showFilterMenu, setShowFilterMenu] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -62,17 +64,16 @@ const Community: React.FC = () => {
       setTimeout(() => {
         setSearchError(false);
         setToastMessage(null);
-      }, 3500); // O toast some em 3.5 segundos
+      }, 3500); 
     }
   };
 
   const handleFilterSelect = (filter: string) => {
     setSearchFilter(filter);
     setShowFilterMenu(false);
-    setSearchError(false); // Limpa o erro se existir
+    setSearchError(false); 
     setToastMessage(null);
   };
-
 
   const trendingTopics = [
     "Análise de Dados Complexos",
@@ -84,6 +85,7 @@ const Community: React.FC = () => {
 
   return (
     <>
+      {/* TOAST NOTIFICATION */}
       {toastMessage && (
         <div className="cmmt-toast-notification">
           <AlertCircle size={20} />
@@ -105,8 +107,8 @@ const Community: React.FC = () => {
 
           <div className="cmmt-partners-list">
             {randomLabs.map(lab => (
-              <span
-                key={lab.id}
+              <span 
+                key={lab.id} 
                 className="cmmt-partner-link"
                 onClick={() => navigate(`/lab/${lab.id}`)}
               >
@@ -119,18 +121,18 @@ const Community: React.FC = () => {
         <div className="cmmt-toolbar">
           <div className={`cmmt-search-bar ${searchError ? 'cmmt-search-error' : ''}`}>
             <Search size={20} className="cmmt-search-icon" />
-            <input
-              type="text"
-              placeholder={searchFilter ? `Pesquisar em ${searchFilter}...` : "Pesquisar publicações, projetos ou pesquisadores..."}
+            <input 
+              type="text" 
+              placeholder={searchFilter ? `Pesquisar em ${searchFilter}...` : "Pesquisar publicações, projetos ou pesquisadores..."} 
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               onClick={handleSearchClick}
-              disabled={!searchFilter}
+              disabled={!searchFilter} 
             />
           </div>
 
           <div style={{ position: 'relative' }}>
-            <button
+            <button 
               className={`cmmt-btn-outline-icon ${searchFilter ? 'cmmt-filter-active-btn' : ''}`}
               onClick={() => setShowFilterMenu(!showFilterMenu)}
             >
