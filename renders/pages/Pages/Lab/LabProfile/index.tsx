@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Mail, 
-  Users, 
+import {
+  ArrowLeft,
+  MapPin,
+  Mail,
+  Users,
   Briefcase,
   Calendar,
   BookOpen,
@@ -15,19 +15,22 @@ import {
 } from 'lucide-react';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
+import JoinLabModal from './../../../../modals/JoinLabModal/index';
 
 const LabProfile: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'publicacoes' | 'oportunidades' | 'equipe'>('publicacoes');
+  
+  // Utilizando o estado para atualizar o botão principal após sucesso do modal
   const [hasRequested, setHasRequested] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Dados mockados fiéis à imagem solicitada
   const labData = {
     id: id || "1",
     name: "Phyton Research",
@@ -81,36 +84,35 @@ const LabProfile: React.FC = () => {
   };
 
   const handleRequestJoin = () => {
-    setHasRequested(true);
+    setIsModalOpen(true);
   };
 
   return (
     <>
       <div className="lab-profile-page">
         <div className="lab-profile-container">
-          
+
           <button className="lab-btn-back-clean" onClick={() => navigate('/community')}>
             <ArrowLeft size={18} />
             Voltar para Comunidade
           </button>
 
           <div className="lab-grid-layout">
-            
+
             {/* COLUNA ESQUERDA (Principal) */}
             <div className="lab-main-col">
-              
-              {/* Card de Cabeçalho do Lab */}
+
               <div className="lab-header-card-clean">
                 <div className="lab-header-top-row">
                   <img src={labData.logoImage} alt="Logo" className="lab-logo-clean" />
-                  
+
                   <div className="lab-title-area">
                     <span className="lab-badge-blue">LAB</span>
                     <div className="lab-name-row">
                       <h1>{labData.name}</h1>
                       {labData.verified && (
                         <svg className="lab-verified-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#5d5fef"/>
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#5d5fef" />
                         </svg>
                       )}
                     </div>
@@ -121,7 +123,7 @@ const LabProfile: React.FC = () => {
 
                   <div className="lab-action-buttons">
                     <button className="lab-btn-outline">Seguir</button>
-                    <button 
+                    <button
                       className={`lab-btn-solid ${hasRequested ? 'requested' : ''}`}
                       onClick={handleRequestJoin}
                       disabled={hasRequested}
@@ -151,13 +153,13 @@ const LabProfile: React.FC = () => {
               {/* Navegação de Abas */}
               <div className="lab-tabs-clean">
                 <div className="lab-tabs-left">
-                  <button 
+                  <button
                     className={activeTab === 'publicacoes' ? 'active' : ''}
                     onClick={() => setActiveTab('publicacoes')}
                   >
                     <BookOpen size={16} /> Publicações
                   </button>
-                  <button 
+                  <button
                     className={activeTab === 'oportunidades' ? 'active' : ''}
                     onClick={() => setActiveTab('oportunidades')}
                   >
@@ -165,7 +167,7 @@ const LabProfile: React.FC = () => {
                   </button>
                 </div>
                 <div className="lab-tabs-right">
-                  <button 
+                  <button
                     className={activeTab === 'equipe' ? 'active' : ''}
                     onClick={() => setActiveTab('equipe')}
                   >
@@ -187,10 +189,10 @@ const LabProfile: React.FC = () => {
                           {pub.isFree ? 'Open Access' : 'Paywall'}
                         </span>
                       </div>
-                      
+
                       <h3 className="lab-pub-title">{pub.title}</h3>
                       <p className="lab-pub-authors">{pub.authors}</p>
-                      
+
                       <div className="lab-pub-meta-clean">
                         <strong>{pub.journal}</strong>
                         <span><Calendar size={14} /> {pub.date}</span>
@@ -200,7 +202,7 @@ const LabProfile: React.FC = () => {
                         <div className="lab-pub-tags-clean">
                           {pub.tags.map(tag => <span key={tag}>{tag}</span>)}
                         </div>
-                        <button 
+                        <button
                           className="lab-pub-link-btn"
                           onClick={() => navigate(`/article/${pub.id}`)}
                         >
@@ -220,7 +222,7 @@ const LabProfile: React.FC = () => {
 
             {/* COLUNA DIREITA (Sidebar) */}
             <div className="lab-sidebar-col">
-              
+
               {/* Artigos Destaque */}
               <div className="lab-sidebar-card">
                 <h3>Artigos de Destaque</h3>
@@ -260,6 +262,14 @@ const LabProfile: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <JoinLabModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        labName={labData.name}
+        onSuccess={() => setHasRequested(true)} // Recebe o sinal de envio para atualizar o botão na tela
+      />
+
       <Footer />
     </>
   );
