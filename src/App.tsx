@@ -8,6 +8,9 @@ import ArticleDetail from './../renders/pages/Pages/Community/ArticleDetail';
 import ProjectDetail from './../renders/pages/Pages/Community/ProjectDetail';
 import DiscussionDetail from './../renders/pages/Pages/Community/DiscussionDetail';
 
+// Importando a nova página de Perfil do Laboratório
+import LabProfile from './../renders/pages/Pages/Lab/LabProfile';
+
 import ScrollToTop from './config/ScrollToTop';
 
 const Lab = () => <div style={{ padding: '100px' }}>Área de Ferramentas Laboratoriais</div>;
@@ -22,6 +25,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/lab" element={<Lab />} />
+          <Route path="/lab/:id" element={<LabProfile />} /> {/* <-- NOVA ROTA DO LAB */}
           <Route path="/p-fuzzy" element={<PFuzzy />} />
           <Route path="/community" element={<Community />} />
           <Route path="/results" element={<div>Resultados de Pesquisa</div>} />
