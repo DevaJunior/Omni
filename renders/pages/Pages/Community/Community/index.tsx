@@ -21,8 +21,7 @@ const ALL_LABS = [
 
 const Community: React.FC = () => {
   const navigate = useNavigate();
-
-  // ESTADOS DE TABS E SCROLL
+  
   const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'articles'>(
     (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'articles') || 'articles'
   );
