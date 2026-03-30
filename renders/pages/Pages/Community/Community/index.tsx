@@ -1,34 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, TrendingUp, Users } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Search, Filter, TrendingUp, Users, AlertCircle, X } from 'lucide-react';
 import './styles.css';
 import ProjectsTab from '../../../../fragments/Community/ProjectsTab';
 import ArticlesTab from '../../../../fragments/Community/ArticlesTab';
 import FeedTab from '../../../../fragments/Community/FeedTab';
 import Footer from '../../../../menus/Footer';
+import { useNavigate } from 'react-router-dom';
+
+// MOCK DE LABORATÓRIOS (Para o header)
+const ALL_LABS = [
+  { id: '1', name: "Phyton Research" },
+  { id: '2', name: "Biogen" },
+  { id: '3', name: "Neurolab" },
+  { id: '4', name: "Genesis Labs" },
+  { id: '5', name: "Acqua Solutions" },
+  { id: '6', name: "AgroTech Labs" },
+  { id: '7', name: "NanoBio Corp" },
+  { id: '8', name: "EcoSys Research" },
+];
 
 const Community: React.FC = () => {
-  // 1. Estado inicial busca na memória do navegador a última aba, ou usa 'articles' como padrão
+  const navigate = useNavigate();
+
+  // ESTADOS DE TABS E SCROLL
   const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'articles'>(
     (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'articles') || 'articles'
   );
 
-  // 2. Restaura o scroll exatamente onde o usuário estava
   useEffect(() => {
     const savedScroll = sessionStorage.getItem('omni_scroll_pos');
     if (savedScroll) {
-      // O setTimeout garante que o React monte a aba antes de rolar a página
       setTimeout(() => {
         window.scrollTo({ top: parseInt(savedScroll, 10), behavior: 'instant' });
-        sessionStorage.removeItem('omni_scroll_pos'); // Limpa a memória após usar
+        sessionStorage.removeItem('omni_scroll_pos');
       }, 50);
     }
   }, [activeTab]);
 
-  // Função para trocar de aba e salvar na memória
   const handleTabChange = (tab: 'projects' | 'feed' | 'articles') => {
     setActiveTab(tab);
     sessionStorage.setItem('omni_current_tab', tab);
   };
+
+  // 1. LÓGICA DE PARCEIROS ALEATÓRIOS (Sempre 5)
+  const randomLabs = useMemo(() => {
+    const shuffled = [...ALL_LABS].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 5);
+  }, []);
+
+  // 2. ESTADOS DO FILTRO E BARRA DE BUSCA INTELIGENTE
+  const [searchFilter, setSearchFilter] = useState<string>(''); // Vazio significa "FILTRO" padrão
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [showFilterMenu, setShowFilterMenu] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [searchError, setSearchError] = useState<boolean>(false);
+
+  const handleSearchClick = () => {
+    if (!searchFilter) {
+      setSearchError(true);
+      setToastMessage("Selecione um filtro antes de pesquisar.");
+      setTimeout(() => {
+        setSearchError(false);
+        setToastMessage(null);
+      }, 3500); // O toast some em 3.5 segundos
+    }
+  };
+
+  const handleFilterSelect = (filter: string) => {
+    setSearchFilter(filter);
+    setShowFilterMenu(false);
+    setSearchError(false); // Limpa o erro se existir
+    setToastMessage(null);
+  };
+
 
   const trendingTopics = [
     "Análise de Dados Complexos",
@@ -40,6 +84,14 @@ const Community: React.FC = () => {
 
   return (
     <>
+      {toastMessage && (
+        <div className="cmmt-toast-notification">
+          <AlertCircle size={20} />
+          <span>{toastMessage}</span>
+          <button onClick={() => setToastMessage(null)}><X size={16} /></button>
+        </div>
+      )}
+
       <div className="cmmt-container">
         <header className="cmmt-header">
           <div className="cmmt-brand">
@@ -52,23 +104,51 @@ const Community: React.FC = () => {
           </h2>
 
           <div className="cmmt-partners-list">
-            <span>Phyton Research</span>
-            <span>Biogen</span>
-            <span>Neurolab</span>
-            <span>Genesis Labs</span>
-            <span>Acqua Solutions</span>
+            {randomLabs.map(lab => (
+              <span
+                key={lab.id}
+                className="cmmt-partner-link"
+                onClick={() => navigate(`/lab/${lab.id}`)}
+              >
+                {lab.name}
+              </span>
+            ))}
           </div>
         </header>
 
         <div className="cmmt-toolbar">
-          <div className="cmmt-search-bar">
+          <div className={`cmmt-search-bar ${searchError ? 'cmmt-search-error' : ''}`}>
             <Search size={20} className="cmmt-search-icon" />
-            <input type="text" placeholder="Pesquisar publicações, projetos ou pesquisadores..." />
+            <input
+              type="text"
+              placeholder={searchFilter ? `Pesquisar em ${searchFilter}...` : "Pesquisar publicações, projetos ou pesquisadores..."}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onClick={handleSearchClick}
+              disabled={!searchFilter}
+            />
           </div>
-          <button className="cmmt-btn-outline-icon">
-            <Filter size={20} />
-            Filtros
-          </button>
+
+          <div style={{ position: 'relative' }}>
+            <button
+              className={`cmmt-btn-outline-icon ${searchFilter ? 'cmmt-filter-active-btn' : ''}`}
+              onClick={() => setShowFilterMenu(!showFilterMenu)}
+            >
+              <Filter size={20} />
+              {searchFilter || "FILTRO"}
+            </button>
+
+            {/* Menu Dropdown do Filtro */}
+            {showFilterMenu && (
+              <div className="cmmt-filter-dropdown-menu">
+                <button onClick={() => handleFilterSelect('')}>Limpar Filtro</button>
+                <button onClick={() => handleFilterSelect('Pesquisas')}>Pesquisas</button>
+                <button onClick={() => handleFilterSelect('Discussões')}>Discussões</button>
+                <button onClick={() => handleFilterSelect('Projetos')}>Projetos</button>
+                <button onClick={() => handleFilterSelect('Laboratórios')}>Laboratórios</button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="cmmt-layout">
