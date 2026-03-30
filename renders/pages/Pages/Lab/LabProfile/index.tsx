@@ -241,19 +241,19 @@ const LabProfile: React.FC = () => {
               <div className="lab-sidebar-card lab-stats-card">
                 <div className="lab-stat-row">
                   <span>Visualizações</span>
-                  <strong>{labData.stats.views}</strong>
+                  <p>{labData.stats.views}</p>
                 </div>
                 <div className="lab-stat-row">
                   <span>Publicações</span>
-                  <strong>{labData.stats.publications}</strong>
+                  <p>{labData.stats.publications}</p>
                 </div>
                 <div className="lab-stat-row">
                   <span>Projetos</span>
-                  <strong>{labData.stats.projects}</strong>
+                  <p>{labData.stats.projects}</p>
                 </div>
                 <div className="lab-stat-row">
                   <span>Mmebros</span>
-                  <strong>{labData.stats.members}</strong>
+                  <p>{labData.stats.members}</p>
                 </div>
               </div>
 

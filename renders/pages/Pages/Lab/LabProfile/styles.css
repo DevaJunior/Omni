@@ -393,10 +393,10 @@
   font-weight: 500;
 }
 
-.lab-stat-row strong {
+.lab-stat-row p {
   font-size: 1.1rem;
-  color: #111827;
-  font-weight: 700;
+  color: #5d5fef;
+  font-weight: 600;
 }
 
 .lab-placeholder-tab {
