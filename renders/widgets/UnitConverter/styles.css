@@ -1,0 +1,161 @@
+/* Reuso da estrutura base de ferramentas (já aplicada em Dilution e Molarity) */
+.tool-page-wrapper { background-color: #f4f5f7; min-height: 100vh; width: 100%; }
+.tool-container { width: 100%; max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; box-sizing: border-box; }
+.tool-btn-back { display: flex; align-items: center; gap: 8px; background: none; border: none; color: #64748b; font-size: 0.95rem; font-weight: 600; cursor: pointer; padding: 0; margin-bottom: 2rem; transition: color 0.2s ease; }
+.tool-btn-back:hover { color: #4f46e5; }
+
+.tool-grid-layout { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; align-items: start; }
+.tool-main-panel { background: white; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02); }
+.tool-header { display: flex; align-items: center; gap: 1.5rem; padding: 2rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+
+/* TEMA ÍNDIGO (Geral/Conversão) */
+.tool-icon-large.indigo-theme { background: #e0e7ff; color: #4f46e5; width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
+.tool-header h1 { font-size: 1.6rem; color: #0f172a; margin-bottom: 0.4rem; font-weight: 800; }
+.tool-header p { color: #64748b; font-size: 0.95rem; }
+
+.tool-card-content { padding: 2rem; }
+.tool-mode-selector { margin-bottom: 2.5rem; }
+.tool-mode-selector > label { display: block; font-size: 0.85rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 1rem; }
+.tool-radio-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+.tool-radio-label { display: flex; align-items: center; gap: 8px; padding: 0.8rem 1.2rem; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; font-size: 0.95rem; color: #475569; font-weight: 500; transition: all 0.2s; }
+.tool-radio-label:hover { background: #e2e8f0; }
+.tool-radio-label.active-indigo { background: #eef2ff; border-color: #4f46e5; color: #3730a3; }
+.tool-radio-label input { display: none; }
+
+/* ÁREA DE CONVERSÃO */
+.converter-work-area {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #f8fafc;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.converter-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.converter-block label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.converter-input-wrapper {
+  display: flex;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 56px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.converter-input-wrapper:focus-within {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.converter-input-wrapper input {
+  flex: 1;
+  border: none;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0f172a;
+  outline: none;
+  min-width: 0; /* Impede que estoure o flex no mobile */
+}
+
+/* Remove as setinhas nativas de number */
+.converter-input-wrapper input[type="number"]::-webkit-inner-spin-button, 
+.converter-input-wrapper input[type="number"]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.converter-result-display {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4f46e5;
+  background: #f1f5f9; /* Fundo levemente cinza para indicar que é leitura (readonly) */
+  min-width: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.converter-input-wrapper select {
+  width: 180px;
+  border: none;
+  border-left: 1px solid #cbd5e1;
+  background: #f8fafc;
+  padding: 0 1rem;
+  font-size: 0.95rem;
+  color: #334155;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.converter-input-wrapper select:focus {
+  background: white;
+}
+
+.converter-swap-row {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.converter-btn-swap {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #4f46e5;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.converter-btn-swap:hover {
+  background: #eef2ff;
+  border-color: #4f46e5;
+  transform: rotate(180deg);
+}
+
+/* Botões Extras */
+.tool-btn-secondary { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: white; border: 1px solid #cbd5e1; color: #475569; padding: 1rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%;}
+.tool-btn-secondary:hover { background: #f1f5f9; }
+
+/* Sidebar */
+.tool-info-card { background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02); }
+.tool-info-card h3 { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; color: #0f172a; margin-bottom: 1rem; }
+.tool-info-card p { font-size: 0.9rem; color: #475569; line-height: 1.6; margin-bottom: 1.5rem; }
+.tool-formula-box.formula-indigo { background: #eef2ff; padding: 1rem; border-radius: 8px; text-align: center; margin-bottom: 1.5rem; color: #4f46e5; border: 1px dashed #6366f1; }
+.tool-info-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+.tool-info-list li { font-size: 0.85rem; color: #64748b; line-height: 1.5;}
+.tool-info-list li strong { color: #334155; }
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .tool-grid-layout { grid-template-columns: 1fr; }
+  .tool-sidebar-panel { order: -1; }
+  .converter-input-wrapper { flex-direction: column; height: auto; }
+  .converter-input-wrapper input, .converter-result-display { width: 100%; padding: 1.2rem 1rem; border-bottom: 1px solid #cbd5e1; box-sizing: border-box; }
+  .converter-input-wrapper select { width: 100%; border-left: none; padding: 1rem; }
+}
