@@ -1,0 +1,96 @@
+/* Reuso da estrutura base */
+.tool-page-wrapper { background-color: #f4f5f7; min-height: 100vh; width: 100%; }
+.tool-container { width: 100%; max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; box-sizing: border-box; }
+.tool-btn-back { display: flex; align-items: center; gap: 8px; background: none; border: none; color: #64748b; font-size: 0.95rem; font-weight: 600; cursor: pointer; padding: 0; margin-bottom: 2rem; transition: color 0.2s ease; }
+.tool-btn-back:hover { color: #d97706; }
+
+.tool-grid-layout { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; align-items: start; }
+.tool-main-panel { background: white; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02); }
+.tool-header { display: flex; align-items: center; gap: 1.5rem; padding: 2rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+
+/* TEMA AMBER (Produtividade) */
+.tool-icon-large.amber-theme { background: #fef3c7; color: #d97706; width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
+.tool-header h1 { font-size: 1.6rem; color: #0f172a; margin-bottom: 0.4rem; font-weight: 800; }
+.tool-header p { color: #64748b; font-size: 0.95rem; }
+
+.tool-card-content { padding: 2rem; }
+
+/* FORMULÁRIO DE ADIÇÃO */
+.timer-add-form { display: flex; gap: 1.5rem; align-items: flex-end; flex-wrap: wrap; }
+.timer-input-name { flex: 2; display: flex; flex-direction: column; gap: 6px; min-width: 200px; }
+.timer-input-name label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+.timer-input-name input { padding: 0.8rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; font-size: 0.95rem; transition: border-color 0.2s; }
+.timer-input-name input:focus { border-color: #d97706; }
+
+.timer-input-time-group { display: flex; align-items: flex-end; gap: 0.5rem; flex-wrap: wrap;}
+.timer-time-box { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.timer-time-box label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+.timer-time-box input { width: 60px; padding: 0.8rem 0; text-align: center; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1.1rem; font-weight: 600; color: #0f172a; outline: none; }
+.timer-time-box input:focus { border-color: #d97706; }
+/* Remove setinhas do number input */
+.timer-time-box input[type="number"]::-webkit-inner-spin-button,
+.timer-time-box input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+.time-separator { font-size: 1.5rem; font-weight: 700; color: #94a3b8; padding-bottom: 0.5rem; }
+
+.btn-add-timer { height: 45px; width: 45px; display: flex; align-items: center; justify-content: center; padding: 0; margin-left: 0.5rem; }
+.tool-btn-primary.btn-amber { background: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+.tool-btn-primary.btn-amber:hover { background: #d97706; }
+
+.timer-divider { border: 0; height: 1px; background: #e2e8f0; margin: 2rem 0; }
+
+/* LISTA DE CRONÔMETROS */
+.timers-list-container { display: flex; flex-direction: column; gap: 1rem; }
+
+.timers-empty-state { text-align: center; padding: 3rem 1rem; color: #94a3b8; background: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 12px; }
+.timers-empty-state svg { margin-bottom: 1rem; opacity: 0.5; }
+
+.timer-item-card { display: flex; align-items: center; justify-content: space-between; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; gap: 1.5rem; transition: border-color 0.2s, box-shadow 0.2s; }
+.timer-item-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+
+/* Estado Finalizado */
+.timer-finished { background: #fffbeb; border-color: #fcd34d; }
+.timer-finished .timer-countdown { color: #d97706; }
+.blinking { animation: blink 1s infinite alternate; }
+@keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
+
+.timer-info { flex: 1; min-width: 150px; }
+.timer-info h4 { font-size: 1.1rem; color: #0f172a; margin-bottom: 0.3rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.timer-original-time { font-size: 0.8rem; color: #64748b; font-weight: 500; }
+
+.timer-display-area { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 120px; }
+.timer-countdown { display: flex; align-items: center; gap: 8px; font-size: 2.2rem; font-weight: 800; color: #0f172a; font-variant-numeric: tabular-nums; margin-bottom: 0.5rem; }
+.ring-icon { color: #d97706; }
+
+.timer-progress-bar-bg { width: 100%; max-width: 200px; height: 6px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+.timer-progress-bar-fill { height: 100%; background: #f59e0b; border-radius: 10px; transition: width 1s linear; }
+
+.timer-controls { display: flex; gap: 0.5rem; }
+.ctrl-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: all 0.2s; }
+.btn-play { background: #dcfce7; color: #059669; }
+.btn-play:hover { background: #a7f3d0; }
+.btn-pause { background: #fef9c3; color: #d97706; }
+.btn-pause:hover { background: #fde68a; }
+.btn-reset { background: #f1f5f9; color: #475569; }
+.btn-reset:hover { background: #e2e8f0; }
+.btn-delete { background: #fee2e2; color: #dc2626; }
+.btn-delete:hover { background: #fecaca; }
+
+/* SIDEBAR */
+.tool-info-card { background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02); }
+.tool-info-card h3 { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; color: #0f172a; margin-bottom: 1rem; }
+.tool-info-card p { font-size: 0.9rem; color: #475569; line-height: 1.6; margin-bottom: 1.5rem; }
+.tool-info-list.timer-tips { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem; }
+.tool-info-list.timer-tips li { font-size: 0.85rem; color: #64748b; }
+.tool-info-list.timer-tips li strong { color: #334155; }
+.info-alert.alert-amber { display: flex; align-items: flex-start; gap: 8px; background: #fffbeb; border-left: 3px solid #f59e0b; padding: 0.8rem; border-radius: 4px; color: #b45309; }
+
+@media (max-width: 768px) {
+  .tool-grid-layout { grid-template-columns: 1fr; }
+  .tool-sidebar-panel { order: -1; }
+  .timer-add-form { flex-direction: column; align-items: stretch; }
+  .timer-input-name { width: 100%; }
+  .timer-input-time-group { justify-content: space-between; }
+  .timer-item-card { flex-direction: column; align-items: center; text-align: center; }
+  .timer-controls { width: 100%; justify-content: center; border-top: 1px solid #f1f5f9; padding-top: 1rem; }
+}
