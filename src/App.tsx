@@ -12,8 +12,8 @@ import DiscussionDetail from './../renders/pages/Pages/Community/DiscussionDetai
 import LabProfile from './../renders/pages/Pages/Lab/LabProfile';
 
 import ScrollToTop from './config/ScrollToTop';
+import LabBancada from './../renders/pages/Pages/Lab/LabBancada';
 
-const Lab = () => <div style={{ padding: '100px' }}>Área de Ferramentas Laboratoriais</div>;
 const PFuzzy = () => <div style={{ padding: '100px' }}>Módulo de Rizofiltração P-Fuzzy</div>;
 
 const App: React.FC = () => {
@@ -24,8 +24,8 @@ const App: React.FC = () => {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/lab" element={<Lab />} />
-          <Route path="/lab/:id" element={<LabProfile />} /> {/* <-- NOVA ROTA DO LAB */}
+          <Route path="/lab_hub" element={<LabBancada />} />
+          <Route path="/lab/:id" element={<LabProfile />} />
           <Route path="/p-fuzzy" element={<PFuzzy />} />
           <Route path="/community" element={<Community />} />
           <Route path="/results" element={<div>Resultados de Pesquisa</div>} />

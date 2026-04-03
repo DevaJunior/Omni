@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
           <Link to="/community" onClick={() => setIsMenuOpen(false)}>
             <Users size={18} /> Comunidade
           </Link>
-          <Link to="/lab" onClick={() => setIsMenuOpen(false)}>
+          <Link to="/lab_hub" onClick={() => setIsMenuOpen(false)}>
             <Beaker size={18} /> Laboratório
           </Link>
           <Link to="/p-fuzzy" onClick={() => setIsMenuOpen(false)}>

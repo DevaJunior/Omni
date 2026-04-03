@@ -1,0 +1,324 @@
+.lab-bancada-wrapper {
+  background-color: #f4f5f7;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.lab-bancada-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   HEADER DA BANCADA
+========================================= */
+.bancada-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.bancada-title-area h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.bancada-title-area p {
+  font-size: 1.05rem;
+  color: #64748b;
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+.bancada-search-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 1rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bancada-search-box:focus-within {
+  border-color: var(--primary, #5d5fef);
+  box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.1);
+}
+
+.bancada-search-icon {
+  color: #94a3b8;
+}
+
+.bancada-search-box input {
+  width: 100%;
+  border: none;
+  padding: 1rem;
+  font-size: 0.95rem;
+  color: #1e293b;
+  outline: none;
+  background: transparent;
+}
+
+.bancada-search-box input::placeholder {
+  color: #94a3b8;
+}
+
+/* =========================================
+   FILTROS (PILLS)
+========================================= */
+.bancada-categories-scroll {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+  /* Esconde a barra de rolagem mas permite o scroll no mobile */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.bancada-categories-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.bancada-categories {
+  display: flex;
+  gap: 0.8rem;
+  width: max-content;
+}
+
+.bancada-category-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01);
+}
+
+.bancada-category-pill:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.bancada-category-pill.active {
+  background: var(--primary, #5d5fef);
+  color: white;
+  border-color: var(--primary, #5d5fef);
+  box-shadow: 0 4px 12px rgba(93, 95, 239, 0.2);
+}
+
+.bancada-category-pill .fill-star {
+  fill: white;
+}
+
+/* =========================================
+   GRID DE FERRAMENTAS
+========================================= */
+.bancada-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.bancada-tool-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.bancada-tool-card:hover:not(.locked) {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  border-color: #cbd5e1;
+}
+
+.bancada-tool-card.locked {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  opacity: 0.85;
+}
+
+.tool-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.2rem;
+}
+
+.tool-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  background: #eef2ff;
+  color: var(--primary, #5d5fef);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tool-icon-wrapper.locked-icon {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+.tool-badges {
+  display: flex;
+  gap: 6px;
+}
+
+.tool-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+}
+
+.tool-badge.new {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.tool-badge.locked {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.tool-card-body {
+  flex: 1;
+}
+
+.tool-title {
+  font-size: 1.2rem;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.tool-description {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.tool-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 1.2rem;
+}
+
+.tool-category-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tool-btn-open {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--primary, #5d5fef);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+}
+
+.tool-btn-open:hover:not(:disabled) {
+  color: var(--primary-hover, #4a4cc7);
+}
+
+.tool-btn-open:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Empty State */
+.bancada-empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  text-align: center;
+  background: white;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  color: #64748b;
+}
+
+.bancada-empty-state svg {
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.bancada-empty-state h3 {
+  font-size: 1.2rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+@media (max-width: 768px) {
+  .bancada-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .bancada-search-box {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .bancada-title-area h1 {
+    font-size: 1.8rem;
+  }
+
+  .bancada-title-area p {
+    font-size: 0.95rem;
+  }
+
+  .bancada-tools-grid {
+    grid-template-columns: 1fr;
+  }
+}
