@@ -76,7 +76,7 @@ const MOCK_TOOLS: Tool[] = [
 
 const CATEGORIES = ['Todas', 'Favoritos', 'Química', 'Produtividade', 'Gestão', 'Análise de Dados'];
 
-const LabBancada: React.FC = () => {
+const Lab: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('Todas');
 
@@ -180,4 +180,4 @@ const LabBancada: React.FC = () => {
   );
 };
 
-export default LabBancada;
+export default Lab;

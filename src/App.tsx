@@ -8,24 +8,29 @@ import ArticleDetail from './../renders/pages/Pages/Community/ArticleDetail';
 import ProjectDetail from './../renders/pages/Pages/Community/ProjectDetail';
 import DiscussionDetail from './../renders/pages/Pages/Community/DiscussionDetail';
 
-// Importando a nova página de Perfil do Laboratório
+// Laboratório e Ferramentas
 import LabProfile from './../renders/pages/Pages/Lab/LabProfile';
+import Lab from './../renders/pages/Pages/Lab/Lab';
 
 import ScrollToTop from './config/ScrollToTop';
-import LabBancada from './../renders/pages/Pages/Lab/LabBancada';
+import MolarityCalc from './../renders/widgets/MolarityCalc/index';
 
 const PFuzzy = () => <div style={{ padding: '100px' }}>Módulo de Rizofiltração P-Fuzzy</div>;
 
 const App: React.FC = () => {
   return (
     <Router>
-      <ScrollToTop /> {/* <-- Componente global interceptando as rotas */}
+      <ScrollToTop />
       <Navbar />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/lab_hub" element={<LabBancada />} />
+
+          {/* Rotas do Ecossistema Lab */}
+          <Route path="/lab" element={<Lab />} />
           <Route path="/lab/:id" element={<LabProfile />} />
+          <Route path="/lab/molarity-calc" element={<MolarityCalc />} />
+
           <Route path="/p-fuzzy" element={<PFuzzy />} />
           <Route path="/community" element={<Community />} />
           <Route path="/results" element={<div>Resultados de Pesquisa</div>} />
@@ -35,7 +40,6 @@ const App: React.FC = () => {
           <Route path="/discussion/:id" element={<DiscussionDetail />} />
         </Routes>
       </main>
-      {/* O Footer será implementado na sequência (se já não estiver dentro das páginas) */}
     </Router>
   );
 };
