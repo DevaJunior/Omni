@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // 1. IMPORT NECESSÁRIO
 import {
   Search,
   Settings2,
@@ -77,6 +78,7 @@ const MOCK_TOOLS: Tool[] = [
 const CATEGORIES = ['Todas', 'Favoritos', 'Química', 'Produtividade', 'Gestão', 'Análise de Dados'];
 
 const Lab: React.FC = () => {
+  const navigate = useNavigate(); // 2. INSTANCIA O HOOK
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('Todas');
 
@@ -157,7 +159,7 @@ const Lab: React.FC = () => {
                     <button
                       className="tool-btn-open"
                       disabled={tool.isLocked}
-                      onClick={() => alert(`Abrindo: ${tool.name}`)} // Placeholder para a rota real
+                      onClick={() => navigate(`/lab/${tool.id}`)} // 3. SUBSTITUÍDO ALERT PELO NAVIGATE
                     >
                       {tool.isLocked ? 'Indisponível' : 'Acessar'} <ChevronRight size={16} />
                     </button>
