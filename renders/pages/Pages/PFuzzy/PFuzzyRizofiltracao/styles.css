@@ -1,0 +1,242 @@
+.pfuzzy-wrapper {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.pfuzzy-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pfuzzy-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.pfuzzy-title-icon {
+  background: #1e293b;
+  color: #38bdf8;
+  padding: 1.2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.pfuzzy-title-texts h1 {
+  font-size: 2.2rem;
+  color: #0f172a;
+  margin-bottom: 0.3rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.pfuzzy-title-texts p {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.pfuzzy-main-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* PAINEL DE CONTROLES */
+.pfuzzy-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.control-module {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.control-module h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  color: #0f172a;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 0.8rem;
+}
+
+.control-group {
+  margin-bottom: 1.2rem;
+}
+
+.control-group:last-child {
+  margin-bottom: 0;
+}
+
+.control-group label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.control-group label span {
+  color: #5d5fef;
+  font-weight: 800;
+  background: #eef2ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Customização dos Sliders */
+input[type=range] {
+  width: 100%;
+  accent-color: #5d5fef;
+  cursor: pointer;
+}
+
+.pf-btn-calc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #0f172a;
+  color: white;
+  border: none;
+  padding: 1.2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2);
+}
+
+.pf-btn-calc:hover {
+  background: #1e293b;
+  transform: translateY(-2px);
+}
+
+/* PAINEL DE RESULTADOS */
+.pfuzzy-results-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pf-charts-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.pf-chart-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  position: relative;
+}
+
+.pf-chart-card h4 {
+  font-size: 0.95rem;
+  color: #334155;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.fuzzy-plot-container {
+  width: 100%;
+  position: relative;
+}
+
+.fuzzy-svg {
+  width: 100%;
+  height: 120px;
+  overflow: visible;
+}
+
+.fuzzy-axis-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.pf-val-badge {
+  margin-top: 1.5rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.pf-val-badge.amb { background: #cffafe; color: #0891b2; }
+.pf-val-badge.phys { background: #dcfce7; color: #16a34a; }
+.pf-val-badge.ops { background: #fef3c7; color: #d97706; }
+
+.pf-arrow-down {
+  display: flex;
+  justify-content: center;
+  color: #cbd5e1;
+  transform: rotate(90deg);
+  margin: -1rem 0;
+}
+
+.pf-final-card {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: white;
+  box-shadow: 0 10px 30px rgba(30, 27, 75, 0.3);
+}
+
+.pf-final-card h2 {
+  font-size: 1.5rem;
+  color: #a5b4fc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.pf-final-value {
+  font-size: 4.5rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  margin-bottom: 1rem;
+}
+
+.pf-vigor-text {
+  font-size: 1.1rem;
+  color: #c7d2fe;
+}
+.pf-vigor-text strong {
+  color: #fca5a5;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1024px) {
+  .pfuzzy-main-grid {
+    grid-template-columns: 1fr;
+  }
+  .pf-charts-row {
+    grid-template-columns: 1fr;
+  }
+  .pf-arrow-down {
+    transform: rotate(0deg);
+  }
+}

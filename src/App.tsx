@@ -26,8 +26,9 @@ import LabTimer from './../renders/widgets/LabTimer/index';
 import UnitConverter from './../renders/widgets/UnitConverter/index';
 import Inventory from './../renders/widgets/Inventory/index';
 
-// Módulos Futuros
-const PFuzzy = () => <div style={{ padding: '100px' }}>Módulo de Rizofiltração P-Fuzzy</div>;
+// Módulos P-Fuzzy
+import PFuzzyRizofiltracao from './../renders/pages/Pages/PFuzzy/PFuzzyRizofiltracao';
+import PFuzzyEngine from './../renders/widgets/PFuzzyEngine/index';
 
 const App: React.FC = () => {
   return (
@@ -48,7 +49,6 @@ const App: React.FC = () => {
 
           {/* Rotas do Ecossistema Lab */}
           <Route path="/lab" element={<Lab />} />
-          <Route path="/lab/:id" element={<LabProfile />} />
           
           {/* Rotas das Ferramentas (Widgets) */}
           <Route path="/lab/molarity-calc" element={<MolarityCalc />} />
@@ -56,9 +56,14 @@ const App: React.FC = () => {
           <Route path="/lab/lab-timer" element={<LabTimer />} />
           <Route path="/lab/unit-converter" element={<UnitConverter />} />
           <Route path="/lab/inventory" element={<Inventory />} />
+          
+          {/* Rotas Avançadas P-Fuzzy (Devem vir ANTES da rota dinâmica /lab/:id) */}
+          <Route path="/lab/pfuzzy-rizofiltracao" element={<PFuzzyRizofiltracao />} />
+          <Route path="/lab/p-fuzzy-engine" element={<PFuzzyEngine />} />
 
-          {/* Rotas Avançadas */}
-          <Route path="/p-fuzzy" element={<PFuzzy />} />
+          {/* Rota Dinâmica de Perfil de Laboratório */}
+          <Route path="/lab/:id" element={<LabProfile />} />
+
         </Routes>
       </main>
       {/* O Footer já está sendo renderizado individualmente no final de cada página */}

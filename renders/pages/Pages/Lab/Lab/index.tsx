@@ -66,9 +66,16 @@ const MOCK_TOOLS: Tool[] = [
     icon: <Database size={24} />
   },
   {
+    id: 'pfuzzy-rizofiltracao',
+    name: 'P-Fuzzy Rizofiltração',
+    description: 'Módulo avançado para análise de dados e predição de eficiência de Rizofiltração.',
+    category: 'Análise de Dados',
+    icon: <Settings2 size={24} />,
+  },
+  {
     id: 'p-fuzzy-engine',
-    name: 'Motor P-Fuzzy',
-    description: 'Módulo avançado para análise de dados e predição de eficiência em bioprocessos.',
+    name: 'Engine P-Fuzzy',
+    description: 'Módulo avançado para análise de dados e predição de eficiência com Lógica P-Fuzzy.',
     category: 'Análise de Dados',
     icon: <Settings2 size={24} />,
     isLocked: true // Deixamos trancado por enquanto como "Em breve"
