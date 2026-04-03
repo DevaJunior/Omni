@@ -29,6 +29,7 @@ import Inventory from './../renders/widgets/Inventory/index';
 // Módulos P-Fuzzy
 import PFuzzyRizofiltracao from './../renders/pages/Pages/PFuzzy/PFuzzyRizofiltracao';
 import PFuzzyEngine from './../renders/widgets/PFuzzyEngine/index';
+import UserProfile from './../renders/pages/Pages/UserProfile/index';
 
 const App: React.FC = () => {
   return (
@@ -41,6 +42,9 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/community" element={<Community />} />
           <Route path="/results" element={<div>Resultados de Pesquisa</div>} />
+
+          {/* Rota de Perfil (User Profile) */}
+          <Route path="/profile" element={<UserProfile />} />
 
           {/* Rotas da Comunidade (Detalhes) */}
           <Route path="/article/:id" element={<ArticleDetail />} />

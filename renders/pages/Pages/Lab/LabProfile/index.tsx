@@ -23,7 +23,7 @@ const LabProfile: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'publicacoes' | 'oportunidades' | 'equipe'>('publicacoes');
-  
+
   // Utilizando o estado para atualizar o botão principal após sucesso do modal
   const [hasRequested, setHasRequested] = useState(false);
 
@@ -92,7 +92,7 @@ const LabProfile: React.FC = () => {
       <div className="lab-profile-page">
         <div className="lab-profile-container">
 
-          <button className="lab-btn-back-clean" onClick={() => navigate('/community')}>
+          <button className="tool-btn-back" onClick={() => navigate('/lab')}>
             <ArrowLeft size={18} />
             Voltar para Comunidade
           </button>
