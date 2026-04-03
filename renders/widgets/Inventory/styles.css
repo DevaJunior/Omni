@@ -1,0 +1,472 @@
+/* Reuso da estrutura base */
+.tool-page-wrapper {
+  background-color: #f4f5f7;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.tool-container {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  box-sizing: border-box;
+}
+
+.tool-btn-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 2rem;
+  transition: color 0.2s ease;
+}
+
+.tool-btn-back:hover {
+  color: #0d9488;
+}
+
+.tool-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.tool-main-panel {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.tool-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+
+.tool-header-text {
+  flex: 1;
+}
+
+/* TEMA TEAL (Gestão/Inventário) */
+.tool-icon-large.teal-theme {
+  background: #ccfbf1;
+  color: #0d9488;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tool-header h1 {
+  font-size: 1.6rem;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.tool-header p {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.tool-btn-primary.btn-teal {
+  background: #0d9488;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.tool-btn-primary.btn-teal:hover {
+  background: #0f766e;
+}
+
+.inventory-content {
+  padding: 2rem;
+}
+
+/* CONTROLES (Busca e Filtros) */
+.inventory-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.inventory-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 1rem;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.inventory-search:focus-within {
+  border-color: #0d9488;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+}
+
+.search-icon {
+  color: #94a3b8;
+}
+
+.inventory-search input {
+  flex: 1;
+  border: none;
+  padding: 0.8rem 0;
+  font-size: 0.95rem;
+  outline: none;
+  color: #334155;
+}
+
+.inventory-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: #e2e8f0;
+}
+
+.filter-btn.active {
+  background: #0f172a;
+  color: white;
+  border-color: #0f172a;
+}
+
+/* LISTA DE REAGENTES */
+.inventory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inventory-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.inventory-empty svg {
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.inventory-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  transition: box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.inventory-item-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border-color: #cbd5e1;
+}
+
+/* Cores de Status Laterais */
+.inventory-item-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.status-ok::before {
+  background: #10b981;
+}
+
+.status-low::before {
+  background: #f59e0b;
+}
+
+.status-expired::before {
+  background: #ef4444;
+}
+
+.reagent-main-info {
+  flex: 2;
+  min-width: 200px;
+}
+
+.reagent-main-info h3 {
+  font-size: 1.05rem;
+  color: #0f172a;
+  margin-bottom: 0.3rem;
+  font-weight: 700;
+}
+
+.reagent-cas {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-family: monospace;
+  background: #f1f5f9;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.reagent-meta-grid {
+  flex: 3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.reagent-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta-value {
+  font-size: 0.9rem;
+  color: #334155;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta-value strong {
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.reagent-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.status-ok .reagent-status-badge {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.status-low .reagent-status-badge {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.status-expired .reagent-status-badge {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* SIDEBAR ESTATÍSTICAS */
+.tool-info-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.tool-info-card h3 {
+  font-size: 1.1rem;
+  color: #0f172a;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 0.8rem;
+}
+
+.inventory-stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inv-stat-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+
+.inv-stat-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.inv-stat-texts span {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.inv-stat-texts strong {
+  font-size: 1.2rem;
+}
+
+.stat-total {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.stat-total svg {
+  color: #64748b;
+}
+
+.stat-total span {
+  color: #64748b;
+}
+
+.stat-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #d97706;
+}
+
+.stat-warning svg {
+  color: #f59e0b;
+}
+
+.stat-warning span {
+  color: #b45309;
+}
+
+.stat-danger {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.stat-danger svg {
+  color: #ef4444;
+}
+
+.stat-danger span {
+  color: #b91c1c;
+}
+
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .tool-grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-sidebar-panel {
+    order: -1;
+  }
+
+  .inventory-stats-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .inv-stat-box {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .inventory-item-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .reagent-meta-grid {
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .reagent-status-badge {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .reagent-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .add-reagent-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .inv-stat-box {
+    width: 100%;
+  }
+}

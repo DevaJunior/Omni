@@ -1,20 +1,32 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './values/tokens.css';
+
+// Menus e Configurações
 import Navbar from './../renders/menus/Navbar';
+import ScrollToTop from './config/ScrollToTop';
+
+// Páginas Principais
 import Home from './../renders/pages/Pages/Home';
 import Community from './../renders/pages/Pages/Community/Community';
+
+// Detalhes da Comunidade
 import ArticleDetail from './../renders/pages/Pages/Community/ArticleDetail';
 import ProjectDetail from './../renders/pages/Pages/Community/ProjectDetail';
 import DiscussionDetail from './../renders/pages/Pages/Community/DiscussionDetail';
 
-// Laboratório e Ferramentas
-import LabProfile from './../renders/pages/Pages/Lab/LabProfile';
+// Ecossistema do Laboratório
 import Lab from './../renders/pages/Pages/Lab/Lab';
+import LabProfile from './../renders/pages/Pages/Lab/LabProfile';
 
-import ScrollToTop from './config/ScrollToTop';
+// Ferramentas da LabBancada
 import MolarityCalc from './../renders/widgets/MolarityCalc/index';
+import DilutionCalc from './../renders/widgets/DilutionCalc/index';
+import LabTimer from './../renders/widgets/LabTimer/index';
+import UnitConverter from './../renders/widgets/UnitConverter/index';
+import Inventory from './../renders/widgets/Inventory/index';
 
+// Módulos Futuros
 const PFuzzy = () => <div style={{ padding: '100px' }}>Módulo de Rizofiltração P-Fuzzy</div>;
 
 const App: React.FC = () => {
@@ -24,22 +36,32 @@ const App: React.FC = () => {
       <Navbar />
       <main>
         <Routes>
+          {/* Rotas Gerais */}
           <Route path="/" element={<Home />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/results" element={<div>Resultados de Pesquisa</div>} />
+
+          {/* Rotas da Comunidade (Detalhes) */}
+          <Route path="/article/:id" element={<ArticleDetail />} />
+          <Route path="/project/:id" element={<ProjectDetail />} />
+          <Route path="/discussion/:id" element={<DiscussionDetail />} />
 
           {/* Rotas do Ecossistema Lab */}
           <Route path="/lab" element={<Lab />} />
           <Route path="/lab/:id" element={<LabProfile />} />
+          
+          {/* Rotas das Ferramentas (Widgets) */}
           <Route path="/lab/molarity-calc" element={<MolarityCalc />} />
+          <Route path="/lab/dilution" element={<DilutionCalc />} />
+          <Route path="/lab/lab-timer" element={<LabTimer />} />
+          <Route path="/lab/unit-converter" element={<UnitConverter />} />
+          <Route path="/lab/inventory" element={<Inventory />} />
 
+          {/* Rotas Avançadas */}
           <Route path="/p-fuzzy" element={<PFuzzy />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/results" element={<div>Resultados de Pesquisa</div>} />
-
-          <Route path="/article/:id" element={<ArticleDetail />} />
-          <Route path="/project/:id" element={<ProjectDetail />} />
-          <Route path="/discussion/:id" element={<DiscussionDetail />} />
         </Routes>
       </main>
+      {/* O Footer já está sendo renderizado individualmente no final de cada página */}
     </Router>
   );
 };
