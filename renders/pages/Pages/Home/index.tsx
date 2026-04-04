@@ -53,9 +53,7 @@ const Home: React.FC = () => {
   };
 
   return (
-
     <>
-
       <div className="home-container">
         {/* SECTION: HERO */}
         <section className="hero">
@@ -66,7 +64,7 @@ const Home: React.FC = () => {
               A Omni é sua suíte completa de ferramentas para análise de dados,
               colaboração e gerenciamento de experimentos, construída para especialistas e pesquisadores.
             </p>
-            <button className="cta-button" onClick={() => navigate('/p-fuzzy')}>
+            <button className="cta-button" onClick={() => navigate('/lab/pfuzzy-rizofiltracao')}>
               COMEÇAR ANÁLISE <ArrowRight size={18} />
             </button>
           </div>
@@ -81,7 +79,6 @@ const Home: React.FC = () => {
             <div className="articles-title">
               <h2>Últimos <br />artigos</h2>
               <p>Bem-vindo à nossa seção de blog, onde o conhecimento encontra a inspiração. Explore artigos perspicazes, dicas de especialistas e as últimas tendências em nosso campo.</p>
-              {/* Navegação adicionada aqui */}
               <button className="btn-secondary" onClick={() => navigate('/community')}>
                 Ver todos
               </button>
@@ -105,7 +102,10 @@ const Home: React.FC = () => {
                 <div className="article-info">
                   <h3>{art.title}</h3>
                   <p>{art.desc}</p>
-                  <a href="#ler" className="read-more">Leia mais &rarr;</a>
+                  {/* Corrigido o a href="#ler" para usar navegação real evitando salto da página */}
+                  <span className="read-more" onClick={() => navigate(`/article/${art.id}`)} style={{cursor: 'pointer'}}>
+                    Leia mais &rarr;
+                  </span>
                 </div>
               </div>
             ))}
@@ -155,7 +155,6 @@ const Home: React.FC = () => {
             <span>Acqua Solutions</span>
           </div>
 
-          {/* Navegação adicionada aqui */}
           <button className="btn-outline" onClick={() => navigate('/community')}>
             Explorar pesquisas
           </button>

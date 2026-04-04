@@ -1,3 +1,4 @@
+import './styles.css';
 import React, { useState, useEffect } from 'react';
 import {
   MapPin,
@@ -14,7 +15,6 @@ import {
 } from 'lucide-react';
 import { FiGithub, FiLinkedin } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import './styles.css';
 import Footer from '../../../menus/Footer';
 
 const UserProfile: React.FC = () => {

@@ -3,9 +3,11 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: var(--spacing-lg) var(--spacing-sm);
+  /* PREVINE SCROLL DA PÁGINA INTEIRA */
+  overflow-x: hidden; 
 }
 
-/* --- HERO SECTION (Original Preservado) --- */
+/* --- HERO SECTION --- */
 .hero {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -81,6 +83,7 @@
   display: flex;
   gap: 3rem;
   align-items: flex-start;
+  width: 100%; /* Garante contenção */
 }
 
 .articles-header {
@@ -157,6 +160,11 @@
   display: flex;
   gap: 1.5rem;
   flex: 1;
+  
+  /* AS DUAS LINHAS MÁGICAS QUE CORRIGEM O FLEXBOX OVERFLOW */
+  min-width: 0; 
+  width: 100%;
+  
   overflow-x: auto;
   scroll-behavior: smooth;
   padding-bottom: 1rem;
@@ -225,7 +233,6 @@
 .services-section {
   padding: 2rem 0 3rem 0;
   text-align: center;
-  /* border: solid 1px red; */
 }
 
 .services-header {
@@ -368,8 +375,11 @@
     text-align: center;
   }
 
+  /* Ajuste no slider controls para o mobile ficar alinhado */
   .slider-controls {
     justify-content: center;
+    width: 100%;
+    margin-top: 1.5rem;
   }
 }
 
