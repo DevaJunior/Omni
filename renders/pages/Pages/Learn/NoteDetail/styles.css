@@ -1,0 +1,214 @@
+.note-detail-wrapper {
+  background-color: #ffffff;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.note-detail-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+  box-sizing: border-box;
+}
+
+.btn-back-learn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 2.5rem;
+  transition: color 0.2s;
+}
+
+.btn-back-learn:hover {
+  color: #0f172a;
+}
+
+.note-article-header {
+  margin-bottom: 3rem;
+}
+
+.note-tag {
+  background: #eef2ff;
+  color: #4f46e5;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.note-article-header h1 {
+  font-size: 2.5rem;
+  color: #0f172a;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 2rem;
+  letter-spacing: -0.5px;
+}
+
+.note-author-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.author-info-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.author-avatar {
+  width: 44px;
+  height: 44px;
+  background: #f1f5f9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}
+
+.author-info-left strong {
+  font-size: 1.05rem;
+  color: #0f172a;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.note-meta .dot {
+  font-weight: bold;
+}
+
+.btn-follow {
+  background: none;
+  border: 1px solid #10b981;
+  color: #10b981;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-follow:hover {
+  background: #10b981;
+  color: white;
+}
+
+.note-content-body {
+  font-size: 1.15rem;
+  color: #334155;
+  line-height: 1.8;
+  margin-bottom: 4rem;
+}
+
+.note-content-body p {
+  margin-bottom: 1.5rem;
+}
+
+.note-content-body h3 {
+  font-size: 1.5rem;
+  color: #0f172a;
+  margin: 2.5rem 0 1rem;
+  font-weight: 800;
+}
+
+.note-list-item {
+  margin-bottom: 0.5rem;
+  margin-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.note-list-item strong {
+  color: #0f172a;
+}
+
+.note-article-footer {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1.5rem;
+}
+
+.interaction-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.interaction-left {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.btn-interact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-interact:hover {
+  color: #0f172a;
+}
+
+.btn-interact.liked {
+  color: #5d5fef;
+}
+
+.btn-interact.liked:hover {
+  color: #4a4cc7;
+}
+
+.interaction-right {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-interact-icon {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+}
+
+.btn-interact-icon:hover {
+  color: #0f172a;
+}
+
+@media (max-width: 768px) {
+  .note-article-header h1 {
+    font-size: 2rem;
+  }
+
+  .note-content-body {
+    font-size: 1.05rem;
+  }
+}

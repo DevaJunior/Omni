@@ -1,0 +1,345 @@
+.learn-page-wrapper {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.learn-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   HERO SECTION
+========================================= */
+.learn-hero-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  margin-bottom: 2.5rem;
+  gap: 2rem;
+}
+
+.learn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.learn-hero-content h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  letter-spacing: -0.5px;
+}
+
+.learn-hero-content h1 span {
+  color: #5d5fef;
+}
+
+.learn-hero-content p {
+  font-size: 1.1rem;
+  color: #64748b;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.btn-publish-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #5d5fef;
+  color: white;
+  border: none;
+  padding: 1rem 1.8rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(93, 95, 239, 0.2);
+}
+
+.btn-publish-note:hover {
+  background: #4a4cc7;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   CONTROLES (BUSCA E FILTRO)
+========================================= */
+.learn-controls-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.learn-search-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  padding: 0 1.5rem;
+  border-radius: 12px;
+  height: 60px;
+  transition: all 0.2s;
+}
+
+.learn-search-box:focus-within {
+  border-color: #5d5fef;
+  box-shadow: 0 0 0 4px rgba(93, 95, 239, 0.1);
+}
+
+.learn-search-box .search-icon {
+  color: #94a3b8;
+}
+
+.learn-search-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  color: #0f172a;
+  outline: none;
+}
+
+.learn-search-box input::placeholder {
+  color: #94a3b8;
+}
+
+.learn-filters-scroll {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  /* Oculta scrollbar */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.learn-filters-scroll::-webkit-scrollbar { display: none; }
+
+.learn-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: max-content;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
+.filter-pill {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-pill:hover {
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.filter-pill.active {
+  background: #0f172a;
+  color: white;
+  border-color: #0f172a;
+}
+
+/* =========================================
+   GRID DE RESUMOS (CARDS)
+========================================= */
+.learn-notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.study-note-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.study-note-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+  transform: translateY(-4px);
+}
+
+.note-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.note-subject-tag {
+  background: #eef2ff;
+  color: #4f46e5;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.btn-like-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0.3rem;
+  border-radius: 4px;
+}
+
+.btn-like-icon:hover {
+  background: #f1f5f9;
+}
+
+.study-note-card:hover .btn-like-icon {
+  color: #5d5fef;
+}
+
+.note-card-body {
+  flex: 1;
+  margin-bottom: 1.5rem;
+}
+
+.note-card-body h2 {
+  font-size: 1.25rem;
+  color: #0f172a;
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+  font-weight: 800;
+}
+
+.note-card-body p {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.note-card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 1.2rem;
+}
+
+.note-author-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.note-meta-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.meta-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ESTADO VAZIO */
+.learn-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 5rem 2rem;
+  background: white;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  color: #64748b;
+}
+
+.learn-empty-state svg {
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.learn-empty-state h3 {
+  font-size: 1.4rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+@media (max-width: 900px) {
+  .learn-hero-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+  }
+  .learn-hero-content p {
+    margin: 0 auto;
+  }
+  .btn-publish-note {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .learn-hero-content h1 {
+    font-size: 2.2rem;
+  }
+  .learn-notes-grid {
+    grid-template-columns: 1fr;
+  }
+}

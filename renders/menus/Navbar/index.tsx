@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, X, Beaker, LayoutDashboard, Users, BookOpen } from 'lucide-react';
+import { Search, User, Menu, X, Beaker, Users, BookOpen } from 'lucide-react';
 import './styles.css';
 
 const Navbar: React.FC = () => {
@@ -27,37 +27,11 @@ const Navbar: React.FC = () => {
         </Link>
 
         <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
-          <Link
-            to="/community"
-            className={`nav-link ${isActive('/community')}`}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            <Users size={18} /> Comunidade
-          </Link>
+          <Link to="/community" className={`nav-link ${isActive('/community')}`} onClick={() => setIsMenuOpen(false)} > <Users size={18} /> Community </Link>
+          <Link to="/lab" className={`nav-link ${isActive('/lab')}`} onClick={() => setIsMenuOpen(false)} > <Beaker size={18} /> Workbench  </Link>
+          {/* <Link to="/lab/pfuzzy-rizofiltracao" className={`nav-link ${isActive('/lab/pfuzzy-rizofiltracao')}`} onClick={() => setIsMenuOpen(false)} > <LayoutDashboard size={18} /> Análise P-Fuzzy </Link> */}
+          <Link to="/learn" className={`nav-link ${isActive('/learn')}`} onClick={() => setIsMenuOpen(false)} > <BookOpen size={18} /> Learn </Link>
 
-          <Link
-            to="/lab"
-            className={`nav-link ${isActive('/lab')}`}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            <Beaker size={18} /> Laboratório
-          </Link>
-
-          <Link
-            to="/lab/pfuzzy-rizofiltracao"
-            className={`nav-link ${isActive('/lab/pfuzzy-rizofiltracao')}`}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            <LayoutDashboard size={18} /> Análise P-Fuzzy
-          </Link>
-
-          <Link
-            to="/results"
-            className={`nav-link ${isActive('/results')}`}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            <BookOpen size={18} /> Resultados
-          </Link>
         </div>
 
         <div className="nav-actions">

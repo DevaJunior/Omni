@@ -29,7 +29,10 @@ import Inventory from './../renders/widgets/Inventory/index';
 // Módulos P-Fuzzy
 import PFuzzyRizofiltracao from './../renders/pages/Pages/PFuzzy/PFuzzyRizofiltracao';
 import PFuzzyEngine from './../renders/widgets/PFuzzyEngine/index';
-import UserProfile from './../renders/pages/Pages/UserProfile/index';
+import UserProfile from '../renders/pages/Init/UserProfile/index';
+import Learn from './../renders/pages/Pages/Learn/Learn/index';
+import PublishNote from './../renders/pages/Pages/Learn/PublishNote/index';
+import NoteDetail from './../renders/pages/Pages/Learn/NoteDetail/index';
 
 const App: React.FC = () => {
   return (
@@ -41,7 +44,6 @@ const App: React.FC = () => {
           {/* Rotas Gerais */}
           <Route path="/" element={<Home />} />
           <Route path="/community" element={<Community />} />
-          <Route path="/results" element={<div>Resultados de Pesquisa</div>} />
 
           {/* Rota de Perfil (User Profile) */}
           <Route path="/profile" element={<UserProfile />} />
@@ -53,14 +55,19 @@ const App: React.FC = () => {
 
           {/* Rotas do Ecossistema Lab */}
           <Route path="/lab" element={<Lab />} />
-          
+
           {/* Rotas das Ferramentas (Widgets) */}
           <Route path="/lab/molarity-calc" element={<MolarityCalc />} />
           <Route path="/lab/dilution" element={<DilutionCalc />} />
           <Route path="/lab/lab-timer" element={<LabTimer />} />
           <Route path="/lab/unit-converter" element={<UnitConverter />} />
           <Route path="/lab/inventory" element={<Inventory />} />
-          
+
+          {/* Rotas da Learn (Aprendendo) */}
+          <Route path="/learn" element={<Learn />} />
+          <Route path="/learn/new" element={<PublishNote />} />
+          <Route path="/learn/:id" element={<NoteDetail />} />
+
           {/* Rotas Avançadas P-Fuzzy (Devem vir ANTES da rota dinâmica /lab/:id) */}
           <Route path="/lab/pfuzzy-rizofiltracao" element={<PFuzzyRizofiltracao />} />
           <Route path="/lab/p-fuzzy-engine" element={<PFuzzyEngine />} />
