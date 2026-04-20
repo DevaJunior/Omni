@@ -41,6 +41,28 @@ const App: React.FC = () => {
       <Navbar />
       <main>
         <Routes>
+          {/* ROTA TEMPORÁRIA DE MIGRAÇÃO FIREBASE */}
+          <Route path="/run-seed" element={
+            <div style={{ padding: '100px', textAlign: 'center' }}>
+              <h2>Migração do Firebase</h2>
+              <p>Clique no botão abaixo para popular todos os dados mockados no seu banco do Firestore.</p>
+              <button 
+                onClick={async () => {
+                  try {
+                    const { seedFirebaseDatabase } = await import('./lib/firebase/seed');
+                    await seedFirebaseDatabase();
+                    alert("Migração Concluída com sucesso! Verifique o console do Firebase.");
+                  } catch (e) {
+                    alert("Erro na migração: " + e);
+                  }
+                }}
+                style={{ padding: '10px 20px', fontSize: '18px', background: '#2563eb', color: 'white', borderRadius: '8px', cursor: 'pointer', border: 'none' }}
+              >
+                Executar Carga do Firebase
+              </button>
+            </div>
+          } />
+
           {/* Rotas Gerais */}
           <Route path="/" element={<Home />} />
           <Route path="/community" element={<Community />} />

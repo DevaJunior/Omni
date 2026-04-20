@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowLeft, Database, Search, Plus, AlertTriangle, CheckCircle2, Clock, MapPin, FlaskConical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../src/config/firebaseConfig';
 import './styles.css';
 import Footer from '../../menus/Footer';
 
@@ -18,40 +20,50 @@ interface Reagent {
   status: ReagentStatus;
 }
 
-// Dados simulados do laboratório
-const MOCK_INVENTORY: Reagent[] = [
-  { id: '1', name: 'Cloreto de Sódio (NaCl) P.A.', cas: '7647-14-5', quantity: 850, unit: 'g', location: 'Prateleira A2', expiration: '2028-10-15', status: 'ok' },
-  { id: '2', name: 'Etanol Absoluto 99,8%', cas: '64-17-5', quantity: 150, unit: 'mL', location: 'Armário Inflamáveis', expiration: '2026-12-01', status: 'low' },
-  { id: '3', name: 'Agarose Ultra Pura', cas: '9012-36-6', quantity: 500, unit: 'g', location: 'Geladeira 1 (4°C)', expiration: '2027-05-20', status: 'ok' },
-  { id: '4', name: 'Tampão TAE 50x', cas: 'Mistura', quantity: 0, unit: 'mL', location: 'Prateleira B1', expiration: '2024-01-10', status: 'expired' },
-  { id: '5', name: 'Brometo de Etídio 10mg/mL', cas: '1239-45-8', quantity: 10, unit: 'mL', location: 'Gaveta Tóxicos', expiration: '2025-11-30', status: 'ok' },
-  { id: '6', name: 'Hidróxido de Sódio (NaOH)', cas: '1310-73-2', quantity: 120, unit: 'g', location: 'Prateleira A1', expiration: '2025-08-15', status: 'low' },
-];
-
 const Inventory: React.FC = () => {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | ReagentStatus>('all');
+  const [inventoryState, setInventoryState] = useState<Reagent[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "inventory"));
+        const data: Reagent[] = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() } as Reagent);
+        });
+        setInventoryState(data);
+      } catch (error) {
+        console.error("Erro ao buscar inventário:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInventory();
+  }, []);
 
   // Lógica de Filtro e Busca
   const filteredReagents = useMemo(() => {
-    return MOCK_INVENTORY.filter(reagent => {
+    return inventoryState.filter(reagent => {
       const matchesSearch = reagent.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             reagent.cas.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = filterStatus === 'all' || reagent.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
-  }, [searchTerm, filterStatus]);
+  }, [searchTerm, filterStatus, inventoryState]);
 
   // Contadores para a Sidebar
   const stats = useMemo(() => {
     return {
-      total: MOCK_INVENTORY.length,
-      low: MOCK_INVENTORY.filter(r => r.status === 'low').length,
-      expired: MOCK_INVENTORY.filter(r => r.status === 'expired').length,
+      total: inventoryState.length,
+      low: inventoryState.filter(r => r.status === 'low').length,
+      expired: inventoryState.filter(r => r.status === 'expired').length,
     };
-  }, []);
+  }, [inventoryState]);
 
   return (
     <>

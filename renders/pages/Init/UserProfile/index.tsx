@@ -15,56 +15,52 @@ import {
 } from 'lucide-react';
 import { FiGithub, FiLinkedin } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../../src/config/firebaseConfig';
 import Footer from '../../../menus/Footer';
 
 const UserProfile: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'visao-geral' | 'projetos' | 'publicacoes'>('visao-geral');
 
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Busca dos dados no Firestore (ID mockado para validação)
+    const fetchUser = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, "users", "uid_devair_junior"));
+        if (userDoc.exists()) {
+          setUserData(userDoc.data());
+        }
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, []);
 
-  // Mock de dados do usuário 
-  const userData = {
-    name: "Devair Junior",
-    headline: "Mestrando em Biotecnologia | Bacharel em Ciência da Computação | Desenvolvedor Front-end",
-    bio: "Unindo a engenharia de software com as ciências biológicas. Sou bacharel em Ciência da Computação e atualmente desenvolvo meu projeto de mestrado em Biotecnologia, focado em modelagem matemática e bioinformática aplicadas à fitorremediação. Apaixonado por criar interfaces limpas, arquiteturas escaláveis e, nas horas vagas, pelo universo nerd, fantasias e desenvolvimento de jogos.",
-    location: "Alfenas, MG - Brasil",
-    email: "contatodevairjunior@gmail.com",
-    github: "github.com/DevaJunior",
-    linkedin: "linkedin.com/in/devairjunior",
-    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200",
-    cover: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=2000",
-    skills: ["React", "TypeScript", "Python", "Bioinformática", "Lógica P-Fuzzy", "CSS Puro", "Phaser 3"],
-    lab: {
-      name: "Phyton Research",
-      role: "Pesquisador / Desenvolvedor Principal"
-    },
-    projects: [
-      {
-        id: 1,
-        title: "Omni",
-        description: "Plataforma web avançada para análise de dados de fitorremediação utilizando modelagem matemática com Lógica P-Fuzzy.",
-        tags: ["React", "TypeScript", "Biotecnologia"],
-        status: "Em Desenvolvimento"
-      },
-      {
-        id: 2,
-        title: "Spotted",
-        description: "Plataforma B2B2C conectando profissionais de saúde (nutricionistas e personal trainers) aos seus clientes.",
-        tags: ["SaaS", "MVP", "Vercel"],
-        status: "Validação"
-      },
-      {
-        id: 3,
-        title: "Klaus Universe",
-        description: "Desenvolvimento de mundo e game design para um jogo de plataforma 2D com temática de fantasia e folclore.",
-        tags: ["Game Dev", "Phaser 3", "Storytelling"],
-        status: "Conceito"
-      }
-    ]
-  };
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#a5a6f6' }}>
+        <h2>Carregando Perfil...</h2>
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'red' }}>
+        <h2>Erro: Usuário não encontrado no banco de dados.</h2>
+      </div>
+    );
+  }
 
   return (
     <>

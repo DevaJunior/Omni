@@ -12,6 +12,8 @@ import {
   ChevronRight,
   Star
 } from 'lucide-react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../../src/config/firebaseConfig';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
 
@@ -27,70 +29,48 @@ type Tool = {
   favorite?: boolean;
 };
 
-const MOCK_TOOLS: Tool[] = [
-  {
-    id: 'molarity-calc',
-    name: 'Calculadora de Molaridade',
-    description: 'Calcule a massa, volume ou concentração para o preparo de soluções químicas rapidamente.',
-    category: 'Química',
-    icon: <Calculator size={24} />,
-    favorite: true
-  },
-  {
-    id: 'dilution',
-    name: 'Diluição de Soluções',
-    description: 'Ferramenta baseada na fórmula C1V1 = C2V2 para diluições seriadas na bancada.',
-    category: 'Química',
-    icon: <Beaker size={24} />
-  },
-  {
-    id: 'lab-timer',
-    name: 'Cronômetro Múltiplo',
-    description: 'Gerencie o tempo de incubação de múltiplas amostras simultaneamente.',
-    category: 'Produtividade',
-    icon: <Timer size={24} />,
-    isNew: true
-  },
-  {
-    id: 'unit-converter',
-    name: 'Conversor Universal',
-    description: 'Converta unidades de massa, volume, pressão e temperatura do SI e sistemas imperiais.',
-    category: 'Geral',
-    icon: <Scale size={24} />
-  },
-  {
-    id: 'inventory',
-    name: 'Inventário de Reagentes',
-    description: 'Controle de estoque, lote, validade e FISPQ dos reagentes do seu laboratório.',
-    category: 'Gestão',
-    icon: <Database size={24} />
-  },
-  {
-    id: 'pfuzzy-rizofiltracao',
-    name: 'P-Fuzzy Rizofiltração',
-    description: 'Módulo avançado para análise de dados e predição de eficiência de Rizofiltração.',
-    category: 'Análise de Dados',
-    icon: <Settings2 size={24} />,
-  },
-  {
-    id: 'p-fuzzy-engine',
-    name: 'Engine P-Fuzzy',
-    description: 'Módulo avançado para análise de dados e predição de eficiência com Lógica P-Fuzzy.',
-    category: 'Análise de Dados',
-    icon: <Settings2 size={24} />,
-    isLocked: true // Deixamos trancado por enquanto como "Em breve"
-  }
-];
-
 const CATEGORIES = ['Todas', 'Favoritos', 'Química', 'Produtividade', 'Gestão', 'Análise de Dados'];
 
 const Lab: React.FC = () => {
-  const navigate = useNavigate(); // 2. INSTANCIA O HOOK
+  const navigate = useNavigate(); 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('Todas');
+  const [toolsState, setToolsState] = useState<Tool[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Mapeamento dinâmico de ícones com base na categoria ou ID para quando vier do banco
+  const getIconForTool = (id: string, category: string) => {
+    switch (id) {
+      case 'molarity-calc': return <Calculator size={24} />;
+      case 'dilution': return <Beaker size={24} />;
+      case 'lab-timer': return <Timer size={24} />;
+      case 'unit-converter': return <Scale size={24} />;
+      case 'inventory': return <Database size={24} />;
+      default: return <Settings2 size={24} />;
+    }
+  };
+
+  useEffect(() => {
+    const fetchTools = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "tools"));
+        const data: Tool[] = [];
+        querySnapshot.forEach((doc) => {
+          const t = doc.data() as any;
+          data.push({ ...t, id: doc.id, icon: getIconForTool(doc.id, t.category) });
+        });
+        setToolsState(data);
+      } catch (error) {
+        console.error("Erro ao buscar ferramentas:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTools();
+  }, []);
 
   // Filtra as ferramentas com base na busca e na categoria selecionada
-  const filteredTools = MOCK_TOOLS.filter(tool => {
+  const filteredTools = toolsState.filter(tool => {
     const matchesSearch = tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       tool.description.toLowerCase().includes(searchTerm.toLowerCase());
 

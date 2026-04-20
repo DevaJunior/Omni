@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Building2, UploadCloud, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../src/config/firebaseConfig';
 import './styles.css';
 
 interface JoinLabModalProps {
@@ -19,7 +21,18 @@ const MOCK_COURSES = [
 ];
 
 const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labName, onSuccess }) => {
-  const currentUser = { name: "Deva Junior" };
+  const [currentUser, setCurrentUser] = useState({ name: "Carregando..." });
+
+  useEffect(() => {
+    // Busca inicial rápida para preencher o formulário
+    if (isOpen) {
+      getDoc(doc(db, "users", "uid_devair_junior")).then((res) => {
+        if (res.exists()) {
+          setCurrentUser({ name: res.data().name });
+        }
+      }).catch(console.error);
+    }
+  }, [isOpen]);
 
   const [coverLetter, setCoverLetter] = useState("");
   const [courseSearch, setCourseSearch] = useState("");
