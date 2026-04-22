@@ -28,7 +28,6 @@ const Learn: React.FC = () => {
   const [activeSubject, setActiveSubject] = useState('Todos');
   const [notesState, setNotesState] = useState<StudyNote[]>([]);
   const [loading, setLoading] = useState(true);
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Estudos...</div>;
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -63,6 +62,8 @@ const Learn: React.FC = () => {
     e.stopPropagation();
     // A lógica de incrementar o Like viria aqui
   };
+
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Estudos...</div>;
 
   return (
     <>

@@ -37,7 +37,6 @@ const Lab: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('Todas');
   const [toolsState, setToolsState] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Bancada...</div>;
 
   // Mapeamento dinâmico de ícones com base na categoria ou ID para quando vier do banco
   const getIconForTool = (id: string, _category?: string) => {
@@ -79,6 +78,8 @@ const Lab: React.FC = () => {
     if (activeCategory === 'Favoritos') return matchesSearch && tool.favorite;
     return matchesSearch && tool.category === activeCategory;
   });
+
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Bancada...</div>;
 
   return (
     <>

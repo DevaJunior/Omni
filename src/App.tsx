@@ -7,6 +7,10 @@ import Navbar from './../renders/menus/Navbar';
 import ScrollToTop from './config/ScrollToTop';
 
 // Páginas Principais
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from '../renders/pages/Auth/Login/index';
+
 import Home from './../renders/pages/Pages/Home';
 import Community from './../renders/pages/Pages/Community/Community';
 
@@ -36,7 +40,8 @@ import NoteDetail from './../renders/pages/Pages/Learn/NoteDetail/index';
 
 const App: React.FC = () => {
   return (
-    <Router>
+    <AuthProvider>
+      <Router>
       <ScrollToTop />
       <Navbar />
       <main>
@@ -65,42 +70,44 @@ const App: React.FC = () => {
 
           {/* Rotas Gerais */}
           <Route path="/" element={<Home />} />
-          <Route path="/community" element={<Community />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
 
           {/* Rota de Perfil (User Profile) */}
-          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
           {/* Rotas da Comunidade (Detalhes) */}
-          <Route path="/article/:id" element={<ArticleDetail />} />
-          <Route path="/project/:id" element={<ProjectDetail />} />
-          <Route path="/discussion/:id" element={<DiscussionDetail />} />
+          <Route path="/article/:id" element={<ProtectedRoute><ArticleDetail /></ProtectedRoute>} />
+          <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
+          <Route path="/discussion/:id" element={<ProtectedRoute><DiscussionDetail /></ProtectedRoute>} />
 
           {/* Rotas do Ecossistema Lab */}
-          <Route path="/lab" element={<Lab />} />
+          <Route path="/lab" element={<ProtectedRoute><Lab /></ProtectedRoute>} />
 
           {/* Rotas das Ferramentas (Widgets) */}
-          <Route path="/lab/molarity-calc" element={<MolarityCalc />} />
-          <Route path="/lab/dilution" element={<DilutionCalc />} />
-          <Route path="/lab/lab-timer" element={<LabTimer />} />
-          <Route path="/lab/unit-converter" element={<UnitConverter />} />
-          <Route path="/lab/inventory" element={<Inventory />} />
+          <Route path="/lab/molarity-calc" element={<ProtectedRoute><MolarityCalc /></ProtectedRoute>} />
+          <Route path="/lab/dilution" element={<ProtectedRoute><DilutionCalc /></ProtectedRoute>} />
+          <Route path="/lab/lab-timer" element={<ProtectedRoute><LabTimer /></ProtectedRoute>} />
+          <Route path="/lab/unit-converter" element={<ProtectedRoute><UnitConverter /></ProtectedRoute>} />
+          <Route path="/lab/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
 
           {/* Rotas da Learn (Aprendendo) */}
-          <Route path="/learn" element={<Learn />} />
-          <Route path="/learn/new" element={<PublishNote />} />
-          <Route path="/learn/:id" element={<NoteDetail />} />
+          <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
+          <Route path="/learn/new" element={<ProtectedRoute><PublishNote /></ProtectedRoute>} />
+          <Route path="/learn/:id" element={<ProtectedRoute><NoteDetail /></ProtectedRoute>} />
 
           {/* Rotas Avançadas P-Fuzzy (Devem vir ANTES da rota dinâmica /lab/:id) */}
-          <Route path="/lab/pfuzzy-rizofiltracao" element={<PFuzzyRizofiltracao />} />
-          <Route path="/lab/p-fuzzy-engine" element={<PFuzzyEngine />} />
+          <Route path="/lab/pfuzzy-rizofiltracao" element={<ProtectedRoute><PFuzzyRizofiltracao /></ProtectedRoute>} />
+          <Route path="/lab/p-fuzzy-engine" element={<ProtectedRoute><PFuzzyEngine /></ProtectedRoute>} />
 
           {/* Rota Dinâmica de Perfil de Laboratório */}
-          <Route path="/lab/:id" element={<LabProfile />} />
+          <Route path="/lab/:id" element={<ProtectedRoute><LabProfile /></ProtectedRoute>} />
 
         </Routes>
       </main>
       {/* O Footer já está sendo renderizado individualmente no final de cada página */}
     </Router>
+      </AuthProvider>
   );
 };
 

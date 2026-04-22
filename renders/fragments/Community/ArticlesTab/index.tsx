@@ -33,7 +33,6 @@ const ArticlesTab: React.FC = () => {
 
   const [articlesList, setArticlesList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Artigos...</div>;
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -64,6 +63,8 @@ const ArticlesTab: React.FC = () => {
     sessionStorage.setItem('omni_scroll_pos', window.scrollY.toString());
     navigate(`/article/${id}`);
   };
+
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Artigos...</div>;
 
   return (
     <div className="cmmt-articles-wrapper">

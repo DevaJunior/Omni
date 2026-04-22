@@ -1,0 +1,99 @@
+/* src/styles/stylesGlobal.css */
+
+.sec_container-padding_horiz-5 {
+    margin: 0 5%;
+}
+
+.sec_container-padding_horiz-10 {
+    margin: 0 10%;
+    /* border: solid 2.5px red; */
+}
+
+.sec_container-padding_horiz-15 {
+    margin: 0 15%;
+}
+
+.sec_container-padding_horiz-20 {
+    margin: 0 20%;
+}
+
+.sec_container-padding_horiz-25 {
+    margin: 0 25%;
+}
+
+.sec_container-background-cinza_clarinho {
+    margin: 0;
+    padding: 5% 0 1.8% 0;
+    margin-bottom: 4%;
+    border-radius: 12px;
+    background-color: #f0f0f04d;
+}
+
+.styles-btn-icon-40px {
+    background-color: #fff;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #1a1a1a;
+    transition: background 0.2s;
+    padding: 0;
+}
+
+.styles-btn_circle-icon-40px {
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 50%;
+    border: 1px solid #eee;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #1a1a1a;
+    transition: background 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    padding: 0;
+}
+
+.styles-btn_square-icon-40px {
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    /* border-radius: 50%; */
+    border: 1px solid #eee;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #1a1a1a;
+    transition: background 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    padding: 0;
+}
+
+@media (min-width: 1200px) {}
+
+@media (min-width: 900px) {}
+
+@media (min-width: 768px) {}
+
+@media (max-width: 650px) {
+
+    .sec_container-padding_horiz-5,
+    .sec_container-padding_horiz-10,
+    .sec_container-padding_horiz-15,
+    .sec_container-padding_horiz-20,
+    .sec_container-padding_horiz-25 {
+        padding: 0 10px;
+        margin: 0;
+    }
+}
+
+@media (min-width: 412px) {}

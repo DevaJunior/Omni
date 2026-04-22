@@ -27,7 +27,6 @@ const Inventory: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<'all' | ReagentStatus>('all');
   const [inventoryState, setInventoryState] = useState<Reagent[]>([]);
   const [loading, setLoading] = useState(true);
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Inventário...</div>;
 
   useEffect(() => {
     const fetchInventory = async () => {
@@ -65,6 +64,8 @@ const Inventory: React.FC = () => {
       expired: inventoryState.filter(r => r.status === 'expired').length,
     };
   }, [inventoryState]);
+
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Inventário...</div>;
 
   return (
     <>
