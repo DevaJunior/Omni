@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Calendar, Users, Download, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../../src/config/firebaseConfig';
 import './styles.css';
 
 import img1 from '../../../../src/assets/wallapapers/wpp_cience_000.png';
@@ -29,47 +31,27 @@ const ArticlesTab: React.FC = () => {
     }
   ];
 
-  const articlesList = [
-    {
-      id: 201,
-      title: "Modelagem P-Fuzzy Aplicada na Fitorremediação de Ambientes Aquáticos",
-      authors: "Ribeiro, H. M.; Costa, A. L.; Silva, M.",
-      journal: "Journal of Environmental Biotechnology",
-      date: "Outubro, 2025",
-      abstract: "Este artigo propõe uma nova abordagem baseada na lógica P-Fuzzy para otimizar e prever a eficiência da rizofiltração no tratamento de efluentes contaminados por metais pesados. Os resultados demonstram um aumento significativo na acurácia da análise laboratorial em comparação com métodos tradicionais.",
-      tags: ["Artigo Original", "P-Fuzzy", "Fitorremediação"],
-      doi: "10.1016/j.jenvbio.2025.10.005",
-      isFree: true,
-      impactFactor: 4.5,
-      likes: 120
-    },
-    {
-      id: 202,
-      title: "Desenvolvimento de Interfaces Web para Automação de Equipamentos em Bioinformática",
-      authors: "Mendes, R.; Oliveira, P.",
-      journal: "Simpósio Internacional de Tecnologia e Saúde (SITS)",
-      date: "Agosto, 2025",
-      abstract: "Apresenta a arquitetura de software utilizando React e TypeScript para a criação de painéis de controle em tempo real para biorreatores industriais. Discute-se o gerenciamento de estado complexo e a responsividade de componentes científicos.",
-      tags: ["Anais de Evento", "React", "Automação"],
-      doi: "10.1109/SITS.2025.998877",
-      isFree: false,
-      impactFactor: 2.1,
-      likes: 85
-    },
-    {
-      id: 203,
-      title: "Revisão Sistemática: O Papel do Aprendizado de Máquina na Descoberta de Vacinas",
-      authors: "Santos, J. C.; Almeida, F. R.",
-      journal: "Vaccine & Immunology Reviews",
-      date: "Fevereiro, 2026",
-      abstract: "Uma análise abrangente dos últimos cinco anos de literatura científica detalhando como algoritmos de IA e modelagem preditiva estão reduzindo os tempos de testes clínicos e otimizando o controle de qualidade na produção de imunizantes.",
-      tags: ["Revisão", "Vacinas", "Inteligência Artificial"],
-      doi: "10.1038/s41541-026-0001-2",
-      isFree: true,
-      impactFactor: 8.9,
-      likes: 340
-    }
-  ];
+  const [articlesList, setArticlesList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Artigos...</div>;
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "articles"));
+        const data: any[] = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() });
+        });
+        setArticlesList(data);
+      } catch (error) {
+        console.error("Erro ao carregar artigos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchArticles();
+  }, []);
 
   const sortedArticles = [...articlesList].sort((a, b) => {
     if (sortBy === 'impact') return b.impactFactor - a.impactFactor;
@@ -77,7 +59,7 @@ const ArticlesTab: React.FC = () => {
     return b.id - a.id;
   });
 
-  const handleViewArticle = (id: number) => {
+  const handleViewArticle = (id: string | number) => {
     // 3. Salva a posição exata da tela antes de navegar
     sessionStorage.setItem('omni_scroll_pos', window.scrollY.toString());
     navigate(`/article/${id}`);
@@ -105,7 +87,7 @@ const ArticlesTab: React.FC = () => {
               <div className="cmmt-visual-info">
                 <h4>{article.title}</h4>
                 <p>{article.desc}</p>
-                <button 
+                <button
                   className="cmmt-btn-read-more"
                   onClick={() => handleViewArticle(article.id)}
                 >
@@ -177,7 +159,7 @@ const ArticlesTab: React.FC = () => {
 
               <div className="cmmt-article-footer">
                 <div className="cmmt-article-tags">
-                  {article.tags.map(tag => (
+                  {article.tags.map((tag: any) => (
                     <span key={tag} className="cmmt-article-tag-item">{tag}</span>
                   ))}
                 </div>
@@ -189,7 +171,7 @@ const ArticlesTab: React.FC = () => {
                         <Download size={16} /> PDF
                       </button>
                     )}
-                    <button 
+                    <button
                       className="cmmt-btn-primary-read"
                       onClick={() => handleViewArticle(article.id)}
                     >

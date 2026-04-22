@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ArrowLeft, Database, Search, Plus, AlertTriangle, CheckCircle2, Clock, MapPin, FlaskConical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs } from 'firebase/firestore';
@@ -27,6 +27,7 @@ const Inventory: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<'all' | ReagentStatus>('all');
   const [inventoryState, setInventoryState] = useState<Reagent[]>([]);
   const [loading, setLoading] = useState(true);
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Inventário...</div>;
 
   useEffect(() => {
     const fetchInventory = async () => {
@@ -130,7 +131,7 @@ const Inventory: React.FC = () => {
                       <p>Nenhum reagente encontrado com estes filtros.</p>
                     </div>
                   ) : (
-                    filteredReagents.map(reagent => (
+                    filteredReagents.map((reagent: any) => (
                       <div key={reagent.id} className={`inventory-item-card status-${reagent.status}`}>
                         <div className="reagent-main-info">
                           <h3>{reagent.name}</h3>

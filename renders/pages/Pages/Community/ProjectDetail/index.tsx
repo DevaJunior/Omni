@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -12,6 +12,8 @@ import {
   DollarSign,
   UserCircle
 } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
 
 const ProjectDetail: React.FC = () => {
@@ -19,82 +21,31 @@ const ProjectDetail: React.FC = () => {
   // Capturando o ID da rota
   const { id } = useParams();
 
-  // Banco de dados mockado simulando o backend para Projetos
-  const projectsDatabase = [
-    {
-      id: "101",
-      title: "Projeto de Pesquisa: Rizo Filtração de Metais Pesados",
-      institution: "Phyton Research & UNIFAL-MG",
-      type: "Pesquisa Acadêmica",
-      location: "Alfenas-MG (Híbrido)",
-      deadline: "Fluxo Contínuo",
-      status: "Aberto",
-      coordinator: "Dra. Helena Ribeiro",
-      grant: "Bolsa FAPEMIG (R$ 2.100,00/mês)",
-      description: "O Laboratório de Biotecnologia Ambiental está recrutando pesquisadores para integrar um projeto multidisciplinar focado na fitorremediação de águas contaminadas. O objetivo central é desenvolver e validar um modelo preditivo utilizando Lógica P-Fuzzy para otimizar a taxa de absorção radicular de metais pesados em biorreatores.",
-      requirements: [
-        "Estar matriculado em programa de Mestrado ou Doutorado em Biotecnologia, Química, ou áreas correlatas.",
-        "Conhecimento sólido em programação Python (bibliotecas de análise de dados e skfuzzy).",
-        "Experiência prévia em laboratório de química analítica ou biologia molecular.",
-        "Disponibilidade de 20 horas semanais."
-      ],
-      responsibilities: [
-        "Coletar e tabular dados de crescimento de biomassa e concentração de metais.",
-        "Desenvolver scripts em Python para modelagem matemática dos dados.",
-        "Participar das reuniões semanais do grupo de pesquisa.",
-        "Auxiliar na redação de artigos científicos e relatórios técnicos."
-      ],
-      tags: ["Rizofiltração", "P-Fuzzy", "Python", "Biotecnologia"]
-    },
-    {
-      id: "102",
-      title: "Bolsa de Mestrado em Biotecnologia",
-      institution: "Laboratório Neurolab",
-      type: "Bolsa de Estudos",
-      location: "Presencial",
-      deadline: "30 de Novembro, 2026",
-      status: "Aberto",
-      coordinator: "Prof. Dr. Rafael Mendes",
-      grant: "Bolsa CAPES",
-      description: "Oportunidade para desenvolver plataformas integradas de auxílio laboratorial e bioinformática. O projeto exige a criação de interfaces web responsivas para a visualização de dados de sequenciamento genético em tempo real.",
-      requirements: [
-        "Graduação completa em Ciência da Computação, Engenharia de Software ou Biotecnologia.",
-        "Proficiência em React, TypeScript e Zustand.",
-        "Inglês técnico avançado para leitura."
-      ],
-      responsibilities: [
-        "Desenhar e implementar a arquitetura frontend da plataforma.",
-        "Integrar APIs RESTful e WebSockets.",
-        "Escrever testes automatizados para os componentes."
-      ],
-      tags: ["Mestrado", "React", "TypeScript", "Bioinformática"]
-    },
-    {
-      id: "103",
-      title: "Chamada de Artigos: Controle de Qualidade em Laboratórios",
-      institution: "Revista Científica Omni",
-      type: "Publicação",
-      location: "Submissão Online",
-      deadline: "Encerrado",
-      status: "Fechado",
-      coordinator: "Comitê Editorial Omni",
-      grant: null,
-      description: "Edição especial focada na interseção entre tecnologia da informação e processos laboratoriais, englobando biologia, química e controle de qualidade de vacinas. Buscamos artigos originais e revisões sistemáticas.",
-      requirements: [
-        "Artigos não publicados em outros meios.",
-        "Aderência ao template padrão de formatação IEEE.",
-        "Foco na área de qualidade laboratorial e sistemas inteligentes."
-      ],
-      responsibilities: [
-        "Submissão do manuscrito via portal.",
-        "Ajustes conforme retorno dos revisores paritários (Peer Review)."
-      ],
-      tags: ["Artigo", "Controle de Qualidade", "Publicação"]
-    }
-  ];
+  const [project, setProject] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // APLICAÇÃO CORRETA DO 'id': Busca o projeto correspondente ao ID da URL.
-  const project = projectsDatabase.find(p => p.id === id) || projectsDatabase[0];
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const fetchProject = async () => {
+      if (!id) return;
+      try {
+        const docSnap = await getDoc(doc(db, "projects", id));
+        if (docSnap.exists()) {
+          setProject({ id: docSnap.id, ...docSnap.data() });
+        }
+      } catch (err) {
+        console.error("Erro ao carregar projeto", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProject();
+  }, [id]);
+
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Projeto...</div>;
+  if (!project) return <div style={{ padding: '40px', textAlign: 'center' }}>Projeto não encontrado.</div>;
+
+
 
   return (
     <div className="prj-detail-container">
@@ -140,7 +91,7 @@ const ProjectDetail: React.FC = () => {
             <section className="prj-section">
               <h3>Requisitos e Qualificações</h3>
               <ul className="prj-check-list">
-                {project.requirements.map((req, index) => (
+                {project.requirements.map((req: any, index: number) => (
                   <li key={index}>
                     <CheckCircle2 size={20} className="prj-icon-check" />
                     <span>{req}</span>
@@ -152,7 +103,7 @@ const ProjectDetail: React.FC = () => {
             <section className="prj-section">
               <h3>Responsabilidades e Atribuições</h3>
               <ul className="prj-bullet-list">
-                {project.responsibilities.map((resp, index) => (
+                {project.responsibilities.map((resp: any, index: number) => (
                   <li key={index}>{resp}</li>
                 ))}
               </ul>
@@ -161,7 +112,7 @@ const ProjectDetail: React.FC = () => {
             <section className="prj-section">
               <h3>Tags Relacionadas</h3>
               <div className="prj-tags-list">
-                {project.tags.map(tag => (
+                {project.tags.map((tag: any) => (
                   <span key={tag} className="prj-tag">{tag}</span>
                 ))}
               </div>

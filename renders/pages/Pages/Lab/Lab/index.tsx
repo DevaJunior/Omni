@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // 1. IMPORT NECESSÁRIO
 import {
   Search,
@@ -13,7 +13,7 @@ import {
   Star
 } from 'lucide-react';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../../src/config/firebaseConfig';
+import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
 
@@ -32,14 +32,15 @@ type Tool = {
 const CATEGORIES = ['Todas', 'Favoritos', 'Química', 'Produtividade', 'Gestão', 'Análise de Dados'];
 
 const Lab: React.FC = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('Todas');
   const [toolsState, setToolsState] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Bancada...</div>;
 
   // Mapeamento dinâmico de ícones com base na categoria ou ID para quando vier do banco
-  const getIconForTool = (id: string, category: string) => {
+  const getIconForTool = (id: string, _category?: string) => {
     switch (id) {
       case 'molarity-calc': return <Calculator size={24} />;
       case 'dilution': return <Beaker size={24} />;

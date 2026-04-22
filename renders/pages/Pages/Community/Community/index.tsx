@@ -6,26 +6,34 @@ import ArticlesTab from '../../../../fragments/Community/ArticlesTab';
 import FeedTab from '../../../../fragments/Community/FeedTab';
 import Footer from '../../../../menus/Footer';
 import { useNavigate } from 'react-router-dom';
-
-// MOCK DE LABORATÓRIOS (Para o header)
-const ALL_LABS = [
-  { id: '1', name: "Phyton Research" },
-  { id: '2', name: "Biogen" },
-  { id: '3', name: "Neurolab" },
-  { id: '4', name: "Genesis Labs" },
-  { id: '5', name: "Acqua Solutions" },
-  { id: '6', name: "AgroTech Labs" },
-  { id: '7', name: "NanoBio Corp" },
-  { id: '8', name: "EcoSys Research" },
-];
-
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../../../src/config/firebaseConfig';
 
 const Community: React.FC = () => {
   const navigate = useNavigate();
-  
+
   const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'articles'>(
     (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'articles') || 'articles'
   );
+
+  const [randomLabs, setRandomLabs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchLabs = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "labs"));
+        const labsData: any[] = [];
+        querySnapshot.forEach(doc => {
+          labsData.push({ id: doc.id, name: doc.data().name });
+        });
+        const shuffled = labsData.sort(() => 0.5 - Math.random());
+        setRandomLabs(shuffled.slice(0, 5));
+      } catch (err) {
+        console.error("Erro ao buscar laboratórios parceiros", err);
+      }
+    };
+    fetchLabs();
+  }, []);
 
   useEffect(() => {
     const savedScroll = sessionStorage.getItem('omni_scroll_pos');
@@ -42,16 +50,8 @@ const Community: React.FC = () => {
     sessionStorage.setItem('omni_current_tab', tab);
   };
 
-  // 1. LÓGICA DE PARCEIROS ALEATÓRIOS (Lazy Initializer)
-  // Passamos uma função para o useState. O React roda isso apenas UMA VEZ na montagem.
-  // Fica 100% puro, não gera renders em cascata e o linter fica feliz!
-  const [randomLabs] = useState(() => {
-    const shuffled = [...ALL_LABS].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 5);
-  });
-
   // 2. ESTADOS DO FILTRO E BARRA DE BUSCA INTELIGENTE
-  const [searchFilter, setSearchFilter] = useState<string>(''); 
+  const [searchFilter, setSearchFilter] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
   const [showFilterMenu, setShowFilterMenu] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -64,14 +64,14 @@ const Community: React.FC = () => {
       setTimeout(() => {
         setSearchError(false);
         setToastMessage(null);
-      }, 3500); 
+      }, 3500);
     }
   };
 
   const handleFilterSelect = (filter: string) => {
     setSearchFilter(filter);
     setShowFilterMenu(false);
-    setSearchError(false); 
+    setSearchError(false);
     setToastMessage(null);
   };
 
@@ -107,8 +107,8 @@ const Community: React.FC = () => {
 
           <div className="cmmt-partners-list">
             {randomLabs.map(lab => (
-              <span 
-                key={lab.id} 
+              <span
+                key={lab.id}
                 className="cmmt-partner-link"
                 onClick={() => navigate(`/lab/${lab.id}`)}
               >
@@ -121,18 +121,18 @@ const Community: React.FC = () => {
         <div className="cmmt-toolbar">
           <div className={`cmmt-search-bar ${searchError ? 'cmmt-search-error' : ''}`}>
             <Search size={20} className="cmmt-search-icon" />
-            <input 
-              type="text" 
-              placeholder={searchFilter ? `Pesquisar em ${searchFilter}...` : "Pesquisar publicações, projetos ou pesquisadores..."} 
+            <input
+              type="text"
+              placeholder={searchFilter ? `Pesquisar em ${searchFilter}...` : "Pesquisar publicações, projetos ou pesquisadores..."}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               onClick={handleSearchClick}
-              disabled={!searchFilter} 
+              disabled={!searchFilter}
             />
           </div>
 
           <div style={{ position: 'relative' }}>
-            <button 
+            <button
               className={`cmmt-btn-outline-icon ${searchFilter ? 'cmmt-filter-active-btn' : ''}`}
               onClick={() => setShowFilterMenu(!showFilterMenu)}
             >

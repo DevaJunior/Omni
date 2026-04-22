@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -9,6 +9,8 @@ import {
   Send,
   UserPlus
 } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
 
 const DiscussionDetail: React.FC = () => {
@@ -17,92 +19,31 @@ const DiscussionDetail: React.FC = () => {
   const { id } = useParams();
 
   const [replyText, setReplyText] = useState('');
+  const [discussion, setDiscussion] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Banco de dados mockado simulando a thread completa
-  const discussionsDatabase = [
-    {
-      id: "1",
-      author: "Dra. Helena Ribeiro",
-      role: "Pesquisadora em Biorremediação",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
-      time: "Há 2 horas",
-      content: "Acabamos de publicar nossos resultados preliminares sobre a aplicação de lógica P-Fuzzy na análise de dados de rizofiltração para remoção de metais pesados. Os índices de pertinência mostraram uma correlação altíssima com a biomassa radicular. Alguém mais trabalhando com modelagem fuzzy em fitorremediação? Gostaria de trocar experiências sobre a definição das regras de inferência para cenários com alta variação de pH.",
-      tags: ["#Biotecnologia", "#LógicaPFuzzy", "#Rizofiltração"],
-      likes: 34,
-      commentsCount: 3,
-      // Respostas (Thread)
-      replies: [
-        {
-          id: "r1",
-          author: "Carlos Eduardo",
-          role: "Mestrando em Engenharia Ambiental",
-          avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150",
-          time: "Há 1 hora",
-          content: "Dra. Helena, trabalho excelente! No nosso laboratório tentamos aplicar lógica fuzzy clássica (Mamdani), mas tivemos problemas com a explosão de regras devido à inclusão da temperatura da água. Como vocês lidaram com as variáveis de entrada múltiplas no modelo P-Fuzzy?",
-          likes: 5,
-          isAuthor: false
-        },
-        {
-          id: "r2",
-          author: "Dra. Helena Ribeiro",
-          role: "Pesquisadora em Biorremediação",
-          avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
-          time: "Há 45 minutos",
-          content: "Carlos, exatamente por isso migramos para o P-Fuzzy! Ao atribuir probabilidades às regras em vez de tratá-las como absolutas, conseguimos reduzir o conjunto de regras em quase 60%, mantendo a acurácia. Vou te enviar o link do repositório no GitHub por mensagem direta.",
-          likes: 8,
-          isAuthor: true
-        },
-        {
-          id: "r3",
-          author: "Instituto Genesis",
-          role: "Conta Institucional",
-          avatar: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=150",
-          time: "Há 10 minutos",
-          content: "Resultados muito promissores. Nosso departamento de P&D tem interesse em conhecer mais sobre essa modelagem para aplicação em escala piloto.",
-          likes: 2,
-          isAuthor: false
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const fetchDiscussion = async () => {
+      if (!id) return;
+      try {
+        const docSnap = await getDoc(doc(db, "discussions", id));
+        if (docSnap.exists()) {
+          setDiscussion({ id: docSnap.id, ...docSnap.data() });
         }
-      ]
-    },
-    {
-      id: "2",
-      author: "Laboratório Genesis",
-      role: "Instituição Parceira",
-      avatar: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=150",
-      time: "Há 5 horas",
-      content: "Estamos com duas bolsas abertas para iniciação científica na área de bioinformática e análise de dados genômicos. O projeto envolve o desenvolvimento de pipelines automatizados. Interessados, confiram o edital anexado.",
-      tags: ["#Bolsas", "#Bioinformática", "#Genômica"],
-      likes: 89,
-      commentsCount: 0,
-      replies: []
-    },
-    {
-      id: "3",
-      author: "Marcos Silva",
-      role: "Doutorando em Microbiologia",
-      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150",
-      time: "Há 1 dia",
-      content: "Dúvida técnica: Qual a melhor biblioteca em Python atualmente para plotar os gráficos de superfície de inferência fuzzy quando temos mais de 4 variáveis de entrada no nosso sistema laboratorial? Tenho usado o scikit-fuzzy, mas sinto falta de algumas customizações.",
-      tags: ["#Python", "#Modelagem", "#Dúvida"],
-      likes: 15,
-      commentsCount: 1,
-      replies: [
-        {
-          id: "r4",
-          author: "Dra. Helena Ribeiro",
-          role: "Pesquisadora em Biorremediação",
-          avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
-          time: "Há 2 horas",
-          content: "Oi Marcos, o scikit-fuzzy realmente sofre com gráficos de superfície multidimensionais. Sugiro dar uma olhada na biblioteca 'matplotlib' nativa operando com cortes seccionais em 3D usando os eixos de contorno, fica bem mais claro visualmente.",
-          likes: 3,
-          isAuthor: false
-        }
-      ]
-    }
-  ];
+      } catch (err) {
+        console.error("Erro ao carregar discussão", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDiscussion();
+  }, [id]);
 
-  // APLICAÇÃO CORRETA DO 'id': Busca a thread correspondente ao ID da URL.
-  const discussion = discussionsDatabase.find(d => d.id === id) || discussionsDatabase[0];
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando postagem...</div>;
+  if (!discussion) return <div style={{ padding: '40px', textAlign: 'center' }}>Discussão não encontrada.</div>;
+
+
 
   return (
     <div className="disc-detail-container">
@@ -132,7 +73,7 @@ const DiscussionDetail: React.FC = () => {
             <div className="disc-post-body">
               <p>{discussion.content}</p>
               <div className="disc-post-tags">
-                {discussion.tags.map(tag => (
+                {discussion.tags.map((tag: any) => (
                   <span key={tag} className="disc-tag">{tag}</span>
                 ))}
               </div>
@@ -183,7 +124,7 @@ const DiscussionDetail: React.FC = () => {
               {discussion.replies.length === 0 ? (
                 <p style={{ color: 'var(--text-muted)' }}>Seja o primeiro a responder esta discussão!</p>
               ) : (
-                discussion.replies.map(reply => (
+                discussion.replies.map((reply: any) => (
                   <div key={reply.id} className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
                     <img src={reply.avatar} alt={reply.author} className="disc-comment-avatar" />
                     <div className="disc-comment-content">

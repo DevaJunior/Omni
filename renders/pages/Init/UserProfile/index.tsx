@@ -122,7 +122,7 @@ const UserProfile: React.FC = () => {
               <div className="profile-skills-section">
                 <h3>Competências</h3>
                 <div className="skills-tags">
-                  {userData.skills.map(skill => (
+                  {userData.skills.map((skill: any) => (
                     <span key={skill} className="skill-tag">{skill}</span>
                   ))}
                 </div>
@@ -201,7 +201,7 @@ const UserProfile: React.FC = () => {
                 {/* ABA: PROJETOS */}
                 {activeTab === 'projetos' && (
                   <div className="projects-grid anim-fade-up">
-                    {userData.projects.map(project => (
+                    {userData.projects.map((project: any) => (
                       <div key={project.id} className="project-card">
                         <div className="project-header">
                           <h4><Code2 size={18} /> {project.title}</h4>
@@ -212,7 +212,7 @@ const UserProfile: React.FC = () => {
                         <p className="project-description">{project.description}</p>
                         <div className="project-footer">
                           <div className="project-tags">
-                            {project.tags.map(tag => <span key={tag}>{tag}</span>)}
+                            {project.tags.map((tag: any) => <span key={tag}>{tag}</span>)}
                           </div>
                         </div>
                       </div>

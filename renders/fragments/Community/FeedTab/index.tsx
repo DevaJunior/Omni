@@ -1,49 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MessageSquare } from 'lucide-react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../../src/config/firebaseConfig';
 import './styles.css';
 import ShareMenu from './../../../components/ShareMenu/index';
 
 const FeedTab: React.FC = () => {
   const navigate = useNavigate();
 
-  const posts = [
-    {
-      id: 1,
-      author: "Dra. Helena Ribeiro",
-      role: "Pesquisadora em Biorremediação",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
-      time: "Há 2 horas",
-      content: "Acabamos de publicar nossos resultados preliminares sobre a aplicação de lógica P-Fuzzy na análise de dados de rizofiltração para remoção de metais pesados. Os índices de pertinência mostraram uma correlação altíssima com a biomassa radicular. Alguém mais trabalhando com modelagem fuzzy em fitorremediação?",
-      tags: ["#Biotecnologia", "#LógicaPFuzzy", "#Rizofiltração"],
-      likes: 34,
-      comments: 12
-    },
-    {
-      id: 2,
-      author: "Laboratório Genesis",
-      role: "Instituição Parceira",
-      avatar: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=150",
-      time: "Há 5 horas",
-      content: "Estamos com duas bolsas abertas para iniciação científica na área de bioinformática e análise de dados genômicos. O projeto envolve o desenvolvimento de pipelines automatizados. Interessados, confiram o edital anexado.",
-      tags: ["#Bolsas", "#Bioinformática", "#Genômica"],
-      likes: 89,
-      comments: 5
-    },
-    {
-      id: 3,
-      author: "Marcos Silva",
-      role: "Doutorando em Microbiologia",
-      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150",
-      time: "Há 1 dia",
-      content: "Dúvida técnica: Qual a melhor biblioteca em Python atualmente para plotar os gráficos de superfície de inferência fuzzy quando temos mais de 4 variáveis de entrada no nosso sistema laboratorial? Tenho usado o scikit-fuzzy, mas sinto falta de algumas customizações.",
-      tags: ["#Python", "#Modelagem", "#Dúvida"],
-      likes: 15,
-      comments: 28
-    }
-  ];
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleOpenThread = (id: number) => {
+  useEffect(() => {
+    const fetchDiscussions = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "discussions"));
+        const data: any[] = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() });
+        });
+        setPosts(data);
+      } catch (error) {
+        console.error("Erro ao carregar feed:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDiscussions();
+  }, []);
+
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Discussões...</div>;
+
+  const handleOpenThread = (id: string | number) => {
     // Salva scroll antes de ir pro detalhe
     sessionStorage.setItem('omni_scroll_pos', window.scrollY.toString());
     navigate(`/discussion/${id}`);
@@ -64,7 +53,7 @@ const FeedTab: React.FC = () => {
           <div className="cmmt-post-body">
             <p>{post.content}</p>
             <div className="cmmt-post-tags">
-              {post.tags.map(tag => (
+              {post.tags.map((tag: any) => (
                 <span key={tag} className="cmmt-post-tag-item">{tag}</span>
               ))}
             </div>

@@ -1,51 +1,46 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, User, ThumbsUp, MessageSquare, Share2, Bookmark } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
-
-// Mock estendido com o conteúdo completo
-const NOTE_DATA = {
-  id: '1',
-  title: 'Mapa Mental: Ciclo de Krebs e Fosforilação Oxidativa',
-  subject: 'Bioquímica',
-  author: 'Maria Clara S.',
-  date: '02 Abr, 2026',
-  readTime: '5 min',
-  likes: 124,
-  content: `
-O Ciclo de Krebs (ou Ciclo do Ácido Cítrico) é uma das etapas mais cruciais da respiração celular aeróbica, ocorrendo na matriz mitocondrial.
-
-### Principais Etapas do Ciclo
-1. **Formação do Citrato:** O Acetil-CoA (2 carbonos) une-se ao Oxaloacetato (4 carbonos).
-2. **Descarboxilação:** Perda de CO2 e geração de NADH nas conversões de Isocitrato para Alfa-cetoglutarato, e deste para Succinil-CoA.
-3. **Geração de Energia:** Formação de 1 GTP (convertido em ATP) na passagem de Succinil-CoA para Succinato.
-4. **Regeneração:** O Succinato é oxidado a Fumarato (gerando FADH2), depois a Malato e finalmente de volta a Oxaloacetato (gerando mais um NADH).
-
-### Saldo por Molécula de Glicose (2 Acetil-CoA)
-* 6 NADH
-* 2 FADH2
-* 2 ATP (via GTP)
-* 4 CO2 (liberados)
-
-Após o ciclo, os carreadores de elétrons (NADH e FADH2) seguem para a **Fosforilação Oxidativa** nas cristas mitocondriais, onde a maior parte do ATP será sintetizada via enzima ATP Sintase, impulsionada pelo gradiente de prótons (H+).
-  `
-};
 
 const NoteDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(NOTE_DATA.likes);
+  const [likesCount, setLikesCount] = useState(0);
+  const [noteData, setNoteData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchNote = async () => {
+      if (!id) return;
+      try {
+        const docSnap = await getDoc(doc(db, "notes", id));
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setNoteData(data);
+          setLikesCount(data.likes || 0);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar resumo", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNote();
   }, [id]);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
     setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
   };
+
+  if (loading) return <div style={{ padding: '100px', textAlign: 'center' }}>Carregando estudo...</div>;
+  if (!noteData) return <div style={{ padding: '100px', textAlign: 'center' }}>Resumo não encontrado.</div>;
 
   return (
     <>
@@ -58,18 +53,18 @@ const NoteDetail: React.FC = () => {
 
           <article className="note-article">
             <header className="note-article-header">
-              <span className="note-tag">{NOTE_DATA.subject}</span>
-              <h1>{NOTE_DATA.title}</h1>
+              <span className="note-tag">{noteData.subject}</span>
+              <h1>{noteData.title}</h1>
 
               <div className="note-author-bar">
                 <div className="author-info-left">
                   <div className="author-avatar"><User size={20} /></div>
                   <div>
-                    <strong>{NOTE_DATA.author}</strong>
+                    <strong>{noteData.author}</strong>
                     <div className="note-meta">
-                      <span>{NOTE_DATA.date}</span>
+                      <span>{noteData.date}</span>
                       <span className="dot">•</span>
-                      <span><Clock size={14} /> {NOTE_DATA.readTime} de leitura</span>
+                      <span><Clock size={14} /> {noteData.readTime} de leitura</span>
                     </div>
                   </div>
                 </div>
@@ -81,7 +76,7 @@ const NoteDetail: React.FC = () => {
 
             <div className="note-content-body">
               {/* Simulação de renderização de Markdown/Texto Rico */}
-              {NOTE_DATA.content.split('\n').map((paragraph, idx) => {
+              {noteData.content.split('\n').map((paragraph: any, idx: number) => {
                 if (paragraph.startsWith('###')) {
                   return <h3 key={idx}>{paragraph.replace('###', '')}</h3>;
                 }

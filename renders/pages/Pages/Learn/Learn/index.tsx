@@ -1,15 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Search,
-  BookOpen,
-  Plus,
-  Clock,
-  User,
-  ThumbsUp,
-  GraduationCap,
-  Filter
+  Search, BookOpen, Plus, Clock, User, ThumbsUp, GraduationCap, Filter
 } from 'lucide-react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
 
@@ -25,76 +20,43 @@ interface StudyNote {
   readTime: string;
 }
 
-// Dados Simulados
-const MOCK_NOTES: StudyNote[] = [
-  {
-    id: '1',
-    title: 'Mapa Mental: Ciclo de Krebs e Fosforilação Oxidativa',
-    excerpt: 'Resumo visual completo das etapas da respiração celular, saldo de ATP e principais enzimas envolvidas na matriz mitocondrial.',
-    author: 'Maria Clara S.',
-    subject: 'Bioquímica',
-    date: '02 Abr, 2026',
-    likes: 124,
-    readTime: '5 min'
-  },
-  {
-    id: '2',
-    title: 'Genética de Populações: Equilíbrio de Hardy-Weinberg',
-    excerpt: 'Anotações da aula prática abordando o cálculo de frequências alélicas e genotípicas em populações ideais.',
-    author: 'Devair Junior',
-    subject: 'Genética',
-    date: '28 Mar, 2026',
-    likes: 89,
-    readTime: '8 min'
-  },
-  {
-    id: '3',
-    title: 'Estruturas de Dados Básicas em C',
-    excerpt: 'Estudo focado na implementação de Pilhas, Filas e Árvores Binárias com exemplos de código comentados.',
-    author: 'Carlos E.',
-    subject: 'Computação',
-    date: '20 Mar, 2026',
-    likes: 210,
-    readTime: '12 min'
-  },
-  {
-    id: '4',
-    title: 'Fitorremediação: Mecanismos de Tolerância a Metais Pesados',
-    excerpt: 'Resumo teórico sobre como macrófitas aquáticas acumulam e estabilizam cádmio e chumbo em suas raízes.',
-    author: 'Ana Carolina',
-    subject: 'Biotecnologia',
-    date: '15 Mar, 2026',
-    likes: 156,
-    readTime: '10 min'
-  },
-  {
-    id: '5',
-    title: 'Introdução à Lógica P-Fuzzy',
-    excerpt: 'Conceitos iniciais, funções de pertinência e aplicações em bioprocessos baseados em sistemas especialistas.',
-    author: 'Devair Junior',
-    subject: 'Matemática',
-    date: '10 Mar, 2026',
-    likes: 342,
-    readTime: '15 min'
-  }
-];
-
 const SUBJECTS = ['Todos', 'Biotecnologia', 'Bioquímica', 'Genética', 'Computação', 'Matemática'];
 
 const Learn: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSubject, setActiveSubject] = useState('Todos');
+  const [notesState, setNotesState] = useState<StudyNote[]>([]);
+  const [loading, setLoading] = useState(true);
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Estudos...</div>;
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "notes"));
+        const data: StudyNote[] = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() } as StudyNote);
+        });
+        setNotesState(data);
+      } catch (error) {
+        console.error("Erro ao buscar notas/resumos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotes();
+  }, []);
 
   // Filtro Inteligente
   const filteredNotes = useMemo(() => {
-    return MOCK_NOTES.filter(note => {
+    return notesState.filter(note => {
       const matchSearch = note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         note.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
       const matchSubject = activeSubject === 'Todos' || note.subject === activeSubject;
       return matchSearch && matchSubject;
     });
-  }, [searchTerm, activeSubject]);
+  }, [searchTerm, activeSubject, notesState]);
 
   // Função para evitar que o clique no "Like" também dispare o redirecionamento do card
   const handleLikeClick = (e: React.MouseEvent) => {
@@ -160,7 +122,7 @@ const Learn: React.FC = () => {
                 <p>Tente ajustar os filtros ou pesquisar por outro termo.</p>
               </div>
             ) : (
-              filteredNotes.map(note => (
+              filteredNotes.map((note: any) => (
                 <article
                   key={note.id}
                   className="study-note-card"
