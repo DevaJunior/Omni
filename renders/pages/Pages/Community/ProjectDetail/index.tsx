@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -91,7 +91,7 @@ const ProjectDetail: React.FC = () => {
             <section className="prj-section">
               <h3>Requisitos e Qualificações</h3>
               <ul className="prj-check-list">
-                {project.requirements.map((req: any, index: number) => (
+                {project.requirements.map((req: string, index: number) => (
                   <li key={index}>
                     <CheckCircle2 size={20} className="prj-icon-check" />
                     <span>{req}</span>
@@ -103,7 +103,7 @@ const ProjectDetail: React.FC = () => {
             <section className="prj-section">
               <h3>Responsabilidades e Atribuições</h3>
               <ul className="prj-bullet-list">
-                {project.responsibilities.map((resp: any, index: number) => (
+                {project.responsibilities.map((resp: string, index: number) => (
                   <li key={index}>{resp}</li>
                 ))}
               </ul>
@@ -112,7 +112,7 @@ const ProjectDetail: React.FC = () => {
             <section className="prj-section">
               <h3>Tags Relacionadas</h3>
               <div className="prj-tags-list">
-                {project.tags.map((tag: any) => (
+                {project.tags.map((tag: string) => (
                   <span key={tag} className="prj-tag">{tag}</span>
                 ))}
               </div>
