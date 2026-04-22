@@ -53,7 +53,6 @@ const Login: React.FC = () => {
                 onClick={handleGoogleLogin}
                 disabled={isAuthenticating}
               >
-
                 <img
                   src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
                   alt="Google Logo"
