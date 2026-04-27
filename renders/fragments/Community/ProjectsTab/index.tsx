@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, FileText, MapPin, Calendar, ExternalLink } from 'lucide-react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../../src/config/firebaseConfig';
+import { communityService } from '../../../../src/services/communityService';
+import type { Project } from '../../../../src/types/community';
 import './styles.css';
 
 const ProjectsTab: React.FC = () => {
   const navigate = useNavigate();
 
-  const [projectsList, setProjectsList] = useState<any[]>([]);
+  const [projectsList, setProjectsList] = useState<(Project & { icon: React.ReactNode })[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Mapeamento dinâmico de ícones com base no tipo vindo do banco
@@ -22,13 +22,11 @@ const ProjectsTab: React.FC = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "projects"));
-        const data: any[] = [];
-        querySnapshot.forEach((doc) => {
-          const p = doc.data();
-          data.push({ ...p, id: doc.id, icon: getIconForProjectType(p.type) });
-        });
-        setProjectsList(data);
+        const data = await communityService.getProjects();
+        setProjectsList(data.map(p => ({
+          ...p,
+          icon: getIconForProjectType(p.type)
+        })));
       } catch (error) {
         console.error("Erro ao carregar projetos:", error);
       } finally {

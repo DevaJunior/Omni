@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MessageSquare } from 'lucide-react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../../src/config/firebaseConfig';
+import { communityService } from '../../../../src/services/communityService';
+import type { Discussion } from '../../../../src/types/community';
 import './styles.css';
 import ShareMenu from './../../../components/ShareMenu/index';
 
 const FeedTab: React.FC = () => {
   const navigate = useNavigate();
 
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDiscussions = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "discussions"));
-        const data: any[] = [];
-        querySnapshot.forEach((doc) => {
-          data.push({ id: doc.id, ...doc.data() });
-        });
+        const data = await communityService.getDiscussions();
         setPosts(data);
       } catch (error) {
         console.error("Erro ao carregar feed:", error);

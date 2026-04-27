@@ -12,22 +12,10 @@ import {
   ChevronRight,
   Star
 } from 'lucide-react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../../../src/config/firebaseConfig';
+import { labService } from '../../../../../src/services/labService';
+import type { Tool } from '../../../../../src/types/lab';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
-
-// Tipagem das ferramentas
-type Tool = {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  icon: React.ReactNode;
-  isNew?: boolean;
-  isLocked?: boolean;
-  favorite?: boolean;
-};
 
 const CATEGORIES = ['Todas', 'Favoritos', 'Química', 'Produtividade', 'Gestão', 'Análise de Dados'];
 
@@ -53,13 +41,11 @@ const Lab: React.FC = () => {
   useEffect(() => {
     const fetchTools = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "tools"));
-        const data: Tool[] = [];
-        querySnapshot.forEach((doc) => {
-          const t = doc.data() as any;
-          data.push({ ...t, id: doc.id, icon: getIconForTool(doc.id, t.category) });
-        });
-        setToolsState(data);
+        const data = await labService.getTools();
+        setToolsState(data.map(t => ({
+          ...t,
+          icon: getIconForTool(t.id, t.category)
+        })));
       } catch (error) {
         console.error("Erro ao buscar ferramentas:", error);
       } finally {

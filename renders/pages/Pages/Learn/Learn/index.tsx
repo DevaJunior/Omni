@@ -3,22 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import {
   Search, BookOpen, Plus, Clock, User, ThumbsUp, GraduationCap, Filter
 } from 'lucide-react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../../../src/config/firebaseConfig';
+import { learnService } from '../../../../../src/services/learnService';
+import type { StudyNote } from '../../../../../src/types/learn';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
-
-// Tipagem de um Resumo/Estudo
-interface StudyNote {
-  id: string;
-  title: string;
-  excerpt: string;
-  author: string;
-  subject: string;
-  date: string;
-  likes: number;
-  readTime: string;
-}
 
 const SUBJECTS = ['Todos', 'Biotecnologia', 'Bioquímica', 'Genética', 'Computação', 'Matemática'];
 
@@ -32,11 +20,7 @@ const Learn: React.FC = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "notes"));
-        const data: StudyNote[] = [];
-        querySnapshot.forEach((doc) => {
-          data.push({ id: doc.id, ...doc.data() } as StudyNote);
-        });
+        const data = await learnService.getAllNotes();
         setNotesState(data);
       } catch (error) {
         console.error("Erro ao buscar notas/resumos:", error);

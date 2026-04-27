@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Calendar, Users, Download, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../../src/config/firebaseConfig';
+import { communityService } from '../../../../src/services/communityService';
+import type { Article } from '../../../../src/types/community';
 import './styles.css';
 
 import img1 from '../../../../src/assets/wallapapers/wpp_cience_000.png';
@@ -16,14 +16,14 @@ const ArticlesTab: React.FC = () => {
 
   const featuredArticles = [
     {
-      id: 901,
+      id: "901",
       title: "Inovações em biotecnologia: da bancada ao mercado",
       desc: "Explorando as tendências mais promissoras em biotecnologia e como elas estão sendo traduzidas em práticas de pesquisas de laboratório para aplicações práticas.",
       image: img1,
       category: "Biotecnologia"
     },
     {
-      id: 902,
+      id: "902",
       title: "Medicina personalizada: Otimizando tratamentos",
       desc: "Saiba como a medicina personalizada está utilizando dados genéticos e moleculares para criar tratamentos sob medida para pacientes.",
       image: img2,
@@ -31,17 +31,13 @@ const ArticlesTab: React.FC = () => {
     }
   ];
 
-  const [articlesList, setArticlesList] = useState<any[]>([]);
+  const [articlesList, setArticlesList] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "articles"));
-        const data: any[] = [];
-        querySnapshot.forEach((doc) => {
-          data.push({ id: doc.id, ...doc.data() });
-        });
+        const data = await communityService.getArticles();
         setArticlesList(data);
       } catch (error) {
         console.error("Erro ao carregar artigos:", error);
@@ -55,7 +51,7 @@ const ArticlesTab: React.FC = () => {
   const sortedArticles = [...articlesList].sort((a, b) => {
     if (sortBy === 'impact') return b.impactFactor - a.impactFactor;
     if (sortBy === 'likes') return b.likes - a.likes;
-    return b.id - a.id;
+    return b.id.localeCompare(a.id);
   });
 
   const handleViewArticle = (id: string | number) => {

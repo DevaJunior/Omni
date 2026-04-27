@@ -6,8 +6,8 @@ import ArticlesTab from '../../../../fragments/Community/ArticlesTab';
 import FeedTab from '../../../../fragments/Community/FeedTab';
 import Footer from '../../../../menus/Footer';
 import { useNavigate } from 'react-router-dom';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../../../src/config/firebaseConfig';
+import { communityService } from '../../../../../src/services/communityService';
+import type { LabPartner } from '../../../../../src/types/community';
 
 const Community: React.FC = () => {
   const navigate = useNavigate();
@@ -16,16 +16,12 @@ const Community: React.FC = () => {
     (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'articles') || 'articles'
   );
 
-  const [randomLabs, setRandomLabs] = useState<any[]>([]);
+  const [randomLabs, setRandomLabs] = useState<LabPartner[]>([]);
 
   useEffect(() => {
     const fetchLabs = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "labs"));
-        const labsData: any[] = [];
-        querySnapshot.forEach(doc => {
-          labsData.push({ id: doc.id, name: doc.data().name });
-        });
+        const labsData = await communityService.getLabs();
         const shuffled = labsData.sort(() => 0.5 - Math.random());
         setRandomLabs(shuffled.slice(0, 5));
       } catch (err) {

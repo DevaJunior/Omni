@@ -5,6 +5,10 @@ import {
   Eye, Edit2, User, Clock, Save
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../../../src/contexts/AuthContext';
+import { learnService } from '../../../../../src/services/learnService';
+import type { StudyNote } from '../../../../../src/types/learn';
+import MarkdownRenderer from '../../../../../src/components/MarkdownRenderer';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
 
@@ -13,8 +17,10 @@ const RESEARCH_AREAS = ['Biotecnologia', 'Matemática', 'Química', 'Biologia', 
 const DISCIPLINES = ['Biologia Molecular', 'Genética', 'Biologia Celular', 'Bioquímica', 'Fisiologia', 'Cálculo', 'Lógica Fuzzy', 'Estruturas de Dados'];
 
 const PublishNote: React.FC = () => {
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Estados do Formulário
   const [title, setTitle] = useState<string>('');
@@ -77,14 +83,39 @@ const PublishNote: React.FC = () => {
   };
 
   // Ações de Salvamento / Publicação
-  const handlePublish = (e: React.FormEvent) => {
+  const handlePublish = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || selectedAreas.length === 0 || selectedDisciplines.length === 0 || !content) {
       alert("Preencha o título, ao menos uma área, uma disciplina e o conteúdo antes de publicar.");
       return;
     }
-    alert("Resumo publicado com sucesso na Comunidade Omni!");
-    navigate('/learn');
+
+    setIsSubmitting(true);
+    try {
+      const newNote: Omit<StudyNote, 'id'> = {
+        title,
+        subtitle,
+        excerpt: content.substring(0, 150) + '...',
+        content,
+        author: currentUser?.displayName || 'Usuário Omni',
+        authorId: currentUser?.uid || 'anonymous',
+        subject: selectedAreas[0], // Pega a primeira área como principal
+        subjects: selectedAreas,
+        disciplines: selectedDisciplines,
+        date: new Date().toLocaleDateString('pt-BR'),
+        likes: 0,
+        readTime: `${Math.max(1, Math.ceil(content.length / 800))} min`
+      };
+
+      await learnService.createNote(newNote);
+      alert("Resumo publicado com sucesso na Comunidade Omni!");
+      navigate('/learn');
+    } catch (err) {
+      console.error("Erro ao publicar nota", err);
+      alert("Erro ao publicar resumo. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSaveDraft = () => {
@@ -97,30 +128,6 @@ const PublishNote: React.FC = () => {
   };
 
   // Parser Dinâmico de Markdown para o Preview
-  const renderMarkdown = (text: string) => {
-    const lines = text.split('\n');
-    return lines.map((line, idx) => {
-      const processedLine = line;
-
-      if (processedLine.startsWith('### ')) return <h3 key={idx}>{processedLine.replace('### ', '')}</h3>;
-      if (processedLine.startsWith('## ')) return <h2 key={idx}>{processedLine.replace('## ', '')}</h2>;
-      if (processedLine.startsWith('# ')) return <h1 key={idx}>{processedLine.replace('# ', '')}</h1>;
-      if (processedLine.startsWith('- ') || processedLine.startsWith('* ')) return <li key={idx} className="note-list-item">{processedLine.replace(/^[-*]\s/, '')}</li>;
-      if (processedLine.match(/^\d+\.\s/)) return <li key={idx} className="note-list-item ordered">{processedLine.replace(/^\d+\.\s/, '')}</li>;
-      if (processedLine.startsWith('> ')) return <blockquote key={idx} className="note-quote">{processedLine.replace('> ', '')}</blockquote>;
-      if (processedLine.trim() === '---') return <hr key={idx} className="note-divider" />;
-
-      // Substituições Inline
-      const htmlLine = processedLine
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/==(.*?)==/g, '<mark>$1</mark>')
-        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="preview-link">$1</a>');
-
-      if (processedLine.trim() === '') return <br key={idx} />;
-      return <p key={idx} dangerouslySetInnerHTML={{ __html: htmlLine }}></p>;
-    });
-  };
 
   return (
     <>
@@ -152,8 +159,8 @@ const PublishNote: React.FC = () => {
                   Rascunho <Save size={16} />
                 </button>
 
-                <button type="submit" className="btn-publish-submit">
-                  Publicar <Send size={16} />
+                <button type="submit" className="btn-publish-submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Publicando...' : 'Publicar'} <Send size={16} />
                 </button>
               </div>
             </div>
@@ -290,7 +297,7 @@ const PublishNote: React.FC = () => {
                       <div className="author-info-left">
                         <div className="author-avatar"><User size={20} /></div>
                         <div>
-                          <strong>Devair Junior</strong>
+                          <strong>{currentUser?.displayName || 'Usuário Omni'}</strong>
                           <div className="preview-meta">
                             <span>Agora mesmo</span>
                             <span className="dot">•</span>
@@ -302,7 +309,7 @@ const PublishNote: React.FC = () => {
                   </header>
 
                   <div className="preview-content-body">
-                    {content ? renderMarkdown(content) : (
+                    {content ? <MarkdownRenderer content={content} /> : (
                       <div className="empty-preview-state">
                         <FileText size={40} />
                         <p>O conteúdo do seu resumo aparecerá aqui...</p>

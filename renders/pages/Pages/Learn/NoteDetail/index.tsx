@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, User, ThumbsUp, MessageSquare, Share2, Bookmark } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../../../src/config/firebaseConfig';
+import { learnService } from '../../../../../src/services/learnService';
+import type { StudyNote } from '../../../../../src/types/learn';
 import './styles.css';
+import MarkdownRenderer from '../../../../../src/components/MarkdownRenderer';
 import Footer from '../../../../menus/Footer';
 
 const NoteDetail: React.FC = () => {
@@ -11,7 +12,7 @@ const NoteDetail: React.FC = () => {
   const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
-  const [noteData, setNoteData] = useState<any>(null);
+  const [noteData, setNoteData] = useState<StudyNote | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,9 +20,8 @@ const NoteDetail: React.FC = () => {
     const fetchNote = async () => {
       if (!id) return;
       try {
-        const docSnap = await getDoc(doc(db, "notes", id));
-        if (docSnap.exists()) {
-          const data = docSnap.data();
+        const data = await learnService.getNoteById(id);
+        if (data) {
           setNoteData(data);
           setLikesCount(data.likes || 0);
         }
@@ -34,9 +34,24 @@ const NoteDetail: React.FC = () => {
     fetchNote();
   }, [id]);
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+  const handleLike = async () => {
+    if (!id) return;
+    const previousLiked = isLiked;
+    setIsLiked(!previousLiked);
+    setLikesCount(prev => previousLiked ? prev - 1 : prev + 1);
+
+    try {
+      if (previousLiked) {
+        await learnService.unlikeNote(id);
+      } else {
+        await learnService.likeNote(id);
+      }
+    } catch (err) {
+      console.error("Erro ao processar like", err);
+      // Reverte estado local em caso de erro
+      setIsLiked(previousLiked);
+      setLikesCount(prev => previousLiked ? prev + 1 : prev - 1);
+    }
   };
 
   if (loading) return <div style={{ padding: '100px', textAlign: 'center' }}>Carregando estudo...</div>;
@@ -75,16 +90,7 @@ const NoteDetail: React.FC = () => {
             </header>
 
             <div className="note-content-body">
-              {/* Simulação de renderização de Markdown/Texto Rico */}
-              {noteData.content.split('\n').map((paragraph: any, idx: number) => {
-                if (paragraph.startsWith('###')) {
-                  return <h3 key={idx}>{paragraph.replace('###', '')}</h3>;
-                }
-                if (paragraph.startsWith('*')) {
-                  return <li key={idx} className="note-list-item">{paragraph.replace('*', '')}</li>;
-                }
-                return <p key={idx}>{paragraph}</p>;
-              })}
+              <MarkdownRenderer content={noteData.content} />
             </div>
 
             <footer className="note-article-footer">
