@@ -14,8 +14,14 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/==(.*?)==/g, '<mark>$1</mark>')
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="md-link">$1</a>')
-      .replace(/\$\\rightarrow\$/g, '→') // Suporte básico para setas LaTeX
-      .replace(/\$\\leftarrow\$/g, '←');
+      // Símbolos Matemáticos Básicos (LaTeX-like)
+      .replace(/\$\\rightarrow\$/g, '→')
+      .replace(/\$\\leftarrow\$/g, '←')
+      .replace(/\\sqrt\{(.*?)\}/g, '√$1')
+      .replace(/\\times/g, '×')
+      .replace(/\^2/g, '²')
+      .replace(/\^3/g, '³')
+      .replace(/\$+(.*?)\$+/g, '<code class="md-inline-math">$1</code>'); // Envolve fórmulas em code style
   };
 
   const renderMarkdown = (text: string) => {

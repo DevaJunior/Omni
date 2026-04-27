@@ -80,3 +80,12 @@
 .markdown-body .md-link:hover {
     text-decoration: underline;
 }
+
+.markdown-body .md-inline-math {
+    background: rgba(0, 0, 0, 0.04);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+    color: #c026d3; /* Um tom de roxo para destacar fórmulas */
+}
