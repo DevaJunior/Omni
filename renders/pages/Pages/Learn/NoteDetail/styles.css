@@ -123,6 +123,10 @@
   margin-bottom: 4rem;
 }
 
+.note-content-body .md-image {
+  box-shadow: none !important;
+}
+
 .note-content-body p {
   margin-bottom: 1.5rem;
 }

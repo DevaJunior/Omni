@@ -30,6 +30,11 @@
     margin-bottom: 1rem;
 }
 
+.markdown-body .md-list-container {
+    margin-bottom: 1.5rem;
+    padding-left: 0;
+}
+
 .markdown-body .md-list-item {
     margin-left: 1.5rem;
     margin-bottom: 0.5rem;
@@ -42,12 +47,18 @@
 
 .markdown-body .md-quote {
     border-left: 4px solid var(--primary, #2563eb);
-    padding: 0.5rem 1rem;
+    padding: 1rem;
     margin: 1.5rem 0;
     background: rgba(37, 99, 235, 0.05);
     color: #555;
-    font-style: italic;
     border-radius: 0 4px 4px 0;
+    white-space: pre-wrap;
+    /* Preserva espaços e quebras de linha */
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+}
+
+.markdown-body .md-code-line {
+    min-height: 1.5rem;
 }
 
 .markdown-body .md-divider {
@@ -87,5 +98,19 @@
     border-radius: 4px;
     font-family: 'Courier New', Courier, monospace;
     font-weight: 600;
-    color: #c026d3; /* Um tom de roxo para destacar fórmulas */
+    color: #c026d3;
+    /* Um tom de roxo para destacar fórmulas */
+}
+
+.markdown-body .md-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-body sub {
+    font-size: 0.8em;
+    vertical-align: sub;
 }
