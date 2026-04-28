@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { 
-  GoogleAuthProvider, 
-  signInWithPopup, 
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   onAuthStateChanged,
   signOut as firebaseSignOut,
   setPersistence,
   browserLocalPersistence,
-  type User 
+  type User
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../config/firebaseConfig';
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             email: user.email || '',
             username: `@${(user.email || 'user').split('@')[0]}`,
             avatar: user.photoURL || '',
-            originalAvatar: user.photoURL || '', 
+            originalAvatar: user.photoURL || '',
             bio: '',
             phone: '',
             location: '',
@@ -118,22 +118,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginWithGoogle = async () => {
     const googleProvider = new GoogleAuthProvider();
     googleProvider.setCustomParameters({ prompt: 'select_account' });
-    
+
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 800;
 
     try {
       if (isMobile) {
         await signInWithRedirect(auth, googleProvider);
       } else {
-        const result = await signInWithPopup(auth, googleProvider);
-        await ensureUserDocument(result.user);
+        try {
+          const result = await signInWithPopup(auth, googleProvider);
+          await ensureUserDocument(result.user);
+        } catch (popupError: any) {
+          console.warn("Popup bloqueado ou erro de COOP. Tentando Redirect...", popupError);
+          await signInWithRedirect(auth, googleProvider);
+        }
       }
     } catch (error: any) {
-      if (error.code === 'auth/popup-blocked') {
-        await signInWithRedirect(auth, googleProvider);
-      } else {
-        throw error;
-      }
+      console.error("Erro crítico na autenticação:", error);
+      await signInWithRedirect(auth, googleProvider);
     }
   };
 

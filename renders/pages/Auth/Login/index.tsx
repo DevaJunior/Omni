@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { Network, ArrowRight } from 'lucide-react';
@@ -8,7 +8,8 @@ import './styles.css';
 import coverImg from '../../../../src/assets/wallapapers/wpp_cience_002.png';
 
 const Login: React.FC = () => {
-  const { loginWithGoogle } = useAuth();
+  // Extraímos também o currentUser e o loading do contexto
+  const { loginWithGoogle, currentUser, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [errorText, setErrorText] = useState('');
@@ -17,20 +18,40 @@ const Login: React.FC = () => {
   // Lê a intenção original de rota para devolvê-lo, ou fallback para a Home
   const from = location.state?.from?.pathname || '/';
 
+  // Este useEffect resolve o bug do Mobile. 
+  // Quando o usuário volta do signInWithRedirect, a página recarrega.
+  // O contexto recupera o usuário e atualiza o estado. Esse efeito percebe e redireciona.
+  useEffect(() => {
+    if (currentUser && !loading) {
+      navigate(from, { replace: true });
+    }
+  }, [currentUser, loading, navigate, from]);
+
   const handleGoogleLogin = async () => {
     setIsAuthenticating(true);
     setErrorText('');
     try {
       await loginWithGoogle();
-      // Ao terminar, levamos para a rota pretendida
-      navigate(from, { replace: true });
+      // No Desktop (signInWithPopup), o código aguarda e chega aqui normalmente.
+      // No Mobile (signInWithRedirect), a página é redirecionada antes desta linha executar.
     } catch (err: any) {
       console.error(err);
       setErrorText("Não foi possível autenticar. Janela foi fechada ou erro de conexão.");
-    } finally {
       setIsAuthenticating(false);
     }
   };
+
+  // Previne que a tela de login pisque ou exiba os botões se estiver processando o redirect do mobile
+  if (loading || (currentUser && isAuthenticating)) {
+    return (
+      <div className="login-wrapper">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+          <Network size={48} color="var(--primary)" className="animate-pulse" />
+          <p style={{ color: 'var(--text-primary)', fontFamily: 'Inter, sans-serif' }}>Autenticando laboratório...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="login-wrapper">
