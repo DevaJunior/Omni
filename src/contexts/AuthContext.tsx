@@ -2,14 +2,22 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
   GoogleAuthProvider, 
   signInWithPopup, 
-  type User, 
+  signInWithRedirect,
+  getRedirectResult,
   onAuthStateChanged,
-  signOut as firebaseSignOut
+  signOut as firebaseSignOut,
+  setPersistence,
+  browserLocalPersistence,
+  type User 
 } from 'firebase/auth';
-import { auth } from '../config/firebaseConfig'; // Firebase instance
+import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../config/firebaseConfig';
+import { FIREBASE_ROUTES } from '../constants/firebaseRoutes';
+import type { IUser } from '../types';
 
 interface AuthContextType {
   currentUser: User | null;
+  userProfile: IUser | null;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
@@ -17,58 +25,130 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Setar o provedor de Google Auth
-  const googleProvider = new GoogleAuthProvider();
-  // Permite select de contas sempre que clicar, para não travar num mesmo email sempre
-  googleProvider.setCustomParameters({
-    prompt: 'select_account'
-  });
+  const ensureUserDocument = async (user: User) => {
+    try {
+      const userRef = doc(db, FIREBASE_ROUTES.USERS, user.uid);
+      const docSnap = await getDoc(userRef);
+
+      if (!docSnap.exists()) {
+        const newUser: IUser = {
+          uid: user.uid,
+          role: 'user',
+          personal: {
+            name: user.displayName || 'Usuário',
+            email: user.email || '',
+            username: `@${(user.email || 'user').split('@')[0]}`,
+            avatar: user.photoURL || '',
+            originalAvatar: user.photoURL || '', 
+            bio: '',
+            phone: '',
+            location: '',
+            isVerified: false,
+            job: '',
+            school: '',
+            highlights: [],
+          },
+          assets: {
+            events: { organizedEventIds: [] },
+            shops: { ownedShopIds: [] },
+            realEstate: { ownedPropertyIds: [] },
+            jobs: { postedJobIds: [], appliedJobIds: [] }
+          },
+          activity: { orders: 0, tickets: [], appointments: [], favorites: [] },
+          gamification: { xp: 0, level: 1, coins: 0 },
+          dating: { isActive: false },
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+        await setDoc(userRef, newUser);
+      }
+    } catch (error) {
+      console.error("Erro ao garantir documento do usuário:", error);
+    }
+  };
 
   useEffect(() => {
-    // onAuthStateChanged detecta estado logado/deslogado persistente do Firebase
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    let unsubscribeFirestore: (() => void) | undefined;
+
+    const initAuth = async () => {
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+        const result = await getRedirectResult(auth);
+        if (result) {
+          await ensureUserDocument(result.user);
+        }
+      } catch (error) {
+        console.error("Erro no resultado do redirect:", error);
+      }
+    };
+
+    initAuth();
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+
+      if (user) {
+        await ensureUserDocument(user);
+
+        const userRef = doc(db, FIREBASE_ROUTES.USERS, user.uid);
+        unsubscribeFirestore = onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setUserProfile(docSnap.data() as IUser);
+          }
+        });
+      } else {
+        setUserProfile(null);
+      }
       setLoading(false);
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeFirestore) unsubscribeFirestore();
+    };
   }, []);
 
   const loginWithGoogle = async () => {
+    const googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: 'select_account' });
+    
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 800;
+
     try {
-      await signInWithPopup(auth, googleProvider);
-      // Redirecionamento e salvamento extra podem ser feitos onde o hook for chamado
-    } catch (error) {
-      console.error("Erro no login com google", error);
-      throw error;
+      if (isMobile) {
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        const result = await signInWithPopup(auth, googleProvider);
+        await ensureUserDocument(result.user);
+      }
+    } catch (error: any) {
+      if (error.code === 'auth/popup-blocked') {
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        throw error;
+      }
     }
   };
 
   const logout = async () => {
     try {
+      setUserProfile(null);
       await firebaseSignOut(auth);
     } catch (error) {
-      console.error("Erro durante logout", error);
+      console.error("Erro ao deslogar:", error);
+      throw error;
     }
   };
 
-  const value = {
-    currentUser,
-    loading,
-    loginWithGoogle,
-    logout
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ currentUser, userProfile, loading, loginWithGoogle, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -14,8 +14,8 @@ const Login: React.FC = () => {
   const [errorText, setErrorText] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-  // Lê a intenção original de rota para devolvê-lo, ou fallback para community
-  const from = location.state?.from?.pathname || '/community';
+  // Lê a intenção original de rota para devolvê-lo, ou fallback para a Home
+  const from = location.state?.from?.pathname || '/';
 
   const handleGoogleLogin = async () => {
     setIsAuthenticating(true);

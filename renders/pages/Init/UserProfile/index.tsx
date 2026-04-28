@@ -13,28 +13,35 @@ import {
   Activity,
   ArrowLeft
 } from 'lucide-react';
-import { FiGithub, FiLinkedin } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../src/config/firebaseConfig';
 import Footer from '../../../menus/Footer';
+import { useAuth } from '../../../../src/contexts/AuthContext';
+import type { IUser } from '../../../../src/types';
+
 
 const UserProfile: React.FC = () => {
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'visao-geral' | 'projetos' | 'publicacoes'>('visao-geral');
 
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    
-    // Busca dos dados no Firestore (ID mockado para validação)
+
     const fetchUser = async () => {
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const userDoc = await getDoc(doc(db, "users", "uid_devair_junior"));
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         if (userDoc.exists()) {
-          setUserData(userDoc.data());
+          setUserData(userDoc.data() as IUser);
         }
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
@@ -44,7 +51,7 @@ const UserProfile: React.FC = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [currentUser]);
 
   if (loading) {
     return (
@@ -62,6 +69,10 @@ const UserProfile: React.FC = () => {
     );
   }
 
+  // Fallbacks para campos que podem ser nulos em contas novas
+  const personal = userData.personal || {};
+  const lab = userData.role === 'user' ? { name: 'Comunidade Omni', role: 'Pesquisador' } : { name: 'Lab Omni', role: 'Moderador' };
+
   return (
     <>
       <div className="user-profile-wrapper">
@@ -74,7 +85,11 @@ const UserProfile: React.FC = () => {
 
           {/* HEADER / COVER */}
           <div className="profile-cover-card">
-            <img src={userData.cover} alt="Capa do Perfil" className="profile-cover-img" />
+            <img
+              src={personal.originalAvatar || "https://images.unsplash.com/photo-1532094349884-543bb11783bb?auto=format&fit=crop&q=80"}
+              alt="Capa do Perfil"
+              className="profile-cover-img"
+            />
             <button className="btn-edit-cover"><Edit3 size={16} /> Editar Capa</button>
           </div>
 
@@ -83,48 +98,44 @@ const UserProfile: React.FC = () => {
             {/* SIDEBAR ESQUERDA: Info Pessoal */}
             <aside className="profile-sidebar">
               <div className="profile-avatar-wrapper">
-                <img src={userData.avatar} alt={userData.name} className="profile-avatar" />
+                <img src={personal.avatar || "https://ui-avatars.com/api/?name=" + (personal.name || "User")} alt={personal.name} className="profile-avatar" />
               </div>
 
               <div className="profile-basic-info">
-                <h1>{userData.name}</h1>
-                <h2>{userData.headline}</h2>
-                <button className="btn-profile-primary">Editar Perfil</button>
+                <h1>{personal.name || 'Usuário Omni'}</h1>
+                <h2>{personal.job || 'Pesquisador Acadêmico'}</h2>
+                <button className="btn-profile-primary" onClick={() => navigate('/settings')}>Editar Perfil</button>
               </div>
 
               <div className="profile-details-list">
                 <div className="detail-item">
                   <MapPin size={18} />
-                  <span>{userData.location}</span>
+                  <span>{personal.location || 'Localização não informada'}</span>
                 </div>
                 <div className="detail-item">
                   <Briefcase size={18} />
-                  <span>{userData.lab.role} em <strong onClick={() => navigate('/lab/1')} style={{ cursor: 'pointer' }}>{userData.lab.name}</strong></span>
+                  <span>{lab.role} em <strong style={{ cursor: 'pointer' }}>{lab.name}</strong></span>
                 </div>
                 <div className="detail-item">
                   <GraduationCap size={18} />
-                  <span>Mestrado na UNIFAL-MG</span>
+                  <span>{personal.school || 'Instituição não informada'}</span>
                 </div>
                 <div className="detail-item">
                   <Mail size={18} />
-                  <a href={`mailto:${userData.email}`}>{userData.email}</a>
-                </div>
-                <div className="detail-item">
-                  <FiGithub size={18} />
-                  <a href={`https://${userData.github}`} target="_blank" rel="noreferrer">{userData.github}</a>
-                </div>
-                <div className="detail-item">
-                  <FiLinkedin size={18} />
-                  <a href={`https://${userData.linkedin}`} target="_blank" rel="noreferrer">{userData.linkedin}</a>
+                  <a href={`mailto:${personal.email}`}>{personal.email}</a>
                 </div>
               </div>
 
               <div className="profile-skills-section">
                 <h3>Competências</h3>
                 <div className="skills-tags">
-                  {userData.skills.map((skill: any) => (
-                    <span key={skill} className="skill-tag">{skill}</span>
-                  ))}
+                  {(personal.highlights || []).length > 0 ? (
+                    personal.highlights.map((skill: string) => (
+                      <span key={skill} className="skill-tag">{skill}</span>
+                    ))
+                  ) : (
+                    <span className="skill-tag">Inovação Científica</span>
+                  )}
                 </div>
               </div>
             </aside>
@@ -154,7 +165,11 @@ const UserProfile: React.FC = () => {
 
                 <div className="tab-spacer"></div>
 
-                <button className="tab-btn-icon" title="Configurações da Conta">
+                <button
+                  className="tab-btn-icon"
+                  title="Configurações da Conta"
+                  onClick={() => navigate('/settings')}
+                >
                   <Settings size={20} />
                 </button>
               </div>
@@ -166,7 +181,7 @@ const UserProfile: React.FC = () => {
                   <div className="anim-fade-up">
                     <div className="content-card">
                       <h3 className="card-section-title">Sobre</h3>
-                      <p className="profile-bio-text">{userData.bio}</p>
+                      <p className="profile-bio-text">{personal.bio || "Este usuário ainda não escreveu uma bio."}</p>
                     </div>
 
                     <div className="content-card mt-4">
@@ -175,22 +190,8 @@ const UserProfile: React.FC = () => {
                         <div className="activity-item">
                           <div className="activity-icon blue"><Terminal size={16} /></div>
                           <div className="activity-details">
-                            <p>Adicionou o módulo <strong>Engine P-Fuzzy</strong> à plataforma Omni.</p>
-                            <span className="activity-time">Hoje</span>
-                          </div>
-                        </div>
-                        <div className="activity-item">
-                          <div className="activity-icon green"><BookOpen size={16} /></div>
-                          <div className="activity-details">
-                            <p>Apoiou a publicação <em>"Modelagem P-Fuzzy Aplicada na Fitorremediação"</em>.</p>
-                            <span className="activity-time">Há 3 dias</span>
-                          </div>
-                        </div>
-                        <div className="activity-item">
-                          <div className="activity-icon amber"><Briefcase size={16} /></div>
-                          <div className="activity-details">
-                            <p>Atualizou o status do projeto <strong>Spotted</strong> para "Validação".</p>
-                            <span className="activity-time">Semana passada</span>
+                            <p>Realizou login na plataforma Omni.</p>
+                            <span className="activity-time">Agora</span>
                           </div>
                         </div>
                       </div>
@@ -201,22 +202,11 @@ const UserProfile: React.FC = () => {
                 {/* ABA: PROJETOS */}
                 {activeTab === 'projetos' && (
                   <div className="projects-grid anim-fade-up">
-                    {userData.projects.map((project: any) => (
-                      <div key={project.id} className="project-card">
-                        <div className="project-header">
-                          <h4><Code2 size={18} /> {project.title}</h4>
-                          <span className={`project-status ${project.status === 'Validação' ? 'status-amber' : 'status-blue'}`}>
-                            {project.status}
-                          </span>
-                        </div>
-                        <p className="project-description">{project.description}</p>
-                        <div className="project-footer">
-                          <div className="project-tags">
-                            {project.tags.map((tag: any) => <span key={tag}>{tag}</span>)}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                    <div className="empty-state-card">
+                      <Code2 size={48} />
+                      <h3>Nenhum projeto público</h3>
+                      <p>Inicie um novo projeto ou torne um projeto privado em público para exibí-lo aqui.</p>
+                    </div>
                   </div>
                 )}
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './values/tokens.css';
 
 // Menus e Configurações
@@ -42,72 +42,66 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router>
-      <ScrollToTop />
-      <Navbar />
-      <main>
+        <ScrollToTop />
         <Routes>
-          {/* ROTA TEMPORÁRIA DE MIGRAÇÃO FIREBASE */}
-          <Route path="/run-seed" element={
-            <div style={{ padding: '100px', textAlign: 'center' }}>
-              <h2>Migração do Firebase</h2>
-              <p>Clique no botão abaixo para popular todos os dados mockados no seu banco do Firestore.</p>
-              <button 
-                onClick={async () => {
-                  try {
-                    const { seedFirebaseDatabase } = await import('./lib/firebase/seed');
-                    await seedFirebaseDatabase();
-                    alert("Migração Concluída com sucesso! Verifique o console do Firebase.");
-                  } catch (e) {
-                    alert("Erro na migração: " + e);
-                  }
-                }}
-                style={{ padding: '10px 20px', fontSize: '18px', background: '#2563eb', color: 'white', borderRadius: '8px', cursor: 'pointer', border: 'none' }}
-              >
-                Executar Carga do Firebase
-              </button>
-            </div>
-          } />
-
-          {/* Rotas Gerais */}
-          <Route path="/" element={<Home />} />
+          {/* Rota de Login: Isolada, sem Navbar */}
           <Route path="/login" element={<Login />} />
-          <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
 
-          {/* Rota de Perfil (User Profile) */}
-          <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+          {/* Todas as outras rotas: Protegidas e com Navbar */}
+          <Route path="*" element={
+            <>
+              <Navbar />
+              <main>
+                <Routes>
+                  <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                  <Route path="/home" element={<Navigate to="/" replace />} />
+                  
+                  <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
-          {/* Rotas da Comunidade (Detalhes) */}
-          <Route path="/article/:id" element={<ProtectedRoute><ArticleDetail /></ProtectedRoute>} />
-          <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
-          <Route path="/discussion/:id" element={<ProtectedRoute><DiscussionDetail /></ProtectedRoute>} />
+                  {/* Detalhes da Comunidade */}
+                  <Route path="/article/:id" element={<ProtectedRoute><ArticleDetail /></ProtectedRoute>} />
+                  <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
+                  <Route path="/discussion/:id" element={<ProtectedRoute><DiscussionDetail /></ProtectedRoute>} />
 
-          {/* Rotas do Ecossistema Lab */}
-          <Route path="/lab" element={<ProtectedRoute><Lab /></ProtectedRoute>} />
+                  {/* Ecossistema Lab e Ferramentas */}
+                  <Route path="/lab" element={<ProtectedRoute><Lab /></ProtectedRoute>} />
+                  <Route path="/lab/molarity-calc" element={<ProtectedRoute><MolarityCalc /></ProtectedRoute>} />
+                  <Route path="/lab/dilution" element={<ProtectedRoute><DilutionCalc /></ProtectedRoute>} />
+                  <Route path="/lab/lab-timer" element={<ProtectedRoute><LabTimer /></ProtectedRoute>} />
+                  <Route path="/lab/unit-converter" element={<ProtectedRoute><UnitConverter /></ProtectedRoute>} />
+                  <Route path="/lab/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
 
-          {/* Rotas das Ferramentas (Widgets) */}
-          <Route path="/lab/molarity-calc" element={<ProtectedRoute><MolarityCalc /></ProtectedRoute>} />
-          <Route path="/lab/dilution" element={<ProtectedRoute><DilutionCalc /></ProtectedRoute>} />
-          <Route path="/lab/lab-timer" element={<ProtectedRoute><LabTimer /></ProtectedRoute>} />
-          <Route path="/lab/unit-converter" element={<ProtectedRoute><UnitConverter /></ProtectedRoute>} />
-          <Route path="/lab/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+                  {/* Learn e Artigos */}
+                  <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
+                  <Route path="/learn/new" element={<ProtectedRoute><PublishNote /></ProtectedRoute>} />
+                  <Route path="/learn/:id" element={<ProtectedRoute><NoteDetail /></ProtectedRoute>} />
 
-          {/* Rotas da Learn (Aprendendo) */}
-          <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
-          <Route path="/learn/new" element={<ProtectedRoute><PublishNote /></ProtectedRoute>} />
-          <Route path="/learn/:id" element={<ProtectedRoute><NoteDetail /></ProtectedRoute>} />
+                  {/* P-Fuzzy */}
+                  <Route path="/lab/pfuzzy-rizofiltracao" element={<ProtectedRoute><PFuzzyRizofiltracao /></ProtectedRoute>} />
+                  <Route path="/lab/p-fuzzy-engine" element={<ProtectedRoute><PFuzzyEngine /></ProtectedRoute>} />
 
-          {/* Rotas Avançadas P-Fuzzy (Devem vir ANTES da rota dinâmica /lab/:id) */}
-          <Route path="/lab/pfuzzy-rizofiltracao" element={<ProtectedRoute><PFuzzyRizofiltracao /></ProtectedRoute>} />
-          <Route path="/lab/p-fuzzy-engine" element={<ProtectedRoute><PFuzzyEngine /></ProtectedRoute>} />
+                  {/* Perfis Dinâmicos */}
+                  <Route path="/lab/:id" element={<ProtectedRoute><LabProfile /></ProtectedRoute>} />
 
-          {/* Rota Dinâmica de Perfil de Laboratório */}
-          <Route path="/lab/:id" element={<ProtectedRoute><LabProfile /></ProtectedRoute>} />
-
+                  {/* Rota de Migração */}
+                  <Route path="/run-seed" element={
+                    <div style={{ padding: '100px', textAlign: 'center' }}>
+                      <h2>Migração do Firebase</h2>
+                      <button onClick={async () => {
+                        const { seedFirebaseDatabase } = await import('./lib/firebase/seed');
+                        await seedFirebaseDatabase();
+                        alert("Migração Concluída!");
+                      }}>Executar Carga do Firebase</button>
+                    </div>
+                  } />
+                </Routes>
+              </main>
+            </>
+          } />
         </Routes>
-      </main>
-      {/* O Footer já está sendo renderizado individualmente no final de cada página */}
-    </Router>
-      </AuthProvider>
+      </Router>
+    </AuthProvider>
   );
 };
 
