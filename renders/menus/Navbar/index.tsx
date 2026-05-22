@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info } from 'lucide-react';
+import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info, Mail } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { notificationService, type NotificationData } from '../../../src/services/notificationService';
 import './styles.css';
@@ -179,6 +179,17 @@ const Navbar: React.FC = () => {
                 </div>
               )}
             </div>
+          )}
+
+          {/* Inbox / Mensagens Menu */}
+          {currentUser && (
+            <button
+              className={`icon-btn ${isActive('/inbox')}`}
+              onClick={() => navigate('/inbox')}
+              title="Mensagens Diretas"
+            >
+              <Mail size={20} />
+            </button>
           )}
 
           {/* Profile Menu */}

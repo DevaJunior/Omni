@@ -39,6 +39,7 @@ import PublishNote from './../renders/pages/Pages/Learn/PublishNote/index';
 import NoteDetail from './../renders/pages/Pages/Learn/NoteDetail/index';
 import Settings from '../renders/pages/Pages/Settings';
 import SearchPage from '../renders/pages/Pages/Search';
+import Inbox from '../renders/pages/Pages/Inbox';
 
 
 const App: React.FC = () => {
@@ -61,6 +62,7 @@ const App: React.FC = () => {
                   
                   <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
                   <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                  <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
                   <Route path="/profile/:id" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
                   <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />

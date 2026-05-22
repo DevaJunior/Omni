@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
-  Heart,
   MessageSquare,
   Share2,
   MoreHorizontal,
   Send,
-  UserPlus
+  UserPlus,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
@@ -80,9 +81,11 @@ const DiscussionDetail: React.FC = () => {
             </div>
 
             <div className="disc-post-actions">
-              <button className="disc-action-btn">
-                <Heart size={18} /> {discussion.likes} Curtidas
-              </button>
+              <div className="disc-vote-group">
+                <button className="disc-action-btn-icon"><ChevronUp size={22} /></button>
+                <span className="disc-vote-count">{discussion.likes}</span>
+                <button className="disc-action-btn-icon"><ChevronDown size={22} /></button>
+              </div>
               <button className="disc-action-btn active-state">
                 <MessageSquare size={18} /> {discussion.commentsCount} Comentários
               </button>
@@ -118,10 +121,10 @@ const DiscussionDetail: React.FC = () => {
 
           {/* Árvore de Comentários */}
           <div className="disc-comments-section">
-            <h3 className="disc-comments-title">Respostas ({discussion.replies.length})</h3>
+            <h3 className="disc-comments-title">Respostas ({(discussion.replies || []).length})</h3>
 
             <div className="disc-comments-list">
-              {discussion.replies.length === 0 ? (
+              {(!discussion.replies || discussion.replies.length === 0) ? (
                 <p style={{ color: 'var(--text-muted)' }}>Seja o primeiro a responder esta discussão!</p>
               ) : (
                 discussion.replies.map((reply: any) => (
@@ -136,9 +139,11 @@ const DiscussionDetail: React.FC = () => {
                       </div>
                       <p className="disc-comment-text">{reply.content}</p>
                       <div className="disc-comment-actions">
-                        <button className="disc-action-btn-small">
-                          <Heart size={14} /> {reply.likes}
-                        </button>
+                        <div className="disc-vote-group-small">
+                          <button className="disc-action-btn-icon"><ChevronUp size={16} /></button>
+                          <span className="disc-vote-count-small">{reply.likes}</span>
+                          <button className="disc-action-btn-icon"><ChevronDown size={16} /></button>
+                        </div>
                         <button className="disc-action-btn-small">Responder</button>
                       </div>
                     </div>

@@ -107,8 +107,8 @@ const UserProfile: React.FC = () => {
               </div>
 
               <div className="profile-basic-info">
-                <h1>{personal.name || userData.name || 'Usuário Omni'}</h1>
-                <h2>{personal.job || userData.headline || 'Pesquisador Acadêmico'}</h2>
+                <h1>{personal.name || (userData as any).name || 'Usuário Omni'}</h1>
+                <h2>{personal.job || (userData as any).headline || 'Pesquisador Acadêmico'}</h2>
                 {(!id || id === currentUser?.uid) && (
                   <button className="btn-profile-primary" onClick={() => navigate('/settings')}>Editar Perfil</button>
                 )}
