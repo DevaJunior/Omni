@@ -44,9 +44,15 @@ const UserProfile: React.FC = () => {
         const userDoc = await getDoc(doc(db, "users", targetId));
         if (userDoc.exists()) {
           setUserData(userDoc.data() as IUser);
-        } else if (id && currentUser && id === currentUser.uid) {
-           // Fallback de segurança se logado recém criado
-           setUserData({ name: "Usuário Recente", role: "user" } as any);
+        } else if (currentUser && targetId === currentUser.uid) {
+           // Fallback de segurança temporário se o doc do usuário logado acabou de ser criado e o Firestore ainda não indexou o read
+           setUserData({ 
+             id: currentUser.uid,
+             name: currentUser.displayName || "Usuário Recente", 
+             email: currentUser.email || "",
+             role: "Pesquisador",
+             avatar: currentUser.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200"
+           } as any);
         }
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
