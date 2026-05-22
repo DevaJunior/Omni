@@ -37,6 +37,8 @@ import UserProfile from '../renders/pages/Init/UserProfile/index';
 import Learn from './../renders/pages/Pages/Learn/Learn/index';
 import PublishNote from './../renders/pages/Pages/Learn/PublishNote/index';
 import NoteDetail from './../renders/pages/Pages/Learn/NoteDetail/index';
+import Settings from '../renders/pages/Pages/Settings/Settings';
+
 
 const App: React.FC = () => {
   return (
@@ -58,6 +60,7 @@ const App: React.FC = () => {
                   
                   <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+                  <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 
                   {/* Detalhes da Comunidade */}
                   <Route path="/article/:id" element={<ProtectedRoute><ArticleDetail /></ProtectedRoute>} />

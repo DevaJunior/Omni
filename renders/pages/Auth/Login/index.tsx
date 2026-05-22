@@ -42,7 +42,7 @@ const Login: React.FC = () => {
   };
 
   // Previne que a tela de login pisque ou exiba os botões se estiver processando o redirect do mobile
-  if (loading || (currentUser && isAuthenticating)) {
+  if (loading || currentUser) {
     return (
       <div className="login-wrapper">
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
