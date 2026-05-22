@@ -59,7 +59,8 @@ const App: React.FC = () => {
                 <Routes>
                   <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                   <Route path="/home" element={<Navigate to="/" replace />} />
-                  
+
+
                   <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
                   <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
                   <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
