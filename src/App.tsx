@@ -38,6 +38,7 @@ import Learn from './../renders/pages/Pages/Learn/Learn/index';
 import PublishNote from './../renders/pages/Pages/Learn/PublishNote/index';
 import NoteDetail from './../renders/pages/Pages/Learn/NoteDetail/index';
 import Settings from '../renders/pages/Pages/Settings';
+import SearchPage from '../renders/pages/Pages/Search';
 
 
 const App: React.FC = () => {
@@ -58,6 +59,7 @@ const App: React.FC = () => {
                   <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                   <Route path="/home" element={<Navigate to="/" replace />} />
                   
+                  <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
                   <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
                   <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
