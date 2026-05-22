@@ -2,12 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   GoogleAuthProvider,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   onAuthStateChanged,
   signOut as firebaseSignOut,
-  setPersistence,
-  browserLocalPersistence,
   type User
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
@@ -32,6 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userProfile, setUserProfile] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // --- FUNÇÃO AUXILIAR: CRIAÇÃO INICIAL DO DOCUMENTO DO USUÁRIO ---
   const ensureUserDocument = async (user: User) => {
     try {
       const userRef = doc(db, FIREBASE_ROUTES.USERS, user.uid);
@@ -74,22 +71,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // --- LOGIN COM GOOGLE (Padrão Spotted: apenas signInWithPopup) ---
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    await ensureUserDocument(result.user);
+  };
+
+  const logout = async () => {
+    setUserProfile(null);
+    await firebaseSignOut(auth);
+  };
+
+  // --- MONITORAMENTO GLOBAL ---
   useEffect(() => {
     let unsubscribeFirestore: (() => void) | undefined;
-
-    const initAuth = async () => {
-      try {
-        await setPersistence(auth, browserLocalPersistence);
-        const result = await getRedirectResult(auth);
-        if (result) {
-          await ensureUserDocument(result.user);
-        }
-      } catch (error) {
-        console.error("Erro no resultado do redirect:", error);
-      }
-    };
-
-    initAuth();
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
@@ -115,32 +111,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const loginWithGoogle = async () => {
-    const googleProvider = new GoogleAuthProvider();
-    googleProvider.setCustomParameters({ prompt: 'select_account' });
-
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      await ensureUserDocument(result.user);
-    } catch (error: any) {
-      console.warn("Popup bloqueado ou falhou. Tentando Redirect...", error);
-      await signInWithRedirect(auth, googleProvider);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      setUserProfile(null);
-      await firebaseSignOut(auth);
-    } catch (error) {
-      console.error("Erro ao deslogar:", error);
-      throw error;
-    }
-  };
-
   return (
     <AuthContext.Provider value={{ currentUser, userProfile, loading, loginWithGoogle, logout }}>
-      {!loading && children}
+      {loading ? null : children}
     </AuthContext.Provider>
   );
 };
