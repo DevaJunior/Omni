@@ -119,22 +119,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const googleProvider = new GoogleAuthProvider();
     googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 800;
-
     try {
-      if (isMobile) {
-        await signInWithRedirect(auth, googleProvider);
-      } else {
-        try {
-          const result = await signInWithPopup(auth, googleProvider);
-          await ensureUserDocument(result.user);
-        } catch (popupError: any) {
-          console.warn("Popup bloqueado ou erro de COOP. Tentando Redirect...", popupError);
-          await signInWithRedirect(auth, googleProvider);
-        }
-      }
+      const result = await signInWithPopup(auth, googleProvider);
+      await ensureUserDocument(result.user);
     } catch (error: any) {
-      console.error("Erro crítico na autenticação:", error);
+      console.warn("Popup bloqueado ou falhou. Tentando Redirect...", error);
       await signInWithRedirect(auth, googleProvider);
     }
   };
