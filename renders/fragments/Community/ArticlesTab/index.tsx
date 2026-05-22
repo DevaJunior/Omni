@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { BookOpen, Calendar, Users, Download, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import type { Article } from '../../../../src/types/community';
+import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import './styles.css';
 
 import img1 from '../../../../src/assets/wallapapers/wpp_cience_000.png';
@@ -10,7 +11,12 @@ import img2 from '../../../../src/assets/wallapapers/wpp_cience_001.png';
 
 type SortOption = 'recent' | 'impact' | 'likes';
 
-const ArticlesTab: React.FC = () => {
+interface ArticlesTabProps {
+  searchQuery?: string;
+  onClear?: () => void;
+}
+
+const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) => {
   const [sortBy, setSortBy] = useState<SortOption>('recent');
   const navigate = useNavigate();
 
@@ -48,11 +54,28 @@ const ArticlesTab: React.FC = () => {
     fetchArticles();
   }, []);
 
-  const sortedArticles = [...articlesList].sort((a, b) => {
-    if (sortBy === 'impact') return b.impactFactor - a.impactFactor;
-    if (sortBy === 'likes') return b.likes - a.likes;
-    return b.id.localeCompare(a.id);
-  });
+  const getSearchScore = (article: any) => {
+    if (!searchQuery) return 1; // Se não tem busca, todos tem score 1
+    const q = searchQuery.toLowerCase();
+    let score = 0;
+    if (article.title.toLowerCase().includes(q)) score += 10;
+    if (article.abstract.toLowerCase().includes(q)) score += 5;
+    if (article.tags.some((tag: string) => tag.toLowerCase().includes(q))) score += 1;
+    return score;
+  };
+
+  const sortedArticles = [...articlesList]
+    .map(a => ({ ...a, _searchScore: getSearchScore(a) }))
+    .filter(a => a._searchScore > 0)
+    .sort((a, b) => {
+      // Se há busca ativa, prioriza pelo match (Title > Desc > Tag)
+      if (searchQuery) return b._searchScore - a._searchScore;
+      
+      // Senão usa a aba selecionada
+      if (sortBy === 'impact') return b.impactFactor - a.impactFactor;
+      if (sortBy === 'likes') return b.likes - a.likes;
+      return b.id.localeCompare(a.id);
+    });
 
   const handleViewArticle = (id: string | number) => {
     // 3. Salva a posição exata da tela antes de navegar
@@ -61,6 +84,16 @@ const ArticlesTab: React.FC = () => {
   };
 
   if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Artigos...</div>;
+
+  if (sortedArticles.length === 0 && searchQuery !== '') {
+    return (
+      <EmptyStateSearch 
+        searchQuery={searchQuery} 
+        onClear={onClear || (() => {})} 
+        suggestions={['Lógica P-Fuzzy', 'Rizofiltração', 'Vacinas', 'Modelagem']} 
+      />
+    );
+  }
 
   return (
     <div className="cmmt-articles-wrapper">

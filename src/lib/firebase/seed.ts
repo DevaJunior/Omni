@@ -23,6 +23,11 @@ const userData = {
   }
 };
 
+const mockOtherUsers = [
+  { id: "uid_ana_costa", name: "Ana Costa", headline: "Doutoranda em Bioquímica | UNICAMP", avatar: "", following: [] },
+  { id: "uid_rafael_mendes", name: "Rafael Mendes", headline: "Pesquisador em Química Analítica", avatar: "", following: [] }
+];
+
 const mockInventory = [
   { id: '1', name: 'Cloreto de Sódio (NaCl) P.A.', cas: '7647-14-5', quantity: 850, unit: 'g', location: 'Prateleira A2', expiration: '2028-10-15', status: 'ok' },
   { id: '2', name: 'Etanol Absoluto 99,8%', cas: '64-17-5', quantity: 150, unit: 'mL', location: 'Armário Inflamáveis', expiration: '2026-12-01', status: 'low' },
@@ -85,16 +90,20 @@ const articlesDatabase = [
 
 const homeArticlesDatabase = [
   {
-    id: "h1", title: "Inovações em biotecnologia: da bancada ao mercado", desc: "Explorando as tendências mais promissoras em biotecnologia e como elas estão sendo traduzidas em práticas.", image: "/src/assets/wallapapers/wpp_cience_000.png", category: "Biotecnologia"
+    id: "h1", title: "Inovações em biotecnologia: da bancada ao mercado", desc: "Explorando as tendências mais promissoras em biotecnologia e como elas estão sendo traduzidas em práticas.", image: "/src/assets/wallapapers/wpp_cience_000.png", category: "Biotecnologia",
+    stats: { views: 120, downloads: 45, citations: 2 }
   },
   {
-    id: "h2", title: "Medicina personalizada: Otimizando tratamentos", desc: "Saiba como a medicina personalizada está utilizando dados genéticos para criar tratamentos sob medida.", image: "/src/assets/wallapapers/wpp_cience_001.png", category: "Medicina"
+    id: "h2", title: "Medicina personalizada: Otimizando tratamentos", desc: "Saiba como a medicina personalizada está utilizando dados genéticos para criar tratamentos sob medida.", image: "/src/assets/wallapapers/wpp_cience_001.png", category: "Medicina",
+    stats: { views: 89, downloads: 12, citations: 0 }
   },
   {
-    id: "h3", title: "Avanços em ciência de materiais: Criando o futuro", desc: "Uma visão geral dos últimos avanços em materiais inteligentes e como eles estão revolucionando a indústria.", image: "/src/assets/wallapapers/wpp_cience_003.png", category: "Ciência"
+    id: "h3", title: "Avanços em ciência de materiais: Criando o futuro", desc: "Uma visão geral dos últimos avanços em materiais inteligentes e como eles estão revolucionando a indústria.", image: "/src/assets/wallapapers/wpp_cience_003.png", category: "Ciência",
+    stats: { views: 240, downloads: 115, citations: 14 }
   },
   {
-    id: "h4", title: "O papel da IA na descoberta de novas vacinas", desc: "Descubra como algoritmos estão acelerando a pesquisa e otimizando testes clínicos para imunizantes.", image: "/src/assets/wallapapers/wpp_cience_002.png", category: "Tecnologia"
+    id: "h4", title: "O papel da IA na descoberta de novas vacinas", desc: "Descubra como algoritmos estão acelerando a pesquisa e otimizando testes clínicos para imunizantes.", image: "/src/assets/wallapapers/wpp_cience_002.png", category: "Tecnologia",
+    stats: { views: 350, downloads: 200, citations: 25 }
   }
 ];
 
@@ -117,6 +126,11 @@ export async function seedFirebaseDatabase() {
     // 1. Criar Perfil de Usuário
     console.log("Populando Users...");
     await setDoc(doc(db, "users", userData.id), userData);
+    
+    // Outros usuários
+    for (const u of mockOtherUsers) {
+      await setDoc(doc(db, "users", u.id), u);
+    }
 
     // 2. Criar Inventário
     console.log("Populando Inventory...");

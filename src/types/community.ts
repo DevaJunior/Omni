@@ -22,6 +22,8 @@ export interface Project {
   deadline: string;
   type: 'Bolsa' | 'Voluntário' | 'Financiamento';
   status: 'Aberto' | 'Em Andamento' | 'Concluído';
+  tags: string[];
+  location?: string;
   author: string;
   authorId?: string;
 }

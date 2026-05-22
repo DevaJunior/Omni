@@ -8,6 +8,7 @@ import Footer from '../../../../menus/Footer';
 import { useNavigate } from 'react-router-dom';
 import { communityService } from '../../../../../src/services/communityService';
 import type { LabPartner } from '../../../../../src/types/community';
+import { useAuth } from '../../../../../src/contexts/AuthContext';
 
 const Community: React.FC = () => {
   const navigate = useNavigate();
@@ -16,7 +17,15 @@ const Community: React.FC = () => {
     (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'articles') || 'articles'
   );
 
+  const { currentUser } = useAuth();
   const [randomLabs, setRandomLabs] = useState<LabPartner[]>([]);
+  const [suggestedUsers, setSuggestedUsers] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (currentUser) {
+      communityService.getSuggestedUsers(currentUser.uid).then(setSuggestedUsers);
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     const fetchLabs = async () => {
@@ -69,6 +78,21 @@ const Community: React.FC = () => {
     setShowFilterMenu(false);
     setSearchError(false);
     setToastMessage(null);
+  };
+
+  const handleFollow = async (userId: string) => {
+    if (!currentUser) return;
+    const success = await communityService.followUser(currentUser.uid, userId);
+    if (success) {
+      setSuggestedUsers(prev => prev.filter(u => u.id !== userId));
+      setToastMessage("Você começou a seguir este pesquisador!");
+      setTimeout(() => setToastMessage(null), 3000);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchValue('');
+    setSearchFilter('');
   };
 
   const trendingTopics = [
@@ -139,7 +163,7 @@ const Community: React.FC = () => {
             {/* Menu Dropdown do Filtro */}
             {showFilterMenu && (
               <div className="cmmt-filter-dropdown-menu">
-                <button onClick={() => handleFilterSelect('')}>Limpar Filtro</button>
+                <button onClick={() => handleFilterSelect('Todos')}>Todos</button>
                 <button onClick={() => handleFilterSelect('Pesquisas')}>Pesquisas</button>
                 <button onClick={() => handleFilterSelect('Discussões')}>Discussões</button>
                 <button onClick={() => handleFilterSelect('Projetos')}>Projetos</button>
@@ -172,9 +196,9 @@ const Community: React.FC = () => {
               </button>
             </div>
 
-            {activeTab === 'projects' && <ProjectsTab />}
-            {activeTab === 'articles' && <ArticlesTab />}
-            {activeTab === 'feed' && <FeedTab />}
+            {activeTab === 'projects' && <ProjectsTab searchQuery={searchValue} onClear={handleClearSearch} />}
+            {activeTab === 'articles' && <ArticlesTab searchQuery={searchValue} onClear={handleClearSearch} />}
+            {activeTab === 'feed' && <FeedTab searchQuery={searchValue} onClear={handleClearSearch} />}
 
           </main>
 
@@ -197,22 +221,39 @@ const Community: React.FC = () => {
                 <h2>Pesquisadores Sugeridos</h2>
               </div>
               <div className="cmmt-suggested-users">
-                <div className="cmmt-user-item">
-                  <div className="cmmt-user-avatar-placeholder">AC</div>
-                  <div className="cmmt-user-details">
-                    <h5>Ana Costa</h5>
-                    <span>Bioquímica</span>
-                  </div>
-                  <button className="cmmt-btn-follow">Seguir</button>
-                </div>
-                <div className="cmmt-user-item">
-                  <div className="cmmt-user-avatar-placeholder">RM</div>
-                  <div className="cmmt-user-details">
-                    <h5>Rafael Mendes</h5>
-                    <span>Química Analítica</span>
-                  </div>
-                  <button className="cmmt-btn-follow">Seguir</button>
-                </div>
+                {suggestedUsers.length > 0 ? (
+                  suggestedUsers.map(user => (
+                    <div 
+                      key={user.id} 
+                      className="cmmt-user-item" 
+                      onClick={() => navigate(`/profile/${user.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.name || 'User'} className="cmmt-user-avatar-img" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+                      ) : (
+                        <div className="cmmt-user-avatar-placeholder">
+                           {user.name ? user.name.substring(0,2).toUpperCase() : 'US'}
+                        </div>
+                      )}
+                      <div className="cmmt-user-details">
+                        <h5>{user.name || 'Usuário Sem Nome'}</h5>
+                        <span>{user.headline ? user.headline.split('|')[0] : ''}</span>
+                      </div>
+                      <button 
+                        className="cmmt-btn-follow" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFollow(user.id);
+                        }}
+                      >
+                        Seguir
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Você já segue todos ou a rede está pequena.</span>
+                )}
               </div>
             </div>
           </aside>

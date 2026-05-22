@@ -13,7 +13,7 @@ import {
   Activity,
   ArrowLeft
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../src/config/firebaseConfig';
 import Footer from '../../../menus/Footer';
@@ -24,6 +24,7 @@ import type { IUser } from '../../../../src/types';
 const UserProfile: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<'visao-geral' | 'projetos' | 'publicacoes'>('visao-geral');
 
   const [userData, setUserData] = useState<IUser | null>(null);
@@ -33,15 +34,19 @@ const UserProfile: React.FC = () => {
     window.scrollTo(0, 0);
 
     const fetchUser = async () => {
-      if (!currentUser) {
+      const targetId = id || (currentUser ? currentUser.uid : null);
+      if (!targetId) {
         setLoading(false);
         return;
       }
 
       try {
-        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        const userDoc = await getDoc(doc(db, "users", targetId));
         if (userDoc.exists()) {
           setUserData(userDoc.data() as IUser);
+        } else if (id && currentUser && id === currentUser.uid) {
+           // Fallback de segurança se logado recém criado
+           setUserData({ name: "Usuário Recente", role: "user" } as any);
         }
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
@@ -102,9 +107,11 @@ const UserProfile: React.FC = () => {
               </div>
 
               <div className="profile-basic-info">
-                <h1>{personal.name || 'Usuário Omni'}</h1>
-                <h2>{personal.job || 'Pesquisador Acadêmico'}</h2>
-                <button className="btn-profile-primary" onClick={() => navigate('/settings')}>Editar Perfil</button>
+                <h1>{personal.name || userData.name || 'Usuário Omni'}</h1>
+                <h2>{personal.job || userData.headline || 'Pesquisador Acadêmico'}</h2>
+                {(!id || id === currentUser?.uid) && (
+                  <button className="btn-profile-primary" onClick={() => navigate('/settings')}>Editar Perfil</button>
+                )}
               </div>
 
               <div className="profile-details-list">
@@ -165,13 +172,15 @@ const UserProfile: React.FC = () => {
 
                 <div className="tab-spacer"></div>
 
-                <button
-                  className="tab-btn-icon"
-                  title="Configurações da Conta"
-                  onClick={() => navigate('/settings')}
-                >
-                  <Settings size={20} />
-                </button>
+                {(!id || id === currentUser?.uid) && (
+                  <button
+                    className="tab-btn-icon"
+                    title="Configurações da Conta"
+                    onClick={() => navigate('/settings')}
+                  >
+                    <Settings size={20} />
+                  </button>
+                )}
               </div>
 
               <div className="profile-tab-content">

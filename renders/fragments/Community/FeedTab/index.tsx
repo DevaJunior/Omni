@@ -3,10 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { Heart, MessageSquare } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import type { Discussion } from '../../../../src/types/community';
+import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import './styles.css';
 import ShareMenu from './../../../components/ShareMenu/index';
 
-const FeedTab: React.FC = () => {
+interface FeedTabProps {
+  searchQuery?: string;
+  onClear?: () => void;
+}
+
+const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState<Discussion[]>([]);
@@ -34,9 +40,35 @@ const FeedTab: React.FC = () => {
     navigate(`/discussion/${id}`);
   };
 
+  const getSearchScore = (post: any) => {
+    if (!searchQuery) return 1;
+    const q = searchQuery.toLowerCase();
+    let score = 0;
+    if (post.title && post.title.toLowerCase().includes(q)) score += 10;
+    if (post.content.toLowerCase().includes(q)) score += 5;
+    if (post.author.toLowerCase().includes(q)) score += 3;
+    if (post.tags.some((tag: string) => tag.toLowerCase().includes(q))) score += 1;
+    return score;
+  };
+
+  const filteredPosts = [...posts]
+    .map(p => ({ ...p, _searchScore: getSearchScore(p) }))
+    .filter(p => p._searchScore > 0)
+    .sort((a, b) => {
+       if (searchQuery) return b._searchScore - a._searchScore;
+       return b.id.localeCompare(a.id);
+    });
+
   return (
     <div className="cmmt-posts-list">
-      {posts.map(post => (
+      {filteredPosts.length === 0 ? (
+        <EmptyStateSearch 
+          searchQuery={searchQuery} 
+          onClear={onClear || (() => {})} 
+          suggestions={['Bolsa de Valores', 'Biotecnologia', 'Python', 'Dúvidas']} 
+        />
+      ) : (
+        filteredPosts.map(post => (
         <article key={post.id} className="cmmt-post-card">
           <div className="cmmt-post-header">
             <img src={post.avatar} alt={post.author} className="cmmt-author-avatar" />
@@ -72,7 +104,8 @@ const FeedTab: React.FC = () => {
             </div>
           </div>
         </article>
-      ))}
+        ))
+      )}
     </div>
   );
 };

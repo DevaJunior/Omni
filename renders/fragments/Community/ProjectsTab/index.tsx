@@ -3,9 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { Briefcase, FileText, MapPin, Calendar, ExternalLink } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import type { Project } from '../../../../src/types/community';
+import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import './styles.css';
 
-const ProjectsTab: React.FC = () => {
+interface ProjectsTabProps {
+  searchQuery?: string;
+  onClear?: () => void;
+}
+
+const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) => {
   const navigate = useNavigate();
 
   const [projectsList, setProjectsList] = useState<(Project & { icon: React.ReactNode })[]>([]);
@@ -44,10 +50,36 @@ const ProjectsTab: React.FC = () => {
     navigate(`/project/${id}`);
   };
 
+  const getSearchScore = (project: any) => {
+    if (!searchQuery) return 1;
+    const q = searchQuery.toLowerCase();
+    let score = 0;
+    if (project.title.toLowerCase().includes(q)) score += 10;
+    if (project.description.toLowerCase().includes(q)) score += 5;
+    if (project.institution.toLowerCase().includes(q)) score += 3;
+    if (project.tags.some((tag: string) => tag.toLowerCase().includes(q))) score += 1;
+    return score;
+  };
+
+  const filteredProjects = [...projectsList]
+    .map(p => ({ ...p, _searchScore: getSearchScore(p) }))
+    .filter(p => p._searchScore > 0)
+    .sort((a, b) => {
+       if (searchQuery) return b._searchScore - a._searchScore;
+       return b.id.localeCompare(a.id);
+    });
+
   return (
     <div className="cmmt-projects-list">
-      {projectsList.map((project: any) => (
-        <article key={project.id} className={`cmmt-project-card ${project.status === 'Fechado' ? 'cmmt-project-closed' : ''}`}>
+      {filteredProjects.length === 0 ? (
+        <EmptyStateSearch 
+          searchQuery={searchQuery} 
+          onClear={onClear || (() => {})} 
+          suggestions={['Bolsa de Estudos', 'Iniciação Científica', 'Biotecnologia', 'Ciência de Dados']} 
+        />
+      ) : (
+        filteredProjects.map((project: any) => (
+          <article key={project.id} className={`cmmt-project-card ${project.status === 'Fechado' ? 'cmmt-project-closed' : ''}`}>
           <div className="cmmt-project-header-top">
             <span className="cmmt-project-type">{project.icon} {project.type}</span>
             <span className={`cmmt-project-status ${project.status === 'Aberto' ? 'cmmt-status-open' : 'cmmt-status-closed'}`}>
@@ -81,7 +113,8 @@ const ProjectsTab: React.FC = () => {
             )}
           </div>
         </article>
-      ))}
+        ))
+      )}
     </div>
   );
 };

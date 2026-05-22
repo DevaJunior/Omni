@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
+import { articleService } from '../../../../../src/services/articleService';
 import './styles.css';
 
 const ArticleDetail: React.FC = () => {
@@ -33,11 +34,16 @@ const ArticleDetail: React.FC = () => {
         
         if (docSnap.exists()) {
           setArticle({ id: docSnap.id, ...docSnap.data() });
+          articleService.incrementViewCount(id, false);
         } else {
           // Se não encontrou, tenta buscar nos artigos de destaque da Home
           docSnap = await getDoc(doc(db, "articles_home", id));
           if (docSnap.exists()) {
             const data = docSnap.data();
+            
+            // Incrementa view no Firebase em background
+            articleService.incrementViewCount(id, true);
+
             // Mock dos dados acadêmicos para artigos de blog da home (para não quebrar a UI)
             setArticle({
               id: docSnap.id,
@@ -49,7 +55,7 @@ const ArticleDetail: React.FC = () => {
               doi: "10.0000/omni.blog.home",
               abstract: data.desc,
               tags: [data.category, "Destaque"],
-              stats: { views: 100, downloads: 0, citations: 0 }
+              stats: data.stats || { views: 1, downloads: 0, citations: 0 }
             });
           }
         }
@@ -61,6 +67,21 @@ const ArticleDetail: React.FC = () => {
     };
     fetchArticle();
   }, [id]);
+
+  const handleDownload = () => {
+    // Incrementa download
+    if (article) {
+      // Como não gravamos o tipo no state, tentamos os dois por enquanto, ou melhor:
+      // Se tiver 'Destaque' nas tags, é da home.
+      const isHome = article.tags?.includes("Destaque");
+      articleService.incrementDownloadCount(article.id, isHome);
+      setArticle({
+         ...article,
+         stats: { ...article.stats, downloads: article.stats.downloads + 1 }
+      });
+      alert("Iniciando download simulado...");
+    }
+  };
 
   if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Artigo...</div>;
   if (!article) return <div style={{ padding: '40px', textAlign: 'center' }}>Artigo não encontrado.</div>;
@@ -153,7 +174,7 @@ const ArticleDetail: React.FC = () => {
 
             {/* Card de Ações Principais */}
             <div className="art-widget art-actions-widget">
-              <button className="art-btn-primary art-btn-full">
+              <button className="art-btn-primary art-btn-full" onClick={handleDownload}>
                 <Download size={18} />
                 Baixar PDF Completo
               </button>
