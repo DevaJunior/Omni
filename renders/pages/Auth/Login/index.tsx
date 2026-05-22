@@ -104,7 +104,7 @@ const Login: React.FC = () => {
         <div className="login-panel-image">
           <img src={coverImg} alt="Cience Illustration" className="cover-img" />
           <div className="login-overlay-text">
-            <h2>Ciência Aberta, Conectada.</h2>
+            <h2>Simplifique a pesquisa. Otimize a ciência.</h2>
             <p>Seu laboratório em rede, publicações dinâmicas e o melhor da pesquisa global em um clique.</p>
           </div>
         </div>

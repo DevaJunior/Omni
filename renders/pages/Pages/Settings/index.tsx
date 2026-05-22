@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../../../../src/contexts/AuthContext';
-import './Settings.css';
+import './styles.css';
 
 type SettingsSection = 'profile' | 'security' | 'notifications' | 'privacy' | 'appearance';
 

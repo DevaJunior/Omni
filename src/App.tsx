@@ -37,7 +37,7 @@ import UserProfile from '../renders/pages/Init/UserProfile/index';
 import Learn from './../renders/pages/Pages/Learn/Learn/index';
 import PublishNote from './../renders/pages/Pages/Learn/PublishNote/index';
 import NoteDetail from './../renders/pages/Pages/Learn/NoteDetail/index';
-import Settings from '../renders/pages/Pages/Settings/Settings';
+import Settings from '../renders/pages/Pages/Settings';
 
 
 const App: React.FC = () => {

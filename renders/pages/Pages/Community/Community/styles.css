@@ -49,8 +49,15 @@
 }
 
 @keyframes slideDownToast {
-  from { top: -50px; opacity: 0; }
-  to { top: 20px; opacity: 1; }
+  from {
+    top: -50px;
+    opacity: 0;
+  }
+
+  to {
+    top: 20px;
+    opacity: 1;
+  }
 }
 
 /* Header Institucional */
@@ -144,6 +151,7 @@
   border-color: #ef4444;
   background-color: #fef2f2;
 }
+
 .cmmt-search-error .cmmt-search-icon {
   color: #ef4444;
 }
@@ -212,7 +220,7 @@
   background: white;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 200px;
   display: flex;
   flex-direction: column;
@@ -334,7 +342,7 @@
   color: var(--primary);
 }
 
-.cmmt-widget-header h3 {
+.cmmt-widget-header h2 {
   font-size: 1.1rem;
   color: var(--text-main);
 }
@@ -440,12 +448,15 @@
   .cmmt-layout {
     grid-template-columns: 1fr;
   }
+
   .cmmt-header {
     padding: 2rem 0;
   }
+
   .cmmt-promo-text {
     font-size: 1.3rem;
   }
+
   .cmmt-sidebar {
     margin-top: 2rem;
   }
@@ -455,14 +466,17 @@
   .cmmt-toolbar {
     flex-direction: column;
   }
+
   .cmmt-btn-outline-icon {
     width: 100%;
     justify-content: center;
     padding: 1rem;
   }
+
   .cmmt-filter-dropdown-menu {
     width: 100%;
   }
+
   .cmmt-partners-list {
     gap: 1.5rem;
   }
@@ -472,12 +486,15 @@
   .cmmt-container {
     padding: var(--spacing-md) 10px;
   }
+
   .cmmt-brand h1 {
     font-size: 2.2rem;
   }
+
   .cmmt-promo-text {
     font-size: 1.15rem;
   }
+
   .cmmt-toast-notification {
     width: 90%;
     top: 10px;
@@ -488,6 +505,7 @@
   .cmmt-brand h1 {
     font-size: 1.8rem;
   }
+
   .cmmt-tab {
     font-size: 0.95rem;
   }

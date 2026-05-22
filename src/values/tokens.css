@@ -31,6 +31,10 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+html, body {
+    overflow-x: hidden;
+}
+
 body {
     background-color: var(--background);
     color: var(--text-main);

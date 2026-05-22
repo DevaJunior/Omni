@@ -182,7 +182,7 @@ const Community: React.FC = () => {
             <div className="cmmt-sidebar-widget">
               <div className="cmmt-widget-header">
                 <TrendingUp size={20} className="cmmt-widget-icon" />
-                <h3>Tópicos em Alta</h3>
+                <h2>Tópicos em Alta</h2>
               </div>
               <ul className="cmmt-trending-list">
                 {trendingTopics.map((topic, index) => (
@@ -194,7 +194,7 @@ const Community: React.FC = () => {
             <div className="cmmt-sidebar-widget">
               <div className="cmmt-widget-header">
                 <Users size={20} className="cmmt-widget-icon" />
-                <h3>Pesquisadores Sugeridos</h3>
+                <h2>Pesquisadores Sugeridos</h2>
               </div>
               <div className="cmmt-suggested-users">
                 <div className="cmmt-user-item">
