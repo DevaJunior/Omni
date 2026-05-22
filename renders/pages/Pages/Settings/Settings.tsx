@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  User, 
-  Lock, 
-  Bell, 
-  Shield, 
-  Palette, 
-  LogOut, 
-  ChevronRight, 
+import {
+  User,
+  Lock,
+  Bell,
+  Shield,
+  Palette,
+  LogOut,
+  ChevronRight,
   ArrowLeft,
   Camera,
   Mail
@@ -19,7 +19,7 @@ import './Settings.css';
 type SettingsSection = 'profile' | 'security' | 'notifications' | 'privacy' | 'appearance';
 
 const Settings: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<SettingsSection>('security');
+  const [activeSection, setActiveSection] = useState<SettingsSection>('profile');
   const { currentUser, userProfile, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ const Settings: React.FC = () => {
           <div className="section-fade-in">
             <h2 className="section-title">Perfil Público</h2>
             <p className="section-description">Gerencie como as outras pessoas veem você na plataforma.</p>
-            
+
             <div className="profile-photo-section">
               <div className="avatar-wrapper">
                 <div className="avatar-image">
@@ -60,29 +60,29 @@ const Settings: React.FC = () => {
             <div className="form-group-row">
               <div className="form-group">
                 <label>Nome de Exibição</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  placeholder="Seu nome" 
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Seu nome"
                   defaultValue={userProfile?.personal.name || ''}
                 />
 
               </div>
               <div className="form-group">
                 <label>Headline Acadêmica</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  placeholder="Ex: Pesquisador em Biotecnologia" 
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Ex: Pesquisador em Biotecnologia"
                 />
               </div>
             </div>
 
             <div className="form-group">
               <label>Bio</label>
-              <textarea 
-                className="form-control" 
-                rows={4} 
+              <textarea
+                className="form-control"
+                rows={4}
                 placeholder="Conte um pouco sobre sua trajetória..."
               ></textarea>
             </div>
@@ -91,19 +91,19 @@ const Settings: React.FC = () => {
               <div className="form-group">
                 <label>Localização</label>
                 <div className="input-with-icon">
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    placeholder="Ex: São Paulo, Brasil" 
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Ex: São Paulo, Brasil"
                   />
                 </div>
               </div>
               <div className="form-group">
                 <label>Website / Link</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  placeholder="https://seusite.com" 
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="https://seusite.com"
                 />
               </div>
             </div>
@@ -117,7 +117,7 @@ const Settings: React.FC = () => {
           <div className="section-fade-in">
             <h2 className="section-title">Conta e Segurança</h2>
             <p className="section-description">Configure suas credenciais e proteja seu acesso.</p>
-            
+
             <div className="settings-card">
               <div className="form-group">
                 <label>Endereço de E-mail</label>
@@ -125,10 +125,10 @@ const Settings: React.FC = () => {
                   <div className="form-control-icon" style={{ paddingLeft: '12px' }}>
                     <Mail size={18} color="#94a3b8" />
                   </div>
-                  <input 
-                    type="email" 
-                    className="form-control" 
-                    disabled 
+                  <input
+                    type="email"
+                    className="form-control"
+                    disabled
                     value={currentUser?.email || ''}
                   />
 
@@ -180,25 +180,25 @@ const Settings: React.FC = () => {
 
       <div className="settings-layout">
         <aside className="settings-sidebar">
-          <button 
+          <button
             className={`sidebar-item ${activeSection === 'profile' ? 'active' : ''}`}
             onClick={() => setActiveSection('profile')}
           >
             <span className="sidebar-icon"><User size={20} /></span>
             Perfil Público
-            {activeSection === 'profile' && <ChevronRight size={16} style={{ marginLeft: 'auto' }} />}
+            {activeSection === 'profile' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
           </button>
-          
-          <button 
+
+          <button
             className={`sidebar-item ${activeSection === 'security' ? 'active' : ''}`}
             onClick={() => setActiveSection('security')}
           >
             <span className="sidebar-icon"><Lock size={20} /></span>
             Conta e Segurança
-            {activeSection === 'security' && <ChevronRight size={16} style={{ marginLeft: 'auto' }} />}
+            {activeSection === 'security' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
           </button>
 
-          <button 
+          <button
             className={`sidebar-item ${activeSection === 'notifications' ? 'active' : ''}`}
             onClick={() => setActiveSection('notifications')}
           >
@@ -206,7 +206,7 @@ const Settings: React.FC = () => {
             Notificações
           </button>
 
-          <button 
+          <button
             className={`sidebar-item ${activeSection === 'privacy' ? 'active' : ''}`}
             onClick={() => setActiveSection('privacy')}
           >
@@ -214,7 +214,7 @@ const Settings: React.FC = () => {
             Privacidade
           </button>
 
-          <button 
+          <button
             className={`sidebar-item ${activeSection === 'appearance' ? 'active' : ''}`}
             onClick={() => setActiveSection('appearance')}
           >

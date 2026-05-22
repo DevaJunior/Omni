@@ -55,7 +55,7 @@
     transition: var(--transition);
     border: none;
     background: transparent;
-    width: 100%;
+    /* width: 100%; */
     text-align: left;
     font-size: 1rem;
 }
@@ -174,6 +174,7 @@
     position: relative;
     width: 100px;
     height: 100px;
+    flex-shrink: 0;
 }
 
 .avatar-image {
@@ -203,6 +204,10 @@
     justify-content: center;
     border: 3px solid white;
     cursor: pointer;
+}
+
+.photo-info {
+    width: 100%;
 }
 
 .photo-info h3 {
@@ -284,7 +289,8 @@
     font-weight: 600;
 }
 
-.input-with-badge, .input-with-icon {
+.input-with-badge,
+.input-with-icon {
     display: flex;
     align-items: center;
     background-color: var(--card-bg);
@@ -293,7 +299,8 @@
     padding-right: 12px;
 }
 
-.input-with-badge .form-control, .input-with-icon .form-control {
+.input-with-badge .form-control,
+.input-with-icon .form-control {
     border: none;
     background: transparent;
     flex: 1;
@@ -307,31 +314,508 @@
 
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .section-fade-in {
     animation: fadeIn 0.4s ease-out forwards;
 }
 
-@media (max-width: 768px) {
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+
+/* === 900px — Tablet Landscape === */
+@media (max-width: 900px) {
+    .settings-container {
+        padding: var(--spacing-sm);
+    }
 
     .settings-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: 240px 1fr;
+        gap: var(--spacing-sm);
     }
-    
+
+    .settings-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* === 768px — Tablet Portrait: Sidebar vira horizontal === */
+@media (max-width: 768px) {
+    .settings-layout {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+
     .settings-sidebar {
         flex-direction: row;
         overflow-x: auto;
-        padding-bottom: 10px;
+        padding-bottom: 8px;
+        gap: 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
     }
-    
+
+    .settings-sidebar::-webkit-scrollbar {
+        display: none;
+    }
+
     .sidebar-item {
         white-space: nowrap;
+        padding: 10px 14px;
+        font-size: 0.9rem;
+        border-radius: 20px;
+        flex-shrink: 0;
+        border: 1px solid var(--border-color);
     }
-    
+
+    .sidebar-item.active {
+        border-color: var(--primary);
+    }
+
+    /* Oculta o ChevronRight no modo horizontal — ele estica o botão ativo */
+    .sidebar-item .chevron-indicator {
+        display: none;
+    }
+
+    .sidebar-divider {
+        display: none;
+    }
+
+    .logout-button {
+        margin-top: 0;
+    }
+
     .form-group-row {
         grid-template-columns: 1fr;
+    }
+
+    .settings-content {
+        padding: var(--spacing-sm);
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
+
+    .security-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .security-item .btn-secondary,
+    .security-item .btn-danger {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* === 600px — Mobile Large === */
+@media (max-width: 600px) {
+    .settings-container {
+        padding: 1rem 0.75rem;
+    }
+
+    .settings-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .back-link {
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .settings-content {
+        padding: 1rem;
+        border-radius: var(--radius-sm);
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+
+    .section-description {
+        font-size: 0.85rem;
+    }
+
+    .profile-photo-section {
+        padding-top: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+    }
+
+    .photo-info {
+        padding: 0 10%;
+        text-align: center;
+    }
+
+    .avatar-wrapper {
+        width: 90px;
+        height: 90px;
+    }
+
+    .avatar-image {
+        font-size: 2rem;
+    }
+
+    .edit-avatar-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    .form-control {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+
+    .save-button {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    .settings-card {
+        padding: var(--spacing-sm);
+    }
+
+    .verified-badge {
+        font-size: 0.7rem;
+        padding: 3px 10px;
+    }
+
+    .sidebar-item {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        gap: 8px;
+    }
+
+    .sidebar-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* === 480px — Mobile Médio === */
+@media (max-width: 480px) {
+    .settings-container {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .settings-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .settings-content {
+        padding: 0.85rem;
+        box-shadow: none;
+        border: 1px solid var(--border-color);
+    }
+
+    .section-title {
+        font-size: 1.15rem;
+    }
+
+    .section-description {
+        font-size: 0.8rem;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .avatar-wrapper {
+        width: 80px;
+        height: 80px;
+    }
+
+    .avatar-image {
+        font-size: 1.8rem;
+    }
+
+    .form-group label {
+        font-size: 0.82rem;
+    }
+
+    .form-control {
+        padding: 9px 12px;
+        font-size: 0.85rem;
+    }
+
+    .security-info h4 {
+        font-size: 0.9rem;
+    }
+
+    .security-info p {
+        font-size: 0.78rem;
+    }
+
+    .btn-secondary,
+    .btn-danger {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+
+    .input-with-badge {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px 10px;
+    }
+
+    .input-with-badge .form-control {
+        min-width: 0;
+    }
+}
+
+/* === 390px — iPhone 14/15, Pixel 7 === */
+@media (max-width: 390px) {
+    .settings-container {
+        padding: 0.5rem 0.4rem;
+    }
+
+    .settings-header {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .settings-header h1 {
+        font-size: 1.2rem;
+    }
+
+    .back-link {
+        font-size: 0.8rem;
+        gap: 6px;
+        margin-bottom: 0.5rem;
+    }
+
+    .settings-content {
+        padding: 0.75rem;
+        border-radius: 10px;
+    }
+
+    .section-title {
+        font-size: 1.05rem;
+    }
+
+    .avatar-wrapper {
+        width: 72px;
+        height: 72px;
+    }
+
+    .avatar-image {
+        font-size: 1.6rem;
+    }
+
+    .edit-avatar-btn {
+        width: 24px;
+        height: 24px;
+        border-width: 2px;
+    }
+
+    .edit-avatar-btn svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .photo-info h3 {
+        font-size: 0.9rem;
+    }
+
+    .photo-info p {
+        font-size: 0.75rem;
+    }
+
+    .sidebar-item {
+        padding: 7px 10px;
+        font-size: 0.8rem;
+        gap: 6px;
+    }
+
+    .sidebar-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .save-button {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+
+    .form-group {
+        gap: 6px;
+        margin-bottom: 0.75rem;
+    }
+
+    .form-group-row {
+        gap: 0;
+    }
+}
+
+/* === 345px — Galaxy S Series, dispositivos compactos === */
+@media (max-width: 345px) {
+    .settings-container {
+        padding: 0.4rem 0.3rem;
+    }
+
+    .settings-header h1 {
+        font-size: 1.1rem;
+    }
+
+    .settings-content {
+        padding: 0.6rem;
+    }
+
+    .section-title {
+        font-size: 1rem;
+    }
+
+    .section-description {
+        font-size: 0.75rem;
+    }
+
+    .avatar-wrapper {
+        width: 64px;
+        height: 64px;
+    }
+
+    .avatar-image {
+        font-size: 1.4rem;
+    }
+
+    .form-group label {
+        font-size: 0.78rem;
+    }
+
+    .form-control {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+
+    .sidebar-item {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+    }
+
+    .save-button {
+        padding: 9px;
+        font-size: 0.8rem;
+    }
+
+    .security-item {
+        padding: 0.75rem;
+    }
+
+    .btn-secondary,
+    .btn-danger {
+        padding: 7px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* === 320px — iPhone SE, dispositivos ultra-compactos === */
+@media (max-width: 320px) {
+    .settings-container {
+        padding: 0.3rem 0.25rem;
+    }
+
+    .settings-header h1 {
+        font-size: 1rem;
+    }
+
+    .back-link {
+        font-size: 0.75rem;
+    }
+
+    .settings-content {
+        padding: 0.5rem;
+        border-radius: 8px;
+    }
+
+    .section-title {
+        font-size: 0.95rem;
+    }
+
+    .section-description {
+        font-size: 0.72rem;
+    }
+
+    .profile-photo-section {
+        gap: 0.5rem;
+    }
+
+    .avatar-wrapper {
+        width: 56px;
+        height: 56px;
+    }
+
+    .avatar-image {
+        font-size: 1.2rem;
+    }
+
+    .edit-avatar-btn {
+        width: 22px;
+        height: 22px;
+    }
+
+    .form-group label {
+        font-size: 0.75rem;
+    }
+
+    .form-control {
+        padding: 7px 8px;
+        font-size: 0.78rem;
+    }
+
+    .photo-info h3 {
+        font-size: 0.8rem;
+    }
+
+    .photo-info p {
+        font-size: 0.7rem;
+    }
+
+    .sidebar-item {
+        padding: 5px 7px;
+        font-size: 0.72rem;
+        gap: 4px;
+    }
+
+    .sidebar-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .save-button {
+        padding: 8px;
+        font-size: 0.78rem;
+    }
+
+    .verified-badge {
+        font-size: 0.65rem;
+        padding: 2px 8px;
+    }
+
+    .security-info h4 {
+        font-size: 0.82rem;
+    }
+
+    .security-info p {
+        font-size: 0.72rem;
+    }
+
+    .btn-secondary,
+    .btn-danger {
+        padding: 6px 10px;
+        font-size: 0.75rem;
     }
 }
