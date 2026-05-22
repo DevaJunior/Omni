@@ -75,8 +75,7 @@ const UserProfile: React.FC = () => {
   }
 
   // Fallbacks para campos que podem ser nulos em contas novas
-  const personal = userData.personal || {};
-  const lab = userData.role === 'user' ? { name: 'Comunidade Omni', role: 'Pesquisador' } : { name: 'Lab Omni', role: 'Moderador' };
+  const lab = userData.lab || { name: 'Comunidade Omni', role: 'Pesquisador' };
 
   return (
     <>
@@ -91,7 +90,7 @@ const UserProfile: React.FC = () => {
           {/* HEADER / COVER */}
           <div className="profile-cover-card">
             <img
-              src={personal.originalAvatar || "https://images.unsplash.com/photo-1532094349884-543bb11783bb?auto=format&fit=crop&q=80"}
+              src={userData.cover || "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80"}
               alt="Capa do Perfil"
               className="profile-cover-img"
             />
@@ -103,12 +102,12 @@ const UserProfile: React.FC = () => {
             {/* SIDEBAR ESQUERDA: Info Pessoal */}
             <aside className="profile-sidebar">
               <div className="profile-avatar-wrapper">
-                <img src={personal.avatar || "https://ui-avatars.com/api/?name=" + (personal.name || "User")} alt={personal.name} className="profile-avatar" />
+                <img src={userData.avatar || "https://ui-avatars.com/api/?name=" + (userData.name || "User")} alt={userData.name} className="profile-avatar" />
               </div>
 
               <div className="profile-basic-info">
-                <h1>{personal.name || (userData as any).name || 'Usuário Omni'}</h1>
-                <h2>{personal.job || (userData as any).headline || 'Pesquisador Acadêmico'}</h2>
+                <h1>{userData.name || 'Usuário Omni'}</h1>
+                <h2>{userData.headline || 'Pesquisador Acadêmico'}</h2>
                 {(!id || id === currentUser?.uid) && (
                   <button className="btn-profile-primary" onClick={() => navigate('/settings')}>Editar Perfil</button>
                 )}
@@ -117,7 +116,7 @@ const UserProfile: React.FC = () => {
               <div className="profile-details-list">
                 <div className="detail-item">
                   <MapPin size={18} />
-                  <span>{personal.location || 'Localização não informada'}</span>
+                  <span>{userData.location || 'Localização não informada'}</span>
                 </div>
                 <div className="detail-item">
                   <Briefcase size={18} />
@@ -125,19 +124,19 @@ const UserProfile: React.FC = () => {
                 </div>
                 <div className="detail-item">
                   <GraduationCap size={18} />
-                  <span>{personal.school || 'Instituição não informada'}</span>
+                  <span>{'Instituição não informada'}</span>
                 </div>
                 <div className="detail-item">
                   <Mail size={18} />
-                  <a href={`mailto:${personal.email}`}>{personal.email}</a>
+                  <a href={`mailto:${userData.email}`}>{userData.email}</a>
                 </div>
               </div>
 
               <div className="profile-skills-section">
                 <h3>Competências</h3>
                 <div className="skills-tags">
-                  {(personal.highlights || []).length > 0 ? (
-                    personal.highlights.map((skill: string) => (
+                  {(userData.skills || []).length > 0 ? (
+                    userData.skills?.map((skill: string) => (
                       <span key={skill} className="skill-tag">{skill}</span>
                     ))
                   ) : (
@@ -190,7 +189,7 @@ const UserProfile: React.FC = () => {
                   <div className="anim-fade-up">
                     <div className="content-card">
                       <h3 className="card-section-title">Sobre</h3>
-                      <p className="profile-bio-text">{personal.bio || "Este usuário ainda não escreveu uma bio."}</p>
+                      <p className="profile-bio-text">{userData.bio || "Este usuário ainda não escreveu uma bio."}</p>
                     </div>
 
                     <div className="content-card mt-4">

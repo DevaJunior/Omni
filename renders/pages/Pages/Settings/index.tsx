@@ -44,7 +44,7 @@ const Settings: React.FC = () => {
             <div className="profile-photo-section">
               <div className="avatar-wrapper">
                 <div className="avatar-image">
-                  {userProfile?.personal.name?.[0] || 'D'}
+                  {userProfile?.name?.[0] || 'D'}
                 </div>
 
                 <div className="edit-avatar-btn">
@@ -64,7 +64,7 @@ const Settings: React.FC = () => {
                   type="text"
                   className="form-control"
                   placeholder="Seu nome"
-                  defaultValue={userProfile?.personal.name || ''}
+                  defaultValue={userProfile?.name || ''}
                 />
 
               </div>

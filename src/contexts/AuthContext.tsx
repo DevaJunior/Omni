@@ -6,7 +6,7 @@ import {
   signOut as firebaseSignOut,
   type User
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../config/firebaseConfig';
 import { FIREBASE_ROUTES } from '../constants/firebaseRoutes';
 import type { IUser } from '../types';
@@ -36,33 +36,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (!docSnap.exists()) {
         const newUser: IUser = {
-          uid: user.uid,
-          role: 'user',
-          personal: {
-            name: user.displayName || 'Usuário',
-            email: user.email || '',
-            username: `@${(user.email || 'user').split('@')[0]}`,
-            avatar: user.photoURL || '',
-            originalAvatar: user.photoURL || '',
-            bio: '',
-            phone: '',
-            location: '',
-            isVerified: false,
-            job: '',
-            school: '',
-            highlights: [],
-          },
-          assets: {
-            events: { organizedEventIds: [] },
-            shops: { ownedShopIds: [] },
-            realEstate: { ownedPropertyIds: [] },
-            jobs: { postedJobIds: [], appliedJobIds: [] }
-          },
-          activity: { orders: 0, tickets: [], appointments: [], favorites: [] },
-          gamification: { xp: 0, level: 1, coins: 0 },
-          dating: { isActive: false },
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
+          id: user.uid,
+          name: user.displayName || 'Usuário Omni',
+          email: user.email || '',
+          avatar: user.photoURL || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200',
+          cover: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=2000',
+          bio: '',
+          headline: 'Pesquisador / Estudante',
+          role: 'Pesquisador',
+          github: '',
+          linkedin: '',
+          location: '',
+          skills: [],
+          lab: {
+            name: 'Laboratório Independente',
+            role: 'Pesquisador Principal'
+          }
         };
         await setDoc(userRef, newUser);
       }
