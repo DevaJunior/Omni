@@ -28,9 +28,30 @@ const ArticleDetail: React.FC = () => {
     const fetchArticle = async () => {
       if (!id) return;
       try {
-        const docSnap = await getDoc(doc(db, "articles", id));
+        // Tenta buscar primeiro em artigos acadêmicos
+        let docSnap = await getDoc(doc(db, "articles", id));
+        
         if (docSnap.exists()) {
           setArticle({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          // Se não encontrou, tenta buscar nos artigos de destaque da Home
+          docSnap = await getDoc(doc(db, "articles_home", id));
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            // Mock dos dados acadêmicos para artigos de blog da home (para não quebrar a UI)
+            setArticle({
+              id: docSnap.id,
+              ...data,
+              journal: "Omni Editorial",
+              authors: "Redação Omni",
+              institutions: "Plataforma Omni",
+              date: "Recente",
+              doi: "10.0000/omni.blog.home",
+              abstract: data.desc,
+              tags: [data.category, "Destaque"],
+              stats: { views: 100, downloads: 0, citations: 0 }
+            });
+          }
         }
       } catch (err) {
         console.error("Erro ao carregar artigo", err);

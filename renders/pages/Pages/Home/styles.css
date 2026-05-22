@@ -228,7 +228,33 @@
   font-size: 0.9rem;
 }
 
-/* --- SERVICES SECTION --- */
+.read-more:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   SKELETON LOADER
+========================================= */
+.article-skeleton {
+  background: linear-gradient(90deg, var(--card-bg) 25%, var(--border-color) 50%, var(--card-bg) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* =========================================
+   SERVICES SECTION
+========================================= */
 .services-section {
   padding: 2rem 0 3rem 0;
   text-align: center;

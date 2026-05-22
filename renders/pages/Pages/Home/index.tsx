@@ -1,48 +1,44 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { ArrowRight, Beaker, Users, BookOpen, ChevronRight, ChevronLeft, Code2 } from 'lucide-react';
 import './styles.css';
 import { useNavigate } from 'react-router-dom';
+import { articleService, type Article } from '../../../../src/services/articleService';
 
-import img1 from '../../../../src/assets/wallapapers/wpp_cience_000.png';
-import img2 from '../../../../src/assets/wallapapers/wpp_cience_001.png';
-import img3 from '../../../../src/assets/wallapapers/wpp_cience_002.png';
-import img4 from '../../../../src/assets/wallapapers/wpp_cience_003.png';
 import Footer from './../../../menus/Footer/index';
 
 const Home: React.FC = () => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const articles = [
-    {
-      id: 1,
-      title: "Inovações em biotecnologia: da bancada ao mercado",
-      desc: "Explorando as tendências mais promissoras em biotecnologia e como elas estão sendo traduzidas em práticas.",
-      image: img1,
-      category: "Biotecnologia",
-    },
-    {
-      id: 2,
-      title: "Medicina personalizada: Otimizando tratamentos",
-      desc: "Saiba como a medicina personalizada está utilizando dados genéticos para criar tratamentos sob medida.",
-      image: img2,
-      category: "Medicina",
-    },
-    {
-      id: 3,
-      title: "Avanços em ciência de materiais: Criando o futuro",
-      desc: "Uma visão geral dos últimos avanços em materiais inteligentes e como eles estão revolucionando a indústria.",
-      image: img4,
-      category: "Ciência",
-    },
-    {
-      id: 4,
-      title: "O papel da IA na descoberta de novas vacinas",
-      desc: "Descubra como algoritmos estão acelerando a pesquisa e otimizando testes clínicos para imunizantes.",
-      image: img3,
-      category: "Tecnologia",
-    }
-  ];
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const data = await articleService.getLatestArticles(10);
+        if (data.length > 0) {
+          setArticles(data);
+        } else {
+          // Auto-seed: Se o banco estiver vazio, popula automaticamente
+          console.log("Banco de dados vazio. Executando seed automático...");
+          const { seedFirebaseDatabase } = await import('../../../../src/lib/firebase/seed');
+          await seedFirebaseDatabase();
+          
+          // Busca novamente após o seed
+          const newData = await articleService.getLatestArticles(10);
+          setArticles(newData);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar artigos:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
+
+
 
   const scroll = (direction: 'left' | 'right') => {
     if (sliderRef.current) {
@@ -94,21 +90,28 @@ const Home: React.FC = () => {
           </div>
 
           <div className="articles-grid" ref={sliderRef}>
-            {articles.map((art) => (
-              <div key={art.id} className="article-card">
-                <div className="article-image">
-                  <img src={art.image} alt={art.title} />
+            {isLoading ? (
+               <div style={{ display: 'flex', gap: '2rem', padding: '1rem' }}>
+                  <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
+                  <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
+                  <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
+               </div>
+            ) : (
+              articles.map((art) => (
+                <div key={art.id} className="article-card">
+                  <div className="article-image">
+                    <img src={art.image} alt={art.title} />
+                  </div>
+                  <div className="article-info">
+                    <h3>{art.title}</h3>
+                    <p>{art.desc}</p>
+                    <span className="read-more" onClick={() => navigate(`/article/${art.id}`)} style={{cursor: 'pointer'}}>
+                      Leia mais &rarr;
+                    </span>
+                  </div>
                 </div>
-                <div className="article-info">
-                  <h3>{art.title}</h3>
-                  <p>{art.desc}</p>
-                  {/* Corrigido o a href="#ler" para usar navegação real evitando salto da página */}
-                  <span className="read-more" onClick={() => navigate(`/article/${art.id}`)} style={{cursor: 'pointer'}}>
-                    Leia mais &rarr;
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </section>
 

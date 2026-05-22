@@ -83,6 +83,21 @@ const articlesDatabase = [
   }
 ];
 
+const homeArticlesDatabase = [
+  {
+    id: "h1", title: "Inovações em biotecnologia: da bancada ao mercado", desc: "Explorando as tendências mais promissoras em biotecnologia e como elas estão sendo traduzidas em práticas.", image: "/src/assets/wallapapers/wpp_cience_000.png", category: "Biotecnologia"
+  },
+  {
+    id: "h2", title: "Medicina personalizada: Otimizando tratamentos", desc: "Saiba como a medicina personalizada está utilizando dados genéticos para criar tratamentos sob medida.", image: "/src/assets/wallapapers/wpp_cience_001.png", category: "Medicina"
+  },
+  {
+    id: "h3", title: "Avanços em ciência de materiais: Criando o futuro", desc: "Uma visão geral dos últimos avanços em materiais inteligentes e como eles estão revolucionando a indústria.", image: "/src/assets/wallapapers/wpp_cience_003.png", category: "Ciência"
+  },
+  {
+    id: "h4", title: "O papel da IA na descoberta de novas vacinas", desc: "Descubra como algoritmos estão acelerando a pesquisa e otimizando testes clínicos para imunizantes.", image: "/src/assets/wallapapers/wpp_cience_002.png", category: "Tecnologia"
+  }
+];
+
 const allLabs = [
   { id: '1', name: "Phyton Research" },
   { id: '2', name: "Biogen" },
@@ -133,10 +148,16 @@ export async function seedFirebaseDatabase() {
       await setDoc(doc(db, "discussions", discussion.id), discussion);
     }
 
-    // 7. Criar Artigos
+    // 7. Criar Artigos Acadêmicos
     console.log("Populando Articles...");
     for (const article of articlesDatabase) {
       await setDoc(doc(db, "articles", article.id), article);
+    }
+
+    // 7.1 Criar Artigos da Home (Destaques)
+    console.log("Populando Home Articles (Destaques)...");
+    for (const hArticle of homeArticlesDatabase) {
+      await setDoc(doc(db, "articles_home", hArticle.id), hArticle);
     }
 
     // 8. Criar Laboratórios
