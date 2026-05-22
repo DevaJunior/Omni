@@ -57,6 +57,7 @@ const Settings: React.FC = () => {
               </div>
             </div>
 
+
             <div className="form-group-row">
               <div className="form-group">
                 <label>Nome de Exibição</label>
