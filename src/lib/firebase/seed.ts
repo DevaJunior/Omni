@@ -108,10 +108,69 @@ const homeArticlesDatabase = [
 ];
 
 const allLabs = [
-  { id: '1', name: "Phyton Research" },
-  { id: '2', name: "Biogen" },
-  { id: '3', name: "Neurolab" },
-  { id: '4', name: "Genesis Labs" }
+  { 
+    id: '1', 
+    name: "Phyton Research",
+    institution: "Universidade Federal de Alfenas",
+    verified: true,
+    description: "Focados na vanguarda da biotecnologia ambiental, nosso laboratório desenvolve abordagens de fitorremediação otimizadas por sistemas matemáticos da Lógica P-Fuzzy. Integrando botânica, ciência de dados e química analítica, criamos soluções sustentáveis para tratar efluentes contaminados com alta precisão e baixo custo. Buscamos impactar diretamente o setor produtivo através da aplicação de tecnologias verdes e monitoramento de precisão.",
+    location: "Alfenas, MG - Brasil",
+    website: "phytonresearch.unifal-mg.edu.br",
+    email: "contato@phytonresearch.edu.br",
+    logoImage: "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=200",
+    stats: { members: 12, projects: 4, publications: 18 },
+    publications: [
+      { id: 1, title: "Modelagem P-Fuzzy em Sistemas Aquáticos", journal: "Journal of Environmental Biotechnology", date: "2025", type: "Artigo" },
+      { id: 2, title: "Fitorremediação: Novas Fronteiras", journal: "Nature Sustainability", date: "2024", type: "Review" },
+      { id: 3, title: "Acúmulo de Metais em Eichhornia crassipes", journal: "Water Research", date: "2024", type: "Artigo" }
+    ],
+    featuredArticles: [
+      { id: 1, title: "Lógica P-Fuzzy na Predição de Absorção", journal: "IEEE Transactions on Fuzzy Systems", authors: "Ribeiro, H. M.; Costa, A. L." },
+      { id: 2, title: "Sustentabilidade e Modelagem", journal: "Biotechnology Advances", authors: "Silva, M.; Ribeiro, H. M." }
+    ]
+  },
+  { 
+    id: '2', 
+    name: "Biogen",
+    institution: "Universidade de São Paulo (USP)",
+    verified: true,
+    description: "Laboratório focado em genômica e bioengenharia de novos materiais. Nossas pesquisas abrangem desde a engenharia de tecidos até o desenvolvimento de biossensores inovadores para diagnósticos médicos de precisão.",
+    location: "São Paulo, SP - Brasil",
+    website: "biogen.usp.br",
+    email: "labbiogen@usp.br",
+    logoImage: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&q=80&w=200",
+    stats: { members: 25, projects: 7, publications: 45 },
+    publications: [],
+    featuredArticles: []
+  },
+  { 
+    id: '3', 
+    name: "Neurolab",
+    institution: "Universidade Estadual de Campinas (UNICAMP)",
+    verified: false,
+    description: "Grupo de pesquisa dedicado ao entendimento das bases neurobiológicas de doenças degenerativas e aplicação de inteligência artificial na interpretação de imagens cerebrais.",
+    location: "Campinas, SP - Brasil",
+    website: "neurolab.unicamp.br",
+    email: "contato@neurolab.unicamp.br",
+    logoImage: "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=200",
+    stats: { members: 8, projects: 2, publications: 10 },
+    publications: [],
+    featuredArticles: []
+  },
+  { 
+    id: '4', 
+    name: "Genesis Labs",
+    institution: "Instituto de Ciências Biomédicas",
+    verified: true,
+    description: "Centro de biologia sintética voltado para o design e síntese de circuitos genéticos em bactérias. Trabalhamos em biologia de sistemas para a produção sustentável de insumos químicos industriais.",
+    location: "Belo Horizonte, MG - Brasil",
+    website: "genesislabs.icb.br",
+    email: "info@genesislabs.icb.br",
+    logoImage: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&q=80&w=200",
+    stats: { members: 15, projects: 5, publications: 32 },
+    publications: [],
+    featuredArticles: []
+  }
 ];
 
 

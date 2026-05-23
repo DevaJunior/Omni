@@ -395,9 +395,69 @@
 }
 
 .lab-stat-row p {
-  font-size: 1.1rem;
-  color: #5d5fef;
   font-weight: 600;
+  color: var(--omni-primary);
+}
+
+/* Espaço do Pesquisador Card */
+.researcher-space-card {
+  background: linear-gradient(145deg, #ffffff, #fcfdfd);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.05);
+  padding: 1.5rem;
+}
+
+.researcher-space-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.researcher-space-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border-radius: 10px;
+}
+
+.researcher-space-header h3 {
+  color: #0f172a; /* Tom escuro, de acordo com a imagem */
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.researcher-space-card p {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.researcher-space-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.researcher-space-btn:hover {
+  background: #059669;
 }
 
 .lab-placeholder-tab {

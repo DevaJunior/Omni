@@ -11,8 +11,12 @@ import {
   Building2,
   CheckCircle2,
   ExternalLink,
-  Link as LinkIcon
+  Link as LinkIcon,
+  FlaskConical,
+  ArrowRight
 } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
 import LabTeamTab from '../../../../fragments/Lab/LabTeamTab';
@@ -27,72 +31,60 @@ const LabProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'publicacoes' | 'oportunidades' | 'equipe_publica'>('publicacoes');
   
   const { userProfile } = useAuth();
-
-  // O estado real de filiação lido diretamente do perfil no Firebase
-  const isFiliado = userProfile?.lab?.name === "Phyton Research" || userProfile?.lab?.id === id;
+  const [labData, setLabData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   // Utilizando o estado para atualizar o botão principal após sucesso do modal
   const [hasRequested, setHasRequested] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    
+    const fetchLab = async () => {
+      setLoading(true);
+      try {
+        if (!id) return;
+        const labRef = doc(db, 'labs', id);
+        const labSnap = await getDoc(labRef);
+        
+        if (labSnap.exists()) {
+          setLabData({ id: labSnap.id, ...labSnap.data() });
+        } else {
+          setLabData(null);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar laboratório:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const labData = {
-    id: id || "1",
-    name: "Phyton Research",
-    institution: "Universidade Federal de Alfenas (UNIFAL-MG)",
-    verified: true,
-    description: "Laboratório de excelência focado na intersecção entre biotecnologia ambiental, modelagem matemática e bioinformática. Desenvolvemos soluções escaláveis para a fitorremediação de ambientes aquáticos utilizando lógica P-Fuzzy e arquiteturas computacionais modernas.",
-    location: "Alfenas, MG - Brasil",
-    website: "phytonresearch.unifal.edu.br",
-    email: "diretoria@phytonresearch.com",
-    logoImage: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=200",
-    stats: {
-      views: 1245,
-      publications: 245,
-      projects: 23,
-      members: 12
-    },
-    featuredArticles: [
-      {
-        id: 301,
-        title: "Fitorremediação de Cádmio utilizando macrófitas aquáticas em biorreatores.",
-        journal: "Journal of Botany",
-        year: "2024"
-      },
-      {
-        id: 302,
-        title: "Comparativo entre Lógica Fuzzy e Redes Neurais na predição de qualidade da água.",
-        journal: "Water Research",
-        year: "2025"
-      }
-    ],
-    publications: [
-      {
-        id: 201,
-        title: "Modelagem P-Fuzzy Aplicada na Fitorremediação de Ambientes Aquáticos",
-        authors: "Ribeiro, H. M.; Costa, A. L.; Silva, M.",
-        journal: "Journal of Environmental Biotechnology",
-        date: "Outubro, 2025",
-        tags: ["Artigo Original", "P-Fuzzy"],
-        isFree: true
-      },
-      {
-        id: 202,
-        title: "Desenvolvimento de Interfaces Web para Automação de Equipamentos",
-        authors: "Mendes, R.; Eduardo, C.",
-        journal: "Simpósio Internacional de Tecnologia",
-        date: "Agosto, 2025",
-        tags: ["Anais de Evento", "Automação"],
-        isFree: false
-      }
-    ]
-  };
+    fetchLab();
+  }, [id]);
+
+  // O estado real de filiação lido diretamente do perfil no Firebase
+  const isFiliado = userProfile?.lab?.name === labData?.name || userProfile?.lab?.id === labData?.id;
 
   const handleRequestJoin = () => {
     setIsModalOpen(true);
   };
+
+  if (loading) {
+    return (
+      <div className="lab-profile-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <h2>Carregando laboratório...</h2>
+      </div>
+    );
+  }
+
+  if (!labData) {
+    return (
+      <div className="lab-profile-page" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', gap: '1rem' }}>
+        <h2>Laboratório não encontrado</h2>
+        <button className="cmmt-btn-primary" onClick={() => navigate('/lab')}>Voltar para Comunidade</button>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -190,11 +182,11 @@ const LabProfile: React.FC = () => {
               {/* Lista de Publicações */}
               {activeTab === 'publicacoes' && (
                 <div className="lab-publications-list">
-                  {labData.publications.map(pub => (
+                  {labData.publications?.length > 0 ? labData.publications.map((pub: any) => (
                     <article key={pub.id} className="lab-pub-card-clean">
                       <div className="lab-pub-top">
                         <span className="lab-pub-type-tag">
-                          <BookOpen size={16} /> Publicação Científica
+                          <BookOpen size={16} /> {pub.type || "Publicação Científica"}
                         </span>
                         <span className={`lab-pub-access ${pub.isFree ? 'open' : 'paywall'}`}>
                           {pub.isFree ? 'Open Access' : 'Paywall'}
@@ -202,7 +194,7 @@ const LabProfile: React.FC = () => {
                       </div>
 
                       <h3 className="lab-pub-title">{pub.title}</h3>
-                      <p className="lab-pub-authors">{pub.authors}</p>
+                      <p className="lab-pub-authors">{pub.authors || "Autores não listados"}</p>
 
                       <div className="lab-pub-meta-clean">
                         <strong>{pub.journal}</strong>
@@ -211,7 +203,7 @@ const LabProfile: React.FC = () => {
 
                       <div className="lab-pub-bottom">
                         <div className="lab-pub-tags-clean">
-                          {pub.tags.map(tag => <span key={tag}>{tag}</span>)}
+                          {pub.tags?.map((tag: string) => <span key={tag}>{tag}</span>)}
                         </div>
                         <button
                           className="lab-pub-link-btn"
@@ -221,7 +213,9 @@ const LabProfile: React.FC = () => {
                         </button>
                       </div>
                     </article>
-                  ))}
+                  )) : (
+                    <div className="lab-placeholder-tab">Nenhuma publicação cadastrada neste laboratório.</div>
+                  )}
                 </div>
               )}
 
@@ -235,17 +229,21 @@ const LabProfile: React.FC = () => {
             <div className="lab-sidebar-col">
 
               {isFiliado && (
-                <div className="lab-sidebar-card" style={{ background: 'rgba(16, 185, 129, 0.05)', borderColor: '#10b981' }}>
-                  <h3 style={{ color: '#10b981', marginBottom: '10px' }}>Espaço do Pesquisador</h3>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--omni-text-secondary)', marginBottom: '16px' }}>
+                <div className="lab-sidebar-card researcher-space-card">
+                  <div className="researcher-space-header">
+                    <div className="researcher-space-icon">
+                      <FlaskConical size={20} />
+                    </div>
+                    <h3>Espaço do Pesquisador</h3>
+                  </div>
+                  <p>
                     Acesse as ferramentas internas do laboratório, cadernos, gestão e LIMS.
                   </p>
                   <button 
-                    className="cmmt-btn-primary" 
-                    style={{ width: '100%', justifyContent: 'center' }}
+                    className="researcher-space-btn"
                     onClick={() => navigate(`/lab/${labData.id}/workspace`)}
                   >
-                    Acessar Workspace
+                    Acessar Workspace <ArrowRight size={16} />
                   </button>
                 </div>
               )}
@@ -255,12 +253,14 @@ const LabProfile: React.FC = () => {
                 <h3>Artigos de Destaque</h3>
                 <div className='lab-divisor'></div>
                 <div className="lab-featured-list">
-                  {labData.featuredArticles.map(art => (
+                  {labData.featuredArticles?.length > 0 ? labData.featuredArticles.map((art: any) => (
                     <div key={art.id} className="lab-featured-item">
                       <h4>{art.title}</h4>
-                      <span>{art.journal} • {art.year}</span>
+                      <span>{art.journal} {art.year ? `• ${art.year}` : ''}</span>
                     </div>
-                  ))}
+                  )) : (
+                    <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Nenhum destaque registrado.</p>
+                  )}
                 </div>
               </div>
 
@@ -268,19 +268,19 @@ const LabProfile: React.FC = () => {
               <div className="lab-sidebar-card lab-stats-card">
                 <div className="lab-stat-row">
                   <span>Visualizações</span>
-                  <p>{labData.stats.views}</p>
+                  <p>{labData.stats?.views || 0}</p>
                 </div>
                 <div className="lab-stat-row">
                   <span>Publicações</span>
-                  <p>{labData.stats.publications}</p>
+                  <p>{labData.stats?.publications || 0}</p>
                 </div>
                 <div className="lab-stat-row">
                   <span>Projetos</span>
-                  <p>{labData.stats.projects}</p>
+                  <p>{labData.stats?.projects || 0}</p>
                 </div>
                 <div className="lab-stat-row">
-                  <span>Mmebros</span>
-                  <p>{labData.stats.members}</p>
+                  <span>Membros</span>
+                  <p>{labData.stats?.members || 0}</p>
                 </div>
               </div>
 
