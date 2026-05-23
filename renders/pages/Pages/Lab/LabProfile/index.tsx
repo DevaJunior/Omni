@@ -15,7 +15,7 @@ import {
   FlaskConical,
   ArrowRight
 } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
@@ -34,13 +34,14 @@ const LabProfile: React.FC = () => {
   const [labData, setLabData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Utilizando o estado para atualizar o botão principal após sucesso do modal
+  // Utilizando o estado para atualizar o botão principal após sucesso do modal ou fetch
   const [hasRequested, setHasRequested] = useState(false);
+  const [requestStatus, setRequestStatus] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    const fetchLab = async () => {
+    const fetchLabAndRequests = async () => {
       setLoading(true);
       try {
         if (!id) return;
@@ -52,6 +53,25 @@ const LabProfile: React.FC = () => {
         } else {
           setLabData(null);
         }
+
+        // Buscar se o usuário já tem solicitação enviada para este lab
+        if (userProfile?.id) {
+          const q = query(
+            collection(db, 'lab_requests'),
+            where('userId', '==', userProfile.id),
+            where('labId', '==', id)
+          );
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            // Pega o status da primeira solicitação encontrada
+            const reqData = querySnapshot.docs[0].data();
+            setRequestStatus(reqData.status);
+            if (reqData.status === 'pending') {
+              setHasRequested(true);
+            }
+          }
+        }
+
       } catch (error) {
         console.error("Erro ao buscar laboratório:", error);
       } finally {
@@ -59,11 +79,11 @@ const LabProfile: React.FC = () => {
       }
     };
 
-    fetchLab();
-  }, [id]);
+    fetchLabAndRequests();
+  }, [id, userProfile]);
 
-  // O estado real de filiação lido diretamente do perfil no Firebase
-  const isFiliado = userProfile?.lab?.name === labData?.name || userProfile?.lab?.id === labData?.id;
+  // O estado real de filiação lido do perfil no Firebase ou via requisição aceita (fallback para testes)
+  const isFiliado = userProfile?.lab?.name === labData?.name || userProfile?.lab?.id === labData?.id || requestStatus === 'accepted';
 
   const handleRequestJoin = () => {
     setIsModalOpen(true);

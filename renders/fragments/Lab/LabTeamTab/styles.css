@@ -189,3 +189,192 @@
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
 }
+
+/* Abas Internas de Navegação (Gestão) */
+.lab-team-nav-tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+}
+
+.lab-team-nav-tabs button {
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lab-team-nav-tabs button:hover {
+  color: #334155;
+}
+
+.lab-team-nav-tabs button.active {
+  color: #0d9488;
+  border-bottom-color: #0d9488;
+}
+
+.lab-team-nav-tabs .badge {
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.loading-msg, .empty-msg {
+  color: #64748b;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+/* Solicitações de Entrada */
+.lab-requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lab-request-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.req-header h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.05rem;
+  color: #1e293b;
+}
+
+.req-header span {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.req-letter {
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  color: #475569;
+  font-style: italic;
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 3px solid #cbd5e1;
+}
+
+.req-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn-accept, .btn-reject {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-accept {
+  background: #10b981;
+  color: #fff;
+}
+.btn-accept:hover { background: #059669; }
+
+.btn-reject {
+  background: #fef2f2;
+  color: #ef4444;
+}
+.btn-reject:hover { background: #fee2e2; }
+
+.req-reject-box textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  margin-bottom: 0.75rem;
+}
+
+.req-reject-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Hierarquia */
+.hierarchy-toolbar {
+  margin-bottom: 1.5rem;
+}
+
+.create-role-form {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.create-role-form input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  width: 300px;
+}
+
+.hierarchy-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.hierarchy-table th, .hierarchy-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.hierarchy-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.hierarchy-table td {
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.hierarchy-table td input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: not-allowed;
+}
+
+.hierarchy-note {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 1rem;
+}

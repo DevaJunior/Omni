@@ -104,7 +104,7 @@ const LabWorkspace: React.FC = () => {
 
           {activeTab === 'gestao' && (
             <div className="workspace-content-card">
-              <LabTeamTab mode="manage" />
+              <LabTeamTab mode="manage" labId={id || '1'} />
             </div>
           )}
         </main>

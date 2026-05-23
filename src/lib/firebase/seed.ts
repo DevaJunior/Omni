@@ -6,7 +6,7 @@ import { db } from '../../config/firebaseConfig';
 // ==========================================
 
 const userData = {
-  id: "uid_devair_junior", // ID manual para facilitar
+  id: "Gbo5XwC4Twas5iTZkdI3v8HalO42", // ID real do Auth do Usuário
   name: "Devair Junior",
   headline: "Mestrando em Biotecnologia | Bacharel em Ciência da Computação | Desenvolvedor Front-end",
   bio: "Unindo a engenharia de software com as ciências biológicas. Sou bacharel em Ciência da Computação e atualmente desenvolvo meu projeto de mestrado em Biotecnologia, focado em modelagem matemática e bioinformática aplicadas à fitorremediação. Apaixonado por criar interfaces limpas, arquiteturas escaláveis e, nas horas vagas, pelo universo nerd, fantasias e desenvolvimento de jogos.",
@@ -18,8 +18,9 @@ const userData = {
   cover: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=2000",
   skills: ["React", "TypeScript", "Python", "Bioinformática", "Lógica P-Fuzzy", "CSS Puro", "Phaser 3"],
   lab: {
+    id: "1",
     name: "Phyton Research",
-    role: "Pesquisador / Desenvolvedor Principal"
+    role: "Admin"
   }
 };
 
@@ -118,6 +119,12 @@ const allLabs = [
     website: "phytonresearch.unifal-mg.edu.br",
     email: "contato@phytonresearch.edu.br",
     logoImage: "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=200",
+    adminId: "Gbo5XwC4Twas5iTZkdI3v8HalO42",
+    customRoles: [
+      { name: "Admin", permissions: ["manage_team", "manage_settings", "manage_projects"] },
+      { name: "Pesquisador", permissions: ["manage_projects"] },
+      { name: "Aluno", permissions: [] }
+    ],
     stats: { members: 12, projects: 4, publications: 18 },
     publications: [
       { id: 1, title: "Modelagem P-Fuzzy em Sistemas Aquáticos", journal: "Journal of Environmental Biotechnology", date: "2025", type: "Artigo" },
