@@ -1,0 +1,127 @@
+.lab-workspace-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 70px);
+}
+
+.lab-workspace-header {
+  margin-bottom: 2rem;
+}
+
+.workspace-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.workspace-title h2 {
+  color: var(--omni-text-primary);
+  font-size: 1.8rem;
+}
+
+.workspace-badge {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.lab-workspace-container {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.workspace-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--omni-surface);
+  border: 1px solid var(--omni-border);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.workspace-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  color: var(--omni-text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.workspace-nav-btn:hover {
+  background: var(--omni-surface-hover);
+  color: var(--omni-text-primary);
+}
+
+.workspace-nav-btn.active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.workspace-divider {
+  height: 1px;
+  background: var(--omni-border);
+  margin: 8px 0;
+}
+
+.workspace-main-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.workspace-content-card {
+  background: var(--omni-surface);
+  border: 1px solid var(--omni-border);
+  padding: 2rem;
+  border-radius: 12px;
+}
+
+.workspace-placeholder-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--omni-surface);
+  border: 1px dashed var(--omni-border);
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  gap: 1rem;
+}
+
+.placeholder-icon {
+  color: var(--omni-text-secondary);
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.workspace-placeholder-tab h3 {
+  color: var(--omni-text-primary);
+  font-size: 1.4rem;
+}
+
+.workspace-placeholder-tab p {
+  color: var(--omni-text-secondary);
+  max-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .lab-workspace-container {
+    grid-template-columns: 1fr;
+  }
+}

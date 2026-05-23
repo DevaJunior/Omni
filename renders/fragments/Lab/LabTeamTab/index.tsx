@@ -28,7 +28,11 @@ const getRoleBadge = (role: TeamMember['role']) => {
   }
 };
 
-const LabTeamTab: React.FC = () => {
+interface LabTeamTabProps {
+  mode?: 'public' | 'manage';
+}
+
+const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage' }) => {
   const [members, setMembers] = useState<TeamMember[]>(mockTeam);
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -61,17 +65,28 @@ const LabTeamTab: React.FC = () => {
 
   return (
     <div className="lab-team-tab anim-fade-up">
-      <div className="lab-team-header">
-        <div>
-          <h3>Membros e Hierarquia</h3>
-          <p>Gerencie o acesso ao laboratório, cadernos e repositórios de dados.</p>
+      {mode === 'manage' && (
+        <div className="lab-team-header">
+          <div>
+            <h3>Membros e Hierarquia (Gestão)</h3>
+            <p>Gerencie o acesso ao laboratório, cadernos e repositórios de dados.</p>
+          </div>
+          <button className="cmmt-btn-primary" onClick={() => setShowInviteForm(!showInviteForm)}>
+            <UserPlus size={18} style={{ marginRight: '8px' }} /> Convidar Membro
+          </button>
         </div>
-        <button className="cmmt-btn-primary" onClick={() => setShowInviteForm(!showInviteForm)}>
-          <UserPlus size={18} style={{ marginRight: '8px' }} /> Convidar Membro
-        </button>
-      </div>
+      )}
 
-      {showInviteForm && (
+      {mode === 'public' && (
+        <div className="lab-team-header" style={{ borderBottom: 'none', paddingBottom: 0 }}>
+          <div>
+            <h3>Equipe do Laboratório</h3>
+            <p>Conheça os pesquisadores e alunos que fazem parte deste hub.</p>
+          </div>
+        </div>
+      )}
+
+      {mode === 'manage' && showInviteForm && (
         <form className="lab-invite-form" onSubmit={handleInvite}>
           <h4>Enviar Convite</h4>
           <div className="invite-inputs">
@@ -102,11 +117,11 @@ const LabTeamTab: React.FC = () => {
       )}
 
       <div className="lab-team-list">
-        {members.map(member => (
-          <div key={member.id} className="lab-team-card">
+        {members.filter(m => mode === 'manage' || m.status === 'Ativo').map(member => (
+          <div key={member.id} className={`lab-team-card ${mode === 'public' ? 'public-hover' : ''}`} style={mode === 'public' ? {cursor: 'pointer'} : {}}>
             <div className="member-avatar">
               <img src={member.avatar || "https://ui-avatars.com/api/?name=" + member.name.replace(' ', '+')} alt={member.name} />
-              {member.status === 'Pendente' && <span className="pending-badge">Pendente</span>}
+              {mode === 'manage' && member.status === 'Pendente' && <span className="pending-badge">Pendente</span>}
             </div>
             
             <div className="member-info">
@@ -118,11 +133,13 @@ const LabTeamTab: React.FC = () => {
               {getRoleBadge(member.role)}
             </div>
 
-            <div className="member-actions">
-              <button className="action-btn-danger" onClick={() => handleRemove(member.id)} title="Remover Membro">
-                <Trash2 size={18} />
-              </button>
-            </div>
+            {mode === 'manage' && (
+              <div className="member-actions">
+                <button className="action-btn-danger" onClick={() => handleRemove(member.id)} title="Remover Membro">
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

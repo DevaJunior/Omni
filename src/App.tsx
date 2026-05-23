@@ -22,6 +22,7 @@ import DiscussionDetail from './../renders/pages/Pages/Community/DiscussionDetai
 // Ecossistema do Laboratório
 import Lab from './../renders/pages/Pages/Lab/Lab';
 import LabProfile from './../renders/pages/Pages/Lab/LabProfile';
+import LabWorkspace from './../renders/pages/Pages/Lab/LabWorkspace';
 
 // Ferramentas da LabBancada
 import MolarityCalc from './../renders/widgets/MolarityCalc/index';
@@ -92,6 +93,7 @@ const App: React.FC = () => {
 
                   {/* Perfis Dinâmicos */}
                   <Route path="/lab/:id" element={<ProtectedRoute><LabProfile /></ProtectedRoute>} />
+                  <Route path="/lab/:id/workspace" element={<ProtectedRoute><LabWorkspace /></ProtectedRoute>} />
 
                   {/* Rota de Migração */}
                   <Route path="/run-seed" element={

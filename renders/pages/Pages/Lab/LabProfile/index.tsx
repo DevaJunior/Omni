@@ -14,6 +14,7 @@ import {
   Link as LinkIcon
 } from 'lucide-react';
 import './styles.css';
+import { useAuth } from '../../../../../src/contexts/AuthContext';
 import LabTeamTab from '../../../../fragments/Lab/LabTeamTab';
 import Footer from '../../../../menus/Footer';
 import JoinLabModal from './../../../../modals/JoinLabModal/index';
@@ -23,7 +24,12 @@ const LabProfile: React.FC = () => {
   const { id } = useParams();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'publicacoes' | 'oportunidades' | 'equipe' | 'bancada' | 'forum' | 'caderno'>('publicacoes');
+  const [activeTab, setActiveTab] = useState<'publicacoes' | 'oportunidades' | 'equipe_publica'>('publicacoes');
+  
+  const { userProfile } = useAuth();
+
+  // O estado real de filiação lido diretamente do perfil no Firebase
+  const isFiliado = userProfile?.lab?.name === "Phyton Research" || userProfile?.lab?.id === id;
 
   // Utilizando o estado para atualizar o botão principal após sucesso do modal
   const [hasRequested, setHasRequested] = useState(false);
@@ -125,11 +131,14 @@ const LabProfile: React.FC = () => {
                   <div className="lab-action-buttons">
                     <button className="lab-btn-outline">Seguir</button>
                     <button
-                      className={`lab-btn-solid ${hasRequested ? 'requested' : ''}`}
+                      className={`lab-btn-solid ${isFiliado ? 'filiado' : hasRequested ? 'requested' : ''}`}
                       onClick={handleRequestJoin}
-                      disabled={hasRequested}
+                      disabled={isFiliado || hasRequested}
+                      style={isFiliado ? { backgroundColor: '#10b981', color: '#fff', borderColor: '#10b981', opacity: 0.8, cursor: 'default' } : {}}
                     >
-                      {hasRequested ? (
+                      {isFiliado ? (
+                        <><CheckCircle2 size={16} /> Filiado ao LAB</>
+                      ) : hasRequested ? (
                         <><CheckCircle2 size={16} /> Solicitação Enviada</>
                       ) : (
                         <><Users size={16} /> Filiar-se ao Lab</>
@@ -167,30 +176,13 @@ const LabProfile: React.FC = () => {
                     <Briefcase size={16} /> Oportunidades
                   </button>
                 </div>
-                <div className="lab-tabs-right" style={{ display: 'flex', gap: '8px' }}>
+                
+                <div className="lab-tabs-right">
                   <button
-                    className={activeTab === 'equipe' ? 'active' : ''}
-                    onClick={() => setActiveTab('equipe')}
+                    className={activeTab === 'equipe_publica' ? 'active' : ''}
+                    onClick={() => setActiveTab('equipe_publica')}
                   >
                     <Users size={16} /> Equipe
-                  </button>
-                  <button
-                    className={activeTab === 'bancada' ? 'active' : ''}
-                    onClick={() => setActiveTab('bancada')}
-                  >
-                    Bancada & LIMS
-                  </button>
-                  <button
-                    className={activeTab === 'forum' ? 'active' : ''}
-                    onClick={() => setActiveTab('forum')}
-                  >
-                    Área Comum
-                  </button>
-                  <button
-                    className={activeTab === 'caderno' ? 'active' : ''}
-                    onClick={() => setActiveTab('caderno')}
-                  >
-                    Meu Caderno
                   </button>
                 </div>
               </div>
@@ -235,31 +227,28 @@ const LabProfile: React.FC = () => {
 
               {/* Placeholder para outras abas */}
               {activeTab === 'oportunidades' && <div className="lab-placeholder-tab">Sem projetos ativos ou oportunidades abertas no momento.</div>}
-              {activeTab === 'equipe' && <LabTeamTab />}
-              {activeTab === 'bancada' && (
-                <div className="lab-placeholder-tab">
-                  <h3>Bancada Virtual e LIMS</h3>
-                  <p>Atalhos para ferramentas do Workbench e gestão de recursos (Agendamento de equipamentos e Inventário).</p>
-                  <button className="lab-btn-outline" onClick={() => navigate('/lab/inventory')}>Acessar Inventário</button>
-                </div>
-              )}
-              {activeTab === 'forum' && (
-                <div className="lab-placeholder-tab">
-                  <h3>Área Comum (Shared)</h3>
-                  <p>Fórum interno, mural de recados e repositório de dados/datasets compartilhados.</p>
-                </div>
-              )}
-              {activeTab === 'caderno' && (
-                <div className="lab-placeholder-tab">
-                  <h3>Área Pessoal (Private)</h3>
-                  <p>Caderno de Pesquisa (Lab Notebook) e diário de fotos de experimentos (culturas, microscópio).</p>
-                </div>
-              )}
-
+              
+              {activeTab === 'equipe_publica' && <LabTeamTab mode="public" />}
             </div>
 
             {/* COLUNA DIREITA (Sidebar) */}
             <div className="lab-sidebar-col">
+
+              {isFiliado && (
+                <div className="lab-sidebar-card" style={{ background: 'rgba(16, 185, 129, 0.05)', borderColor: '#10b981' }}>
+                  <h3 style={{ color: '#10b981', marginBottom: '10px' }}>Espaço do Pesquisador</h3>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--omni-text-secondary)', marginBottom: '16px' }}>
+                    Acesse as ferramentas internas do laboratório, cadernos, gestão e LIMS.
+                  </p>
+                  <button 
+                    className="cmmt-btn-primary" 
+                    style={{ width: '100%', justifyContent: 'center' }}
+                    onClick={() => navigate(`/lab/${labData.id}/workspace`)}
+                  >
+                    Acessar Workspace
+                  </button>
+                </div>
+              )}
 
               {/* Artigos Destaque */}
               <div className="lab-sidebar-card">
