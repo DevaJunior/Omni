@@ -293,6 +293,7 @@ const LabProfile: React.FC = () => {
       <JoinLabModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        labId={labData.id}
         labName={labData.name}
         onSuccess={() => setHasRequested(true)} // Recebe o sinal de envio para atualizar o botão na tela
       />

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Building2, UploadCloud, ChevronRight, CheckCircle2 } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../src/config/firebaseConfig';
+import { useAuth } from '../../../src/contexts/AuthContext';
 import './styles.css';
 
 interface JoinLabModalProps {
   isOpen: boolean;
   onClose: () => void;
+  labId: string;
   labName: string;
   onSuccess?: () => void; 
 }
@@ -20,19 +22,15 @@ const MOCK_COURSES = [
   "Medicina",
 ];
 
-const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labName, onSuccess }) => {
+const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labId, labName, onSuccess }) => {
+  const { userProfile } = useAuth();
   const [currentUser, setCurrentUser] = useState({ name: "Carregando..." });
 
   useEffect(() => {
-    // Busca inicial rápida para preencher o formulário
-    if (isOpen) {
-      getDoc(doc(db, "users", "uid_devair_junior")).then((res) => {
-        if (res.exists()) {
-          setCurrentUser({ name: res.data().name });
-        }
-      }).catch(console.error);
+    if (isOpen && userProfile) {
+      setCurrentUser({ name: userProfile.name });
     }
-  }, [isOpen]);
+  }, [isOpen, userProfile]);
 
   const [coverLetter, setCoverLetter] = useState("");
   const [courseSearch, setCourseSearch] = useState("");
@@ -95,13 +93,26 @@ const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labName, o
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedCourse || !ra || !fileAttached) return; 
+    if (!selectedCourse || !ra || !fileAttached || !userProfile) return; 
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    
+    try {
+      // Salva a solicitação na coleção 'lab_requests' do Firebase
+      await addDoc(collection(db, 'lab_requests'), {
+        labId,
+        labName,
+        userId: userProfile.id,
+        userName: userProfile.name,
+        course: selectedCourse,
+        ra: ra,
+        coverLetter: coverLetter,
+        status: 'pending', // Status inicial. Quando aceito, muda para 'accepted'
+        createdAt: serverTimestamp()
+      });
+
       setIsSuccess(true);
       setTimeout(() => {
         setIsSuccess(false);
@@ -114,7 +125,12 @@ const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labName, o
         setRa("");
         setFileAttached(false);
       }, 2000);
-    }, 1500);
+    } catch (error) {
+      console.error("Erro ao enviar solicitação:", error);
+      alert("Houve um erro ao enviar sua solicitação.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
