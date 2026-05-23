@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings2, ArrowRight, Activity, Sprout, TestTube2, Calculator, ArrowLeft, Lightbulb } from 'lucide-react';
+import { Settings2, ArrowRight, Activity, Sprout, TestTube2, Calculator, ArrowLeft, Lightbulb, FileText, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { calcularSistemaCompleto, type PFuzzyRizofiltracaoParams, type PFuzzyRizofiltracaoResult } from './engine';
 import './styles.css';
@@ -211,6 +211,18 @@ const PFuzzyRizofiltracao: React.FC = () => {
                   <div className="pf-insight-card">
                     <h3 className="pf-insight-title"><Lightbulb size={20} className="insight-icon" /> Interpretação Analítica (Sistema Especialista)</h3>
                     <p className="pf-insight-text">{generateInsight(result)}</p>
+                  </div>
+
+                  <div className="pf-export-card" style={{ marginTop: '1.5rem', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                    <button className="cmmt-btn-outline" onClick={() => alert('Exportando para PDF...')}>
+                      <FileText size={16} style={{ marginRight: '5px' }} /> PDF
+                    </button>
+                    <button className="cmmt-btn-outline" onClick={() => alert('Exportando para CSV...')}>
+                      <Download size={16} style={{ marginRight: '5px' }} /> CSV
+                    </button>
+                    <button className="cmmt-btn-outline" onClick={() => alert('Exportando para Excel...')}>
+                      <Download size={16} style={{ marginRight: '5px' }} /> Excel
+                    </button>
                   </div>
                 </>
               )}

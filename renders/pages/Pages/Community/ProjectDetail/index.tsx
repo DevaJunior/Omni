@@ -15,6 +15,7 @@ import {
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
+import ShareMenu from '../../../../components/ShareMenu';
 
 const ProjectDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -177,6 +178,10 @@ const ProjectDetail: React.FC = () => {
                     Inscrições Encerradas
                   </button>
                 )}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+                <ShareMenu text={`Confira a oportunidade: ${project.title} na Omni!`}
+                  url={`${window.location.origin}/project/${project.id}`} />
               </div>
             </div>
 

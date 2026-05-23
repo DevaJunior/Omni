@@ -11,7 +11,8 @@ import {
   Edit3,
   Terminal,
   Activity,
-  ArrowLeft
+  ArrowLeft,
+  Bookmark
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
@@ -25,7 +26,7 @@ const UserProfile: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState<'visao-geral' | 'projetos' | 'publicacoes'>('visao-geral');
+  const [activeTab, setActiveTab] = useState<'visao-geral' | 'projetos' | 'publicacoes' | 'colecoes'>('visao-geral');
 
   const [userData, setUserData] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -174,6 +175,12 @@ const UserProfile: React.FC = () => {
                 >
                   <BookOpen size={18} /> Publicações
                 </button>
+                <button
+                  className={`tab-btn ${activeTab === 'colecoes' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('colecoes')}
+                >
+                  <Bookmark size={18} /> Coleções
+                </button>
 
                 <div className="tab-spacer"></div>
 
@@ -231,6 +238,15 @@ const UserProfile: React.FC = () => {
                     <h3>Nenhuma publicação adicionada</h3>
                     <p>Compartilhe seus artigos científicos, resumos e produções acadêmicas com a comunidade.</p>
                     <button className="btn-profile-outline mt-3">Adicionar Publicação</button>
+                  </div>
+                )}
+
+                {/* ABA: COLEÇÕES */}
+                {activeTab === 'colecoes' && (
+                  <div className="empty-state-card anim-fade-up">
+                    <Bookmark size={48} />
+                    <h3>Nenhum item salvo</h3>
+                    <p>Os artigos, projetos e discussões que você salvar aparecerão aqui para fácil acesso.</p>
                   </div>
                 )}
 

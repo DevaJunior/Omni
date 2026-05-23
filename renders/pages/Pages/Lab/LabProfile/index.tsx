@@ -14,6 +14,7 @@ import {
   Link as LinkIcon
 } from 'lucide-react';
 import './styles.css';
+import LabTeamTab from '../../../../fragments/Lab/LabTeamTab';
 import Footer from '../../../../menus/Footer';
 import JoinLabModal from './../../../../modals/JoinLabModal/index';
 
@@ -22,7 +23,7 @@ const LabProfile: React.FC = () => {
   const { id } = useParams();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'publicacoes' | 'oportunidades' | 'equipe'>('publicacoes');
+  const [activeTab, setActiveTab] = useState<'publicacoes' | 'oportunidades' | 'equipe' | 'bancada' | 'forum' | 'caderno'>('publicacoes');
 
   // Utilizando o estado para atualizar o botão principal após sucesso do modal
   const [hasRequested, setHasRequested] = useState(false);
@@ -166,12 +167,30 @@ const LabProfile: React.FC = () => {
                     <Briefcase size={16} /> Oportunidades
                   </button>
                 </div>
-                <div className="lab-tabs-right">
+                <div className="lab-tabs-right" style={{ display: 'flex', gap: '8px' }}>
                   <button
                     className={activeTab === 'equipe' ? 'active' : ''}
                     onClick={() => setActiveTab('equipe')}
                   >
                     <Users size={16} /> Equipe
+                  </button>
+                  <button
+                    className={activeTab === 'bancada' ? 'active' : ''}
+                    onClick={() => setActiveTab('bancada')}
+                  >
+                    Bancada & LIMS
+                  </button>
+                  <button
+                    className={activeTab === 'forum' ? 'active' : ''}
+                    onClick={() => setActiveTab('forum')}
+                  >
+                    Área Comum
+                  </button>
+                  <button
+                    className={activeTab === 'caderno' ? 'active' : ''}
+                    onClick={() => setActiveTab('caderno')}
+                  >
+                    Meu Caderno
                   </button>
                 </div>
               </div>
@@ -215,8 +234,27 @@ const LabProfile: React.FC = () => {
               )}
 
               {/* Placeholder para outras abas */}
-              {activeTab === 'oportunidades' && <div className="lab-placeholder-tab">Sem oportunidades abertas no momento.</div>}
-              {activeTab === 'equipe' && <div className="lab-placeholder-tab">Visualização da equipe.</div>}
+              {activeTab === 'oportunidades' && <div className="lab-placeholder-tab">Sem projetos ativos ou oportunidades abertas no momento.</div>}
+              {activeTab === 'equipe' && <LabTeamTab />}
+              {activeTab === 'bancada' && (
+                <div className="lab-placeholder-tab">
+                  <h3>Bancada Virtual e LIMS</h3>
+                  <p>Atalhos para ferramentas do Workbench e gestão de recursos (Agendamento de equipamentos e Inventário).</p>
+                  <button className="lab-btn-outline" onClick={() => navigate('/lab/inventory')}>Acessar Inventário</button>
+                </div>
+              )}
+              {activeTab === 'forum' && (
+                <div className="lab-placeholder-tab">
+                  <h3>Área Comum (Shared)</h3>
+                  <p>Fórum interno, mural de recados e repositório de dados/datasets compartilhados.</p>
+                </div>
+              )}
+              {activeTab === 'caderno' && (
+                <div className="lab-placeholder-tab">
+                  <h3>Área Pessoal (Private)</h3>
+                  <p>Caderno de Pesquisa (Lab Notebook) e diário de fotos de experimentos (culturas, microscópio).</p>
+                </div>
+              )}
 
             </div>
 

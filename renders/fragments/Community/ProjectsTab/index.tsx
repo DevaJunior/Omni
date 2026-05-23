@@ -4,6 +4,7 @@ import { Briefcase, FileText, MapPin, Calendar, ExternalLink } from 'lucide-reac
 import { communityService } from '../../../../src/services/communityService';
 import type { Project } from '../../../../src/types/community';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
+import CreateProjectModal from '../../../../renders/modals/CreateProjectModal';
 import './styles.css';
 
 interface ProjectsTabProps {
@@ -13,6 +14,7 @@ interface ProjectsTabProps {
 
 const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) => {
   const navigate = useNavigate();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const [projectsList, setProjectsList] = useState<(Project & { icon: React.ReactNode })[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,21 +67,31 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
     .map(p => ({ ...p, _searchScore: getSearchScore(p) }))
     .filter(p => p._searchScore > 0)
     .sort((a, b) => {
-       if (searchQuery) return b._searchScore - a._searchScore;
-       return b.id.localeCompare(a.id);
+      if (searchQuery) return b._searchScore - a._searchScore;
+      return b.id.localeCompare(a.id);
     });
 
   return (
     <div className="cmmt-projects-list">
-      {filteredProjects.length === 0 ? (
-        <EmptyStateSearch 
-          searchQuery={searchQuery} 
-          onClear={onClear || (() => {})} 
-          suggestions={['Bolsa de Estudos', 'Iniciação Científica', 'Biotecnologia', 'Ciência de Dados']} 
-        />
-      ) : (
-        filteredProjects.map((project: any) => (
-          <article key={project.id} className={`cmmt-project-card ${project.status === 'Fechado' ? 'cmmt-project-closed' : ''}`}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+      <button
+        className="cmmt-btn-primary"
+        onClick={() => setIsCreateModalOpen(true)}
+      >
+        <Briefcase size={18} style={{ marginRight: '8px' }} />
+        Criar Projeto
+      </button>
+    </div>
+
+    {filteredProjects.length === 0 ? (
+      <EmptyStateSearch
+        searchQuery={searchQuery}
+        onClear={onClear || (() => { })}
+        suggestions={['Bolsa de Estudos', 'Iniciação Científica', 'Biotecnologia', 'Ciência de Dados']}
+      />
+    ) : (
+      filteredProjects.map((project: any) => (
+        <article key={project.id} className={`cmmt-project-card ${project.status === 'Fechado' ? 'cmmt-project-closed' : ''}`}>
           <div className="cmmt-project-header-top">
             <span className="cmmt-project-type">{project.icon} {project.type}</span>
             <span className={`cmmt-project-status ${project.status === 'Aberto' ? 'cmmt-status-open' : 'cmmt-status-closed'}`}>
@@ -113,9 +125,15 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
             )}
           </div>
         </article>
-        ))
-      )}
-    </div>
+      ))
+    )}
+
+    <CreateProjectModal
+      isOpen={isCreateModalOpen}
+      onClose={() => setIsCreateModalOpen(false)}
+      onSuccess={() => alert('Projeto criado com sucesso!')}
+    />
+  </div>
   );
 };
 
