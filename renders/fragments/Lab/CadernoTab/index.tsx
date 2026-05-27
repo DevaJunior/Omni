@@ -7,6 +7,7 @@ import { collection, query, where, onSnapshot, addDoc, doc, deleteDoc, orderBy }
 import { db } from '../../../../src/config/firebaseConfig';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import NewEntryModal from '../../../modals/NewEntryModal';
+import ConfirmModal from '../../../../renders/components/ConfirmModal';
 import './styles.css';
 
 interface CadernoTabProps {
@@ -18,6 +19,12 @@ const CadernoTab: React.FC<CadernoTabProps> = ({ labId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [entries, setEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [confirmConfig, setConfirmConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
 
   useEffect(() => {
     if (!labId || !currentUser) return;
@@ -72,13 +79,21 @@ const CadernoTab: React.FC<CadernoTabProps> = ({ labId }) => {
     }
   };
 
-  const handleDeleteEntry = async (entryId: string) => {
-    if (!window.confirm("Tem certeza que deseja apagar esta anotação permanentemente?")) return;
-    try {
-      await deleteDoc(doc(db, 'lab_notebooks', entryId));
-    } catch (e) {
-      console.error("Erro ao deletar entrada:", e);
-    }
+  const handleDeleteEntry = (entryId: string) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Apagar anotação',
+      message: 'Tem certeza que deseja apagar esta anotação permanentemente?',
+      onConfirm: async () => {
+        try {
+          await deleteDoc(doc(db, 'lab_notebooks', entryId));
+        } catch (e) {
+          console.error("Erro ao deletar entrada:", e);
+        } finally {
+          setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        }
+      }
+    });
   };
 
   const formatDate = (ts: number) => {
@@ -140,6 +155,14 @@ const CadernoTab: React.FC<CadernoTabProps> = ({ labId }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreateEntry}
+      />
+
+      <ConfirmModal 
+        isOpen={confirmConfig.isOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

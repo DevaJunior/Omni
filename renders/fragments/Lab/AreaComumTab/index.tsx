@@ -9,6 +9,7 @@ import { collection, query, where, onSnapshot, addDoc, doc, deleteDoc, updateDoc
 import { db } from '../../../../src/config/firebaseConfig';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import NewPostModal from '../../../modals/NewPostModal';
+import ConfirmModal from '../../../../components/ConfirmModal';
 import './styles.css';
 
 interface AreaComumTabProps {
@@ -22,6 +23,12 @@ const AreaComumTab: React.FC<AreaComumTabProps> = ({ labId }) => {
   const [loading, setLoading] = useState(true);
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
+  const [confirmConfig, setConfirmConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
 
   useEffect(() => {
     if (!labId) return;
@@ -78,13 +85,21 @@ const AreaComumTab: React.FC<AreaComumTabProps> = ({ labId }) => {
     }
   };
 
-  const handleDeletePost = async (postId: string) => {
-    if (!window.confirm("Tem certeza que deseja apagar este post?")) return;
-    try {
-      await deleteDoc(doc(db, 'lab_posts', postId));
-    } catch (e) {
-      console.error("Erro ao deletar:", e);
-    }
+  const handleDeletePost = (postId: string) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Apagar Post',
+      message: 'Tem certeza que deseja apagar este post?',
+      onConfirm: async () => {
+        try {
+          await deleteDoc(doc(db, 'lab_posts', postId));
+        } catch (e) {
+          console.error("Erro ao deletar:", e);
+        } finally {
+          setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        }
+      }
+    });
   };
 
   const handleToggleLike = async (post: any) => {
@@ -130,16 +145,24 @@ const AreaComumTab: React.FC<AreaComumTabProps> = ({ labId }) => {
     }
   };
 
-  const handleDeleteComment = async (postId: string, comment: any) => {
-    if (!window.confirm("Apagar comentário?")) return;
-    try {
-      const postRef = doc(db, 'lab_posts', postId);
-      await updateDoc(postRef, {
-        comments: arrayRemove(comment)
-      });
-    } catch (error) {
-      console.error("Erro ao deletar comentário:", error);
-    }
+  const handleDeleteComment = (postId: string, comment: any) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Apagar Comentário',
+      message: 'Deseja realmente apagar este comentário?',
+      onConfirm: async () => {
+        try {
+          const postRef = doc(db, 'lab_posts', postId);
+          await updateDoc(postRef, {
+            comments: arrayRemove(comment)
+          });
+        } catch (error) {
+          console.error("Erro ao apagar comentário:", error);
+        } finally {
+          setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        }
+      }
+    });
   };
 
   const formatTime = (ts: number) => {
@@ -273,6 +296,14 @@ const AreaComumTab: React.FC<AreaComumTabProps> = ({ labId }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreatePost}
+      />
+      
+      <ConfirmModal 
+        isOpen={confirmConfig.isOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

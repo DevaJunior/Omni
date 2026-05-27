@@ -5,6 +5,7 @@ import { communityService } from '../../../../src/services/communityService';
 import type { Discussion } from '../../../../src/types/community';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
+import ConfirmModal from '../../../../renders/components/ConfirmModal';
 import './styles.css';
 import ShareMenu from './../../../components/ShareMenu/index';
 
@@ -21,6 +22,12 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
   const [loading, setLoading] = useState(true);
   const [newPostText, setNewPostText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
 
   const fetchDiscussions = async () => {
     try {
@@ -102,15 +109,22 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Deseja realmente excluir esta publicação?")) {
-      try {
-        await communityService.deleteDiscussion(id);
-        setPosts(prev => prev.filter(p => p.id !== id));
-      } catch (e) {
-        console.error("Erro ao excluir", e);
+  const handleDelete = (id: string) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Excluir Discussão',
+      message: 'Deseja realmente excluir esta publicação?',
+      onConfirm: async () => {
+        try {
+          await communityService.deleteDiscussion(id);
+          setPosts(prev => prev.filter(p => p.id !== id));
+        } catch (e) {
+          console.error("Erro ao excluir", e);
+        } finally {
+          setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        }
       }
-    }
+    });
   };
 
   return (
@@ -196,6 +210,13 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
         </article>
         ))
       )}
+      <ConfirmModal 
+        isOpen={confirmConfig.isOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

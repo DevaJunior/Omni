@@ -16,6 +16,7 @@ import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firesto
 import { db } from '../../../../../src/config/firebaseConfig';
 import { communityService } from '../../../../../src/services/communityService';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
+import ConfirmModal from '../../../../components/ConfirmModal';
 import './styles.css';
 
 const DiscussionDetail: React.FC = () => {
@@ -27,6 +28,12 @@ const DiscussionDetail: React.FC = () => {
   const [authorStats, setAuthorStats] = useState({ publications: 0, followers: 0 });
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
 
   const fetchDiscussion = async () => {
     if (!id) return;
@@ -101,16 +108,23 @@ const DiscussionDetail: React.FC = () => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!id) return;
-    if (window.confirm("Deseja realmente excluir esta publicação?")) {
-      try {
-        await communityService.deleteDiscussion(id);
-        navigate('/community');
-      } catch (e) {
-        console.error("Erro ao excluir", e);
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Excluir Discussão',
+      message: 'Deseja realmente excluir esta publicação?',
+      onConfirm: async () => {
+        try {
+          await communityService.deleteDiscussion(id);
+          navigate('/community');
+        } catch (e) {
+          console.error("Erro ao excluir", e);
+        } finally {
+          setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        }
       }
-    }
+    });
   };
 
   if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando postagem...</div>;
@@ -277,6 +291,14 @@ const DiscussionDetail: React.FC = () => {
         </aside>
 
       </div>
+
+      <ConfirmModal 
+        isOpen={confirmConfig.isOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };
