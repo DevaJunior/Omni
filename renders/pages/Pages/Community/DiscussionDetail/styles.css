@@ -602,3 +602,25 @@
     padding: 0.5rem 0;
   }
 }
+
+.disc-delete-btn {
+  color: var(--text-muted);
+}
+
+.disc-delete-btn:hover {
+  color: #ef4444;
+}
+
+.disc-liked {
+  color: #ef4444 !important;
+}
+
+.disc-like-anim {
+  animation: heartBeat 0.3s ease-in-out;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}

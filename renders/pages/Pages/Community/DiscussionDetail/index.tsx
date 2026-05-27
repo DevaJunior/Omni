@@ -8,38 +8,110 @@ import {
   Send,
   UserPlus,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Trash2,
+  Heart
 } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
+import { communityService } from '../../../../../src/services/communityService';
+import { useAuth } from '../../../../../src/contexts/AuthContext';
 import './styles.css';
 
 const DiscussionDetail: React.FC = () => {
   const navigate = useNavigate();
-  // Capturando o ID da rota
   const { id } = useParams();
-
+  const { currentUser, userProfile } = useAuth();
   const [replyText, setReplyText] = useState('');
   const [discussion, setDiscussion] = useState<any>(null);
+  const [authorStats, setAuthorStats] = useState({ publications: 0, followers: 0 });
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const fetchDiscussion = async () => {
+    if (!id) return;
+    try {
+      const docSnap = await getDoc(doc(db, "discussions", id));
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setDiscussion({ id: docSnap.id, ...data });
+
+        if (data.authorId) {
+          const userDoc = await getDoc(doc(db, "users", data.authorId));
+          let followersCount = 0;
+          if (userDoc.exists()) {
+            followersCount = (userDoc.data().followers || []).length;
+          }
+          const pubQuery = query(collection(db, "discussions"), where("authorId", "==", data.authorId));
+          const pubSnap = await getDocs(pubQuery);
+          setAuthorStats({
+            publications: pubSnap.docs.length,
+            followers: followersCount
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Erro ao carregar discussão", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const fetchDiscussion = async () => {
-      if (!id) return;
-      try {
-        const docSnap = await getDoc(doc(db, "discussions", id));
-        if (docSnap.exists()) {
-          setDiscussion({ id: docSnap.id, ...docSnap.data() });
-        }
-      } catch (err) {
-        console.error("Erro ao carregar discussão", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchDiscussion();
   }, [id]);
+
+  const handleSendReply = async () => {
+    if (!id || !replyText.trim() || !currentUser) return;
+    setIsSubmitting(true);
+    try {
+      const newReply = {
+        id: Date.now().toString(),
+        author: userProfile?.name || currentUser.displayName || 'Você',
+        authorId: currentUser.uid,
+        avatar: userProfile?.avatar || currentUser.photoURL || `https://ui-avatars.com/api/?name=Você`,
+        role: 'Pesquisador(a)',
+        time: 'Agora mesmo',
+        content: replyText.trim(),
+        likes: 0,
+        isAuthor: discussion.authorId === currentUser.uid
+      };
+      await communityService.addReply(id, newReply);
+      setReplyText('');
+      await fetchDiscussion(); // Refresh
+    } catch (e) {
+      console.error("Erro ao enviar resposta", e);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLike = async () => {
+    if (!id || !currentUser) return;
+    try {
+      const { liked, likesCount } = await communityService.voteDiscussion(id, currentUser.uid);
+      setDiscussion((prev: any) => ({
+        ...prev,
+        likes: likesCount,
+        likedBy: liked ? [...(prev.likedBy || []), currentUser.uid] : (prev.likedBy || []).filter((u: string) => u !== currentUser.uid)
+      }));
+    } catch (e) {
+      console.error("Erro ao curtir", e);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    if (window.confirm("Deseja realmente excluir esta publicação?")) {
+      try {
+        await communityService.deleteDiscussion(id);
+        navigate('/community');
+      } catch (e) {
+        console.error("Erro ao excluir", e);
+      }
+    }
+  };
 
   if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando postagem...</div>;
   if (!discussion) return <div style={{ padding: '40px', textAlign: 'center' }}>Discussão não encontrada.</div>;
@@ -68,7 +140,15 @@ const DiscussionDetail: React.FC = () => {
                 <h4>{discussion.author}</h4>
                 <span>{discussion.role} • {discussion.time}</span>
               </div>
-              <button className="disc-btn-more"><MoreHorizontal size={20} /></button>
+              
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                {currentUser?.uid === discussion.authorId && (
+                  <button className="disc-action-btn disc-delete-btn" onClick={handleDelete} title="Excluir">
+                    <Trash2 size={16} />
+                  </button>
+                )}
+                <button className="disc-btn-more"><MoreHorizontal size={20} /></button>
+              </div>
             </div>
 
             <div className="disc-post-body">
@@ -81,11 +161,17 @@ const DiscussionDetail: React.FC = () => {
             </div>
 
             <div className="disc-post-actions">
-              <div className="disc-vote-group">
-                <button className="disc-action-btn-icon"><ChevronUp size={22} /></button>
-                <span className="disc-vote-count">{discussion.likes}</span>
-                <button className="disc-action-btn-icon"><ChevronDown size={22} /></button>
-              </div>
+              <button 
+                className={`disc-action-btn ${discussion.likedBy?.includes(currentUser?.uid || '') ? 'disc-liked' : ''}`} 
+                onClick={handleLike}
+              >
+                <Heart 
+                  size={18} 
+                  fill={discussion.likedBy?.includes(currentUser?.uid || '') ? 'currentColor' : 'none'} 
+                  className={discussion.likedBy?.includes(currentUser?.uid || '') ? 'disc-like-anim' : ''}
+                /> 
+                {discussion.likes}
+              </button>
               <button className="disc-action-btn active-state">
                 <MessageSquare size={18} /> {discussion.commentsCount} Comentários
               </button>
@@ -109,9 +195,10 @@ const DiscussionDetail: React.FC = () => {
                 <span className="disc-reply-hint">Seja respeitoso e científico.</span>
                 <button
                   className="disc-btn-send"
-                  disabled={replyText.trim().length === 0}
+                  disabled={replyText.trim().length === 0 || isSubmitting}
+                  onClick={handleSendReply}
                 >
-                  Responder <Send size={16} />
+                  {isSubmitting ? 'Enviando...' : 'Responder'} <Send size={16} />
                 </button>
               </div>
             </div>
@@ -166,8 +253,8 @@ const DiscussionDetail: React.FC = () => {
                 <h3>{discussion.author}</h3>
                 <p>{discussion.role}</p>
                 <div className="disc-author-stats">
-                  <div><strong>45</strong><span>Publicações</span></div>
-                  <div><strong>1.2k</strong><span>Seguidores</span></div>
+                  <div><strong>{authorStats.publications}</strong><span>Publicações</span></div>
+                  <div><strong>{authorStats.followers}</strong><span>Seguidores</span></div>
                 </div>
                 <button className="disc-btn-follow-full">
                   <UserPlus size={18} /> Seguir Pesquisador

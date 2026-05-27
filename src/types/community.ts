@@ -40,6 +40,7 @@ export interface Discussion {
   category: string;
   date: string;
   likes: number;
+  likedBy?: string[];
   comments: number;
   tags: string[];
 }

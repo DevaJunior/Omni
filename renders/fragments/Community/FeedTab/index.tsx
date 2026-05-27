@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, MessageSquare } from 'lucide-react';
+import { Heart, MessageSquare, Send, Trash2 } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import type { Discussion } from '../../../../src/types/community';
+import { useAuth } from '../../../../src/contexts/AuthContext';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import './styles.css';
 import ShareMenu from './../../../components/ShareMenu/index';
@@ -14,23 +15,53 @@ interface FeedTabProps {
 
 const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
   const navigate = useNavigate();
+  const { currentUser, userProfile } = useAuth();
 
   const [posts, setPosts] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [newPostText, setNewPostText] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const fetchDiscussions = async () => {
+    try {
+      const data = await communityService.getDiscussions();
+      setPosts(data);
+    } catch (error) {
+      console.error("Erro ao carregar feed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDiscussions = async () => {
-      try {
-        const data = await communityService.getDiscussions();
-        setPosts(data);
-      } catch (error) {
-        console.error("Erro ao carregar feed:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchDiscussions();
   }, []);
+
+  const handleCreatePost = async () => {
+    if (!newPostText.trim() || !currentUser) return;
+    setIsSubmitting(true);
+    try {
+      await communityService.createDiscussion({
+        author: userProfile?.name || currentUser.displayName || 'Você',
+        authorId: currentUser.uid,
+        avatar: userProfile?.avatar || currentUser.photoURL || `https://ui-avatars.com/api/?name=Você`,
+        role: 'Pesquisador(a)',
+        time: 'Agora mesmo',
+        content: newPostText.trim(),
+        category: 'Geral',
+        date: new Date().toISOString(),
+        likes: 0,
+        comments: 0,
+        tags: ['Discussão']
+      });
+      setNewPostText('');
+      await fetchDiscussions();
+    } catch (e) {
+      console.error("Erro ao criar postagem", e);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Discussões...</div>;
 
@@ -59,8 +90,55 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
        return b.id.localeCompare(a.id);
     });
 
+  const handleLike = async (id: string) => {
+    if (!currentUser) return;
+    try {
+      const { liked, likesCount } = await communityService.voteDiscussion(id, currentUser.uid);
+      setPosts(prev => prev.map(p => 
+        p.id === id ? { ...p, likes: likesCount, likedBy: liked ? [...(p.likedBy || []), currentUser.uid] : (p.likedBy || []).filter(u => u !== currentUser.uid) } : p
+      ));
+    } catch (e) {
+      console.error("Erro ao curtir", e);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Deseja realmente excluir esta publicação?")) {
+      try {
+        await communityService.deleteDiscussion(id);
+        setPosts(prev => prev.filter(p => p.id !== id));
+      } catch (e) {
+        console.error("Erro ao excluir", e);
+      }
+    }
+  };
+
   return (
     <div className="cmmt-posts-list">
+      
+      {/* Formulário de Nova Discussão */}
+      <div className="cmmt-create-post">
+        <div className="cmmt-create-post-header">
+          <img src={userProfile?.avatar || currentUser?.photoURL || `https://ui-avatars.com/api/?name=Você`} alt="Avatar" className="cmmt-author-avatar" />
+          <textarea 
+            className="cmmt-create-post-input"
+            placeholder="Inicie uma discussão ou faça uma pergunta..."
+            value={newPostText}
+            onChange={(e) => setNewPostText(e.target.value)}
+            rows={3}
+          />
+        </div>
+        <div className="cmmt-create-post-footer">
+          <button 
+            className="cmmt-btn-send"
+            disabled={!newPostText.trim() || isSubmitting}
+            onClick={handleCreatePost}
+          >
+            {isSubmitting ? 'Publicando...' : 'Publicar'} <Send size={16} />
+          </button>
+        </div>
+      </div>
+
       {filteredPosts.length === 0 ? (
         <EmptyStateSearch 
           searchQuery={searchQuery} 
@@ -76,6 +154,14 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
               <h4>{post.author}</h4>
               <span>{post.role} • {post.time}</span>
             </div>
+            
+            {currentUser?.uid === post.authorId && (
+              <div className="cmmt-post-options">
+                <button className="cmmt-action-btn cmmt-delete-btn" onClick={() => handleDelete(post.id)} title="Excluir">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="cmmt-post-body">
@@ -88,16 +174,20 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
           </div>
 
           <div className="cmmt-post-actions">
-            <button className="cmmt-action-btn">
-              <Heart size={18} /> {post.likes}
+            <button 
+              className={`cmmt-action-btn ${post.likedBy?.includes(currentUser?.uid || '') ? 'cmmt-liked' : ''}`} 
+              onClick={() => handleLike(post.id)}
+            >
+              <Heart 
+                size={18} 
+                fill={post.likedBy?.includes(currentUser?.uid || '') ? 'currentColor' : 'none'} 
+                className={post.likedBy?.includes(currentUser?.uid || '') ? 'cmmt-like-anim' : ''}
+              /> 
+              {post.likes}
             </button>
             <button className="cmmt-action-btn cmmt-comments-btn" onClick={() => handleOpenThread(post.id)} >
               <MessageSquare size={18} /> {post.comments} Comentários
             </button>
-            {/* <div className="cmmt-share">
-              <ShareMenu image={post.avatar} text={`Confira a publicação de ${post.author} na Omni!`}
-                url={`${window.location.origin}/discussion/${post.id}`} />
-            </div> */}
             <div className="cmmt-share">
               <ShareMenu text={`Confira a publicação de ${post.author} na Omni!`}
                 url={`${window.location.origin}/discussion/${post.id}`} />

@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc, arrayUnion, setDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, arrayUnion, setDoc, increment, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import type { Article, Project, Discussion, LabPartner } from '../types/community';
 
@@ -38,7 +38,65 @@ export const communityService = {
     querySnapshot.forEach((doc) => {
       data.push({ id: doc.id, ...doc.data() } as Discussion);
     });
-    return data;
+    // Ordenar por data mais recente
+    return data.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
+  },
+
+  async getDiscussionById(id: string): Promise<any | null> {
+    const docSnap = await getDoc(doc(db, "discussions", id));
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() };
+    }
+    return null;
+  },
+
+  async createDiscussion(discussionData: Omit<Discussion, 'id'>): Promise<string> {
+    const docRef = doc(collection(db, "discussions"));
+    await setDoc(docRef, discussionData);
+    return docRef.id;
+  },
+
+  async addReply(discussionId: string, replyData: any): Promise<void> {
+    const docRef = doc(db, "discussions", discussionId);
+    // Para simplificar, vamos colocar os replies dentro do array de replies na própria doc
+    // e incrementar a contagem de comentários.
+    await setDoc(docRef, {
+      replies: arrayUnion(replyData),
+      commentsCount: increment(1),
+      comments: increment(1) // mantendo a compatibilidade com a tipagem antiga
+    }, { merge: true });
+  },
+
+  async voteDiscussion(discussionId: string, userId: string): Promise<{liked: boolean, likesCount: number}> {
+    const docRef = doc(db, "discussions", discussionId);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) throw new Error("Discussão não encontrada");
+    
+    const data = docSnap.data();
+    const likedBy = data.likedBy || [];
+    const hasLiked = likedBy.includes(userId);
+    
+    let newLikesCount = data.likes || 0;
+    
+    if (hasLiked) {
+      await setDoc(docRef, {
+        likedBy: likedBy.filter((id: string) => id !== userId),
+        likes: increment(-1)
+      }, { merge: true });
+      newLikesCount--;
+      return { liked: false, likesCount: newLikesCount };
+    } else {
+      await setDoc(docRef, {
+        likedBy: arrayUnion(userId),
+        likes: increment(1)
+      }, { merge: true });
+      newLikesCount++;
+      return { liked: true, likesCount: newLikesCount };
+    }
+  },
+
+  async deleteDiscussion(discussionId: string): Promise<void> {
+    await deleteDoc(doc(db, "discussions", discussionId));
   },
 
   // Laboratórios Parceiros
