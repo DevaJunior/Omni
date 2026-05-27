@@ -9,7 +9,7 @@ import { collection, query, where, onSnapshot, addDoc, doc, deleteDoc, updateDoc
 import { db } from '../../../../src/config/firebaseConfig';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import NewPostModal from '../../../modals/NewPostModal';
-import ConfirmModal from '../../../../components/ConfirmModal';
+import ConfirmModal from '../../../components/ConfirmModal';
 import './styles.css';
 
 interface AreaComumTabProps {

@@ -72,7 +72,8 @@
   border-radius: var(--radius-md);
   padding: 1.5rem;
   transition: var(--transition);
-  cursor: pointer;
+  /* cursor: pointer; */
+  /* border: solid 2.5px blue; */
 }
 
 .cmmt-post-card:hover {
@@ -87,7 +88,6 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1rem;
 }
 
 .cmmt-author-avatar {
@@ -100,7 +100,8 @@
 .cmmt-author-info h4 {
   font-size: 1.05rem;
   color: var(--text-main);
-  margin-bottom: 0.2rem;
+  margin-bottom: -0.3rem;
+  cursor: pointer;
 }
 
 .cmmt-author-info span {
@@ -108,10 +109,14 @@
   color: var(--text-muted);
 }
 
+.cmmt-post-body {
+  cursor: pointer;
+}
+
 .cmmt-post-body p {
   color: var(--text-main);
   line-height: 1.6;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
   font-size: 0.95rem;
 }
 
@@ -229,7 +234,15 @@
 }
 
 @keyframes heartBeat {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }

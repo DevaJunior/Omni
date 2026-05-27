@@ -26,7 +26,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     isOpen: false,
     title: '',
     message: '',
-    onConfirm: () => {}
+    onConfirm: () => { }
   });
 
   const fetchDiscussions = async () => {
@@ -93,15 +93,15 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     .map(p => ({ ...p, _searchScore: getSearchScore(p) }))
     .filter(p => p._searchScore > 0)
     .sort((a, b) => {
-       if (searchQuery) return b._searchScore - a._searchScore;
-       return b.id.localeCompare(a.id);
+      if (searchQuery) return b._searchScore - a._searchScore;
+      return b.id.localeCompare(a.id);
     });
 
   const handleLike = async (id: string) => {
     if (!currentUser) return;
     try {
       const { liked, likesCount } = await communityService.voteDiscussion(id, currentUser.uid);
-      setPosts(prev => prev.map(p => 
+      setPosts(prev => prev.map(p =>
         p.id === id ? { ...p, likes: likesCount, likedBy: liked ? [...(p.likedBy || []), currentUser.uid] : (p.likedBy || []).filter(u => u !== currentUser.uid) } : p
       ));
     } catch (e) {
@@ -129,12 +129,12 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
 
   return (
     <div className="cmmt-posts-list">
-      
+
       {/* Formulário de Nova Discussão */}
       <div className="cmmt-create-post">
         <div className="cmmt-create-post-header">
           <img src={userProfile?.avatar || currentUser?.photoURL || `https://ui-avatars.com/api/?name=Você`} alt="Avatar" className="cmmt-author-avatar" />
-          <textarea 
+          <textarea
             className="cmmt-create-post-input"
             placeholder="Inicie uma discussão ou faça uma pergunta..."
             value={newPostText}
@@ -143,7 +143,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
           />
         </div>
         <div className="cmmt-create-post-footer">
-          <button 
+          <button
             className="cmmt-btn-send"
             disabled={!newPostText.trim() || isSubmitting}
             onClick={handleCreatePost}
@@ -154,63 +154,71 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
       </div>
 
       {filteredPosts.length === 0 ? (
-        <EmptyStateSearch 
-          searchQuery={searchQuery} 
-          onClear={onClear || (() => {})} 
-          suggestions={['Bolsa de Valores', 'Biotecnologia', 'Python', 'Dúvidas']} 
+        <EmptyStateSearch
+          searchQuery={searchQuery}
+          onClear={onClear || (() => { })}
+          suggestions={['Bolsa de Valores', 'Biotecnologia', 'Python', 'Dúvidas']}
         />
       ) : (
         filteredPosts.map(post => (
-        <article key={post.id} className="cmmt-post-card">
-          <div className="cmmt-post-header">
-            <img src={post.avatar} alt={post.author} className="cmmt-author-avatar" />
-            <div className="cmmt-author-info">
-              <h4>{post.author}</h4>
-              <span>{post.role} • {post.time}</span>
-            </div>
-            
-            {currentUser?.uid === post.authorId && (
-              <div className="cmmt-post-options">
-                <button className="cmmt-action-btn cmmt-delete-btn" onClick={() => handleDelete(post.id)} title="Excluir">
-                  <Trash2 size={16} />
-                </button>
+          <article key={post.id} className="cmmt-post-card">
+            <div className="cmmt-post-header">
+              <img 
+                src={post.avatar} 
+                alt={post.author} 
+                className="cmmt-author-avatar" 
+                onClick={(e) => { e.stopPropagation(); navigate(`/profile/${post.authorId}`); }}
+                style={{ cursor: 'pointer' }}
+              />
+              <div className="cmmt-author-info">
+                <h4 onClick={(e) => { e.stopPropagation(); navigate(`/profile/${post.authorId}`); }}>
+                  {post.author}
+                </h4>
+                <span>{post.role} • {post.time}</span>
               </div>
-            )}
-          </div>
 
-          <div className="cmmt-post-body">
-            <p>{post.content}</p>
-            <div className="cmmt-post-tags">
-              {post.tags.map((tag: any) => (
-                <span key={tag} className="cmmt-post-tag-item">{tag}</span>
-              ))}
+              {currentUser?.uid === post.authorId && (
+                <div className="cmmt-post-options">
+                  <button className="cmmt-action-btn cmmt-delete-btn" onClick={() => handleDelete(post.id)} title="Excluir">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
 
-          <div className="cmmt-post-actions">
-            <button 
-              className={`cmmt-action-btn ${post.likedBy?.includes(currentUser?.uid || '') ? 'cmmt-liked' : ''}`} 
-              onClick={() => handleLike(post.id)}
-            >
-              <Heart 
-                size={18} 
-                fill={post.likedBy?.includes(currentUser?.uid || '') ? 'currentColor' : 'none'} 
-                className={post.likedBy?.includes(currentUser?.uid || '') ? 'cmmt-like-anim' : ''}
-              /> 
-              {post.likes}
-            </button>
-            <button className="cmmt-action-btn cmmt-comments-btn" onClick={() => handleOpenThread(post.id)} >
-              <MessageSquare size={18} /> {post.comments} Comentários
-            </button>
-            <div className="cmmt-share">
-              <ShareMenu text={`Confira a publicação de ${post.author} na Omni!`}
-                url={`${window.location.origin}/discussion/${post.id}`} />
+            <div className="cmmt-post-body" onClick={() => handleOpenThread(post.id)}>
+              <p>{post.content}</p>
+              <div className="cmmt-post-tags">
+                {post.tags.map((tag: any) => (
+                  <span key={tag} className="cmmt-post-tag-item">{tag}</span>
+                ))}
+              </div>
             </div>
-          </div>
-        </article>
+
+            <div className="cmmt-post-actions">
+              <button
+                className={`cmmt-action-btn ${post.likedBy?.includes(currentUser?.uid || '') ? 'cmmt-liked' : ''}`}
+                onClick={() => handleLike(post.id)}
+              >
+                <Heart
+                  size={18}
+                  fill={post.likedBy?.includes(currentUser?.uid || '') ? 'currentColor' : 'none'}
+                  className={post.likedBy?.includes(currentUser?.uid || '') ? 'cmmt-like-anim' : ''}
+                />
+                {post.likes}
+              </button>
+              <button className="cmmt-action-btn cmmt-comments-btn" onClick={() => handleOpenThread(post.id)} >
+                <MessageSquare size={18} /> {post.comments} Comentários
+              </button>
+              <div className="cmmt-share">
+                <ShareMenu text={`Confira a publicação de ${post.author} na Omni!`}
+                  url={`${window.location.origin}/discussion/${post.id}`} />
+              </div>
+            </div>
+          </article>
         ))
       )}
-      <ConfirmModal 
+      <ConfirmModal
         isOpen={confirmConfig.isOpen}
         title={confirmConfig.title}
         message={confirmConfig.message}

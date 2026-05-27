@@ -149,9 +149,20 @@ const DiscussionDetail: React.FC = () => {
           {/* Post Original */}
           <article className="disc-original-post">
             <div className="disc-post-header">
-              <img src={discussion.avatar} alt={discussion.author} className="disc-author-avatar" />
+              <img 
+                src={discussion.avatar} 
+                alt={discussion.author} 
+                className="disc-author-avatar" 
+                onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
+                style={{ cursor: 'pointer' }}
+              />
               <div className="disc-author-info">
-                <h4>{discussion.author}</h4>
+                <h4 
+                  onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {discussion.author}
+                </h4>
                 <span>{discussion.role} • {discussion.time}</span>
               </div>
               
@@ -230,11 +241,22 @@ const DiscussionDetail: React.FC = () => {
               ) : (
                 discussion.replies.map((reply: any) => (
                   <div key={reply.id} className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
-                    <img src={reply.avatar} alt={reply.author} className="disc-comment-avatar" />
+                    <img 
+                      src={reply.avatar} 
+                      alt={reply.author} 
+                      className="disc-comment-avatar" 
+                      onClick={(e) => { e.stopPropagation(); if(reply.authorId) navigate(`/profile/${reply.authorId}`); }}
+                      style={{ cursor: 'pointer' }}
+                    />
                     <div className="disc-comment-content">
                       <div className="disc-comment-header">
                         <div className="disc-comment-author-info">
-                          <h4>{reply.author} {reply.isAuthor && <span className="disc-author-badge">Autor</span>}</h4>
+                          <h4 
+                            onClick={(e) => { e.stopPropagation(); if(reply.authorId) navigate(`/profile/${reply.authorId}`); }}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            {reply.author} {reply.isAuthor && <span className="disc-author-badge">Autor</span>}
+                          </h4>
                           <span>{reply.role} • {reply.time}</span>
                         </div>
                       </div>
@@ -262,9 +284,20 @@ const DiscussionDetail: React.FC = () => {
             {/* Sobre o Autor */}
             <div className="disc-widget disc-author-widget">
               <div className="disc-author-cover"></div>
-              <img src={discussion.avatar} alt={discussion.author} className="disc-author-profile-pic" />
+              <img 
+                src={discussion.avatar} 
+                alt={discussion.author} 
+                className="disc-author-profile-pic" 
+                onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
+                style={{ cursor: 'pointer' }}
+              />
               <div className="disc-author-widget-info">
-                <h3>{discussion.author}</h3>
+                <h3 
+                  onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {discussion.author}
+                </h3>
                 <p>{discussion.role}</p>
                 <div className="disc-author-stats">
                   <div><strong>{authorStats.publications}</strong><span>Publicações</span></div>
