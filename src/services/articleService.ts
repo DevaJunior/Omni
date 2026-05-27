@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc, query, limit, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, limit, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
 export interface Article {

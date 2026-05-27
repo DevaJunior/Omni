@@ -1,64 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, Image as ImageIcon, Smile, Search, MoreVertical, Info } from 'lucide-react';
+import { useAuth } from '../../../../src/contexts/AuthContext';
+import { chatService } from '../../../../src/services/chatService';
+import type { ChatRoom, ChatMessage } from '../../../../src/services/chatService';
 import './styles.css';
 
-// Interfaces mockadas (em breve Firebase)
-interface Message {
-  id: string;
-  senderId: string;
-  text: string;
-  timestamp: string;
-}
-
-interface ChatContact {
-  id: string;
-  name: string;
-  avatar: string;
-  lastMessage: string;
-  time: string;
-  unread: number;
-}
-
-const mockContacts: ChatContact[] = [
-  { id: '1', name: 'Ana Costa', avatar: 'https://ui-avatars.com/api/?name=Ana+Costa', lastMessage: 'Você pode me mandar o link do repositório?', time: '10:30', unread: 2 },
-  { id: '2', name: 'Dr. Rafael Mendes', avatar: 'https://ui-avatars.com/api/?name=Rafael+Mendes', lastMessage: 'Muito interessante a abordagem fuzzy!', time: 'Ontem', unread: 0 },
-];
-
-const mockHistory: Record<string, Message[]> = {
-  '1': [
-    { id: 'm1', senderId: '1', text: 'Olá! Vi sua última publicação sobre Rizofiltração.', timestamp: '10:15' },
-    { id: 'm2', senderId: 'me', text: 'Oi Ana! Muito obrigado.', timestamp: '10:20' },
-    { id: 'm3', senderId: '1', text: 'Você pode me mandar o link do repositório?', timestamp: '10:30' },
-  ],
-  '2': [
-    { id: 'm4', senderId: 'me', text: 'Acha que o P-Fuzzy resolve?', timestamp: '14:00' },
-    { id: 'm5', senderId: '2', text: 'Muito interessante a abordagem fuzzy!', timestamp: 'Ontem' },
-  ]
-};
-
 const Inbox: React.FC = () => {
-  const [activeContactId, setActiveContactId] = useState<string | null>(mockContacts[0].id);
+  const { currentUser } = useAuth();
+  const [chats, setChats] = useState<ChatRoom[]>([]);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
-  const [history, setHistory] = useState(mockHistory);
 
-  const activeContact = mockContacts.find(c => c.id === activeContactId);
-  const activeChat = activeContactId ? history[activeContactId] || [] : [];
+  // 1. Carregar lista de conversas
+  useEffect(() => {
+    if (!currentUser) return;
+    const unsubscribe = chatService.subscribeToChats(currentUser.uid, (data) => {
+      setChats(data);
+    });
+    return () => unsubscribe();
+  }, [currentUser]);
 
-  const handleSendMessage = () => {
-    if (!inputText.trim() || !activeContactId) return;
+  // 2. Carregar mensagens quando um chat for selecionado
+  useEffect(() => {
+    if (!activeChatId || !currentUser) {
+      setMessages([]);
+      return;
+    }
+    
+    // Marca como lido localmente e no Firebase
+    chatService.markAsRead(activeChatId, currentUser.uid);
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      senderId: 'me', // currentUser.uid
-      text: inputText.trim(),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    const unsubscribe = chatService.subscribeToMessages(activeChatId, (msgs) => {
+      setMessages(msgs);
+    });
+    return () => unsubscribe();
+  }, [activeChatId, currentUser]);
+
+  const activeChat = chats.find(c => c.id === activeChatId);
+
+  // Obtem os dados do contato baseado no dicionario de "users" no chatRoom
+  const getContactInfo = (chat: ChatRoom) => {
+    if (!currentUser || !chat.users) return { name: 'Desconhecido', avatar: '' };
+    
+    // O contato é a chave que não é o currentUser.uid
+    const contactId = chat.participants.find(id => id !== currentUser.uid) || currentUser.uid;
+    const contactData = chat.users[contactId];
+    
+    return {
+      id: contactId,
+      name: contactData?.name || 'Desconhecido',
+      avatar: contactData?.avatar || `https://ui-avatars.com/api/?name=User`
     };
+  };
 
-    setHistory(prev => ({
-      ...prev,
-      [activeContactId]: [...(prev[activeContactId] || []), newMessage]
-    }));
-    setInputText('');
+  const handleSendMessage = async () => {
+    if (!inputText.trim() || !activeChatId || !currentUser) return;
+    
+    const textToSend = inputText.trim();
+    setInputText(''); // Limpa o input rápido por UX
+    
+    const contactId = activeChat?.participants.find(id => id !== currentUser.uid) || currentUser.uid;
+
+    try {
+      await chatService.sendMessage(activeChatId, currentUser.uid, contactId, textToSend);
+    } catch (err) {
+      console.error("Erro ao enviar mensagem:", err);
+    }
+  };
+
+  const formatTime = (dateObj: any) => {
+    if (!dateObj) return '';
+    const date = dateObj.toDate ? dateObj.toDate() : new Date(dateObj);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -73,37 +87,50 @@ const Inbox: React.FC = () => {
           <input type="text" placeholder="Buscar nas conversas..." />
         </div>
         <div className="inbox-contacts-list">
-          {mockContacts.map(contact => (
-            <div 
-              key={contact.id} 
-              className={`inbox-contact-item ${activeContactId === contact.id ? 'active' : ''}`}
-              onClick={() => setActiveContactId(contact.id)}
-            >
-              <img src={contact.avatar} alt={contact.name} className="inbox-contact-avatar" />
-              <div className="inbox-contact-info">
-                <div className="inbox-contact-top">
-                  <h4>{contact.name}</h4>
-                  <span className="inbox-contact-time">{contact.time}</span>
-                </div>
-                <div className="inbox-contact-bottom">
-                  <p className="inbox-contact-lastmsg">{contact.lastMessage}</p>
-                  {contact.unread > 0 && <span className="inbox-unread-badge">{contact.unread}</span>}
+          {chats.map(chat => {
+            const contact = getContactInfo(chat);
+            const unreadCount = chat.unreadCount?.[currentUser?.uid || ''] || 0;
+            
+            return (
+              <div 
+                key={chat.id} 
+                className={`inbox-contact-item ${activeChatId === chat.id ? 'active' : ''}`}
+                onClick={() => setActiveChatId(chat.id)}
+              >
+                <img src={contact.avatar} alt={contact.name} className="inbox-contact-avatar" />
+                <div className="inbox-contact-info">
+                  <div className="inbox-contact-top">
+                    <h4>{contact.name}</h4>
+                    <span className="inbox-contact-time">
+                      {chat.updatedAt ? formatTime(chat.updatedAt) : ''}
+                    </span>
+                  </div>
+                  <div className="inbox-contact-bottom">
+                    <p className="inbox-contact-lastmsg">{chat.lastMessage}</p>
+                    {unreadCount > 0 && <span className="inbox-unread-badge">{unreadCount}</span>}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+          
+          {chats.length === 0 && (
+            <p style={{ textAlign: 'center', padding: '20px', color: '#666', fontSize: '0.9rem' }}>
+              Nenhuma conversa iniciada. Acesse o perfil de um pesquisador para enviar uma mensagem.
+            </p>
+          )}
         </div>
       </aside>
 
       {/* Janela de Chat */}
       <main className="inbox-chat-window">
-        {activeContact ? (
+        {activeChat ? (
           <>
             <header className="inbox-chat-header">
               <div className="inbox-chat-header-user">
-                <img src={activeContact.avatar} alt={activeContact.name} className="inbox-chat-header-avatar" />
+                <img src={getContactInfo(activeChat).avatar} alt={getContactInfo(activeChat).name} className="inbox-chat-header-avatar" />
                 <div>
-                  <h3>{activeContact.name}</h3>
+                  <h3>{getContactInfo(activeChat).name}</h3>
                   <span className="inbox-chat-status">Online agora</span>
                 </div>
               </div>
@@ -114,16 +141,18 @@ const Inbox: React.FC = () => {
             </header>
 
             <div className="inbox-chat-history">
-              {activeChat.map((msg) => {
-                const isMe = msg.senderId === 'me'; // comparar com currentUser.uid futuramente
+              {messages.map((msg) => {
+                const isMe = msg.senderId === currentUser?.uid;
+                const contactInfo = getContactInfo(activeChat);
+                
                 return (
                   <div key={msg.id} className={`inbox-bubble-wrapper ${isMe ? 'me' : 'them'}`}>
                     {!isMe && (
-                      <img src={activeContact.avatar} alt="Avatar" className="inbox-bubble-avatar" />
+                      <img src={contactInfo.avatar} alt="Avatar" className="inbox-bubble-avatar" />
                     )}
                     <div className={`inbox-bubble ${isMe ? 'bubble-me' : 'bubble-them'}`}>
                       <p>{msg.text}</p>
-                      <span className="inbox-bubble-time">{msg.timestamp}</span>
+                      <span className="inbox-bubble-time">{formatTime(msg.createdAt)}</span>
                     </div>
                   </div>
                 );

@@ -23,7 +23,7 @@ import type { IUser } from '../../../../src/types';
 
 
 const UserProfile: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<'visao-geral' | 'projetos' | 'publicacoes' | 'colecoes'>('visao-geral');
@@ -119,9 +119,19 @@ const UserProfile: React.FC = () => {
               <div className="profile-basic-info">
                 <h1>{userData.name || 'Usuário Omni'}</h1>
                 <h2>{userData.headline || 'Pesquisador Acadêmico'}</h2>
-                {isOwnProfile && (
-                  <button className="btn-profile-primary" onClick={() => navigate('/settings')}>Editar Perfil</button>
-                )}
+                <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                  {isOwnProfile ? (
+                    <button className="btn-profile-primary" onClick={() => navigate('/settings')}>Editar Perfil</button>
+                  ) : (
+                    <button className="btn-profile-primary" onClick={async () => {
+                      const { chatService } = await import('../../../../src/services/chatService');
+                      if (currentUser && userProfile) {
+                        await chatService.getOrCreateChat(currentUser.uid, id!, userProfile, userData);
+                        navigate('/inbox');
+                      }
+                    }}>Enviar Mensagem</button>
+                  )}
+                </div>
               </div>
 
               <div className="profile-details-list">
