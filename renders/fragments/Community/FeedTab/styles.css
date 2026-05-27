@@ -72,8 +72,6 @@
   border-radius: var(--radius-md);
   padding: 1.5rem;
   transition: var(--transition);
-  /* cursor: pointer; */
-  /* border: solid 2.5px blue; */
 }
 
 .cmmt-post-card:hover {
