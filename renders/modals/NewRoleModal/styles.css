@@ -1,0 +1,262 @@
+.nrm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: nrm-fadeIn 0.2s ease-out;
+}
+
+.nrm-modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 550px;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: nrm-slideUp 0.3s ease-out;
+  box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.nrm-modal-content::-webkit-scrollbar {
+  display: none;
+}
+
+.nrm-btn-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nrm-btn-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.nrm-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.nrm-icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.nrm-icon-red {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.nrm-header h2 {
+  font-size: 1.4rem;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.nrm-header p {
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.nrm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.nrm-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nrm-form-group label {
+  font-size: 0.7rem;
+  /* font-weight: 700; */
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  /* text-transform: uppercase; */
+}
+
+.nrm-required {
+  color: #ef4444;
+}
+
+.nrm-form-group input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #334155;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.nrm-form-group input:focus {
+  border-color: #3b82f6;
+}
+
+.nrm-permissions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.nrm-permission-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: var(--omni-surface);
+  border: 1px solid var(--omni-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nrm-permission-item:hover {
+  background: var(--omni-surface-hover);
+  border-color: #d1d5db;
+}
+
+.nrm-permission-item input[type="checkbox"] {
+  margin-top: 4px;
+  width: 16px;
+  height: 16px;
+  accent-color: #10b981;
+}
+
+.nrm-perm-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nrm-perm-info p {
+  font-size: 0.95rem;
+  color: var(--omni-text-primary);
+}
+
+.nrm-perm-info span {
+  font-size: 0.85rem;
+  color: #272727;
+  /* color: var(--omni-text-secondary); */
+  /* border: solid 1px red; */
+}
+
+.nrm-text-upper {
+  /* text-transform: uppercase; */
+}
+
+.nrm-modal-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 2rem;
+}
+
+.nrm-modal-btn-cancel {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nrm-modal-btn-cancel:hover {
+  background: #f3f4f6;
+}
+
+.nrm-modal-btn-submit {
+  background: #3b82f6;
+  border: none;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nrm-modal-btn-submit:hover {
+  background: #2563eb;
+}
+
+.nrm-modal-btn-submit:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+@keyframes nrm-fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nrm-slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .nrm-modal-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .nrm-header p {
+    font-size: 0.9rem;
+  }
+}

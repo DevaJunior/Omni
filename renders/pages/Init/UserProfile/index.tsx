@@ -63,7 +63,7 @@ const UserProfile: React.FC = () => {
     };
 
     fetchUser();
-  }, [currentUser]);
+  }, [id, currentUser]);
 
   if (loading) {
     return (
@@ -84,6 +84,8 @@ const UserProfile: React.FC = () => {
   // Fallbacks para campos que podem ser nulos em contas novas
   const lab = userData.lab || { name: 'Comunidade Omni', role: 'Pesquisador' };
 
+  const isOwnProfile = !id || id === currentUser?.uid;
+
   return (
     <>
       <div className="user-profile-wrapper">
@@ -101,7 +103,9 @@ const UserProfile: React.FC = () => {
               alt="Capa do Perfil"
               className="profile-cover-img"
             />
-            <button className="btn-edit-cover"><Edit3 size={16} /> Editar Capa</button>
+            {isOwnProfile && (
+              <button className="btn-edit-cover"><Edit3 size={16} /> Editar Capa</button>
+            )}
           </div>
 
           <div className="profile-main-layout">
@@ -115,7 +119,7 @@ const UserProfile: React.FC = () => {
               <div className="profile-basic-info">
                 <h1>{userData.name || 'Usuário Omni'}</h1>
                 <h2>{userData.headline || 'Pesquisador Acadêmico'}</h2>
-                {(!id || id === currentUser?.uid) && (
+                {isOwnProfile && (
                   <button className="btn-profile-primary" onClick={() => navigate('/settings')}>Editar Perfil</button>
                 )}
               </div>
@@ -184,7 +188,7 @@ const UserProfile: React.FC = () => {
 
                 <div className="tab-spacer"></div>
 
-                {(!id || id === currentUser?.uid) && (
+                {isOwnProfile && (
                   <button
                     className="tab-btn-icon"
                     title="Configurações da Conta"
@@ -237,7 +241,9 @@ const UserProfile: React.FC = () => {
                     <BookOpen size={48} />
                     <h3>Nenhuma publicação adicionada</h3>
                     <p>Compartilhe seus artigos científicos, resumos e produções acadêmicas com a comunidade.</p>
-                    <button className="btn-profile-outline mt-3">Adicionar Publicação</button>
+                    {isOwnProfile && (
+                      <button className="btn-profile-outline mt-3">Adicionar Publicação</button>
+                    )}
                   </div>
                 )}
 

@@ -236,6 +236,21 @@
     transform: translateY(-2px);
 }
 
+.save-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.save-feedback {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 0.75rem;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    animation: fadeIn 0.3s ease-out;
+}
+
 /* Security Items */
 .security-item {
     display: flex;

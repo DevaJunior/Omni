@@ -242,7 +242,7 @@ const LabProfile: React.FC = () => {
               {/* Placeholder para outras abas */}
               {activeTab === 'oportunidades' && <div className="lab-placeholder-tab">Sem projetos ativos ou oportunidades abertas no momento.</div>}
               
-              {activeTab === 'equipe_publica' && <LabTeamTab mode="public" />}
+              {activeTab === 'equipe_publica' && <LabTeamTab mode="public" labId={labData.id} />}
             </div>
 
             {/* COLUNA DIREITA (Sidebar) */}

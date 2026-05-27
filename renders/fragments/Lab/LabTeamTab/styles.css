@@ -12,6 +12,11 @@
   border-bottom: 1px solid var(--omni-border);
 }
 
+.lab-team-header-public {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
 .lab-team-header h3 {
   font-size: 1.2rem;
   color: var(--omni-text-primary);
@@ -90,6 +95,10 @@
 
 .lab-team-card:hover {
   border-color: var(--omni-primary-muted);
+}
+
+.lab-team-card.public-hover {
+  cursor: pointer;
 }
 
 .member-avatar {
@@ -306,6 +315,12 @@
 }
 .btn-reject:hover { background: #fee2e2; }
 
+.btn-reject-confirm {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+  color: white;
+}
+
 .req-reject-box textarea {
   width: 100%;
   padding: 0.75rem;
@@ -327,6 +342,24 @@
   margin-bottom: 1.5rem;
 }
 
+.btn-create-role {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-create-role:hover {
+  background: #f3f4f6;
+}
+
 .create-role-form {
   display: flex;
   gap: 0.75rem;
@@ -344,27 +377,47 @@
   width: 100%;
   border-collapse: collapse;
   background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
 .hierarchy-table th, .hierarchy-table td {
-  padding: 1rem;
+  padding: 1.25rem 1.5rem;
   text-align: left;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #f8fafc;
 }
 
 .hierarchy-table th {
-  background: #f8fafc;
-  color: #475569;
-  font-weight: 600;
-  font-size: 0.9rem;
+  background: #fdfdfd;
+  color: #334155;
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
 .hierarchy-table td {
-  color: #334155;
+  color: #1e293b;
   font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.perm-cell {
+  text-align: center !important;
+}
+
+.perm-check-icon {
+  color: #10b981;
+}
+
+.perm-dash {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.empty-table-cell {
+  text-align: center;
+  padding: 2rem;
 }
 
 .hierarchy-table td input[type="checkbox"] {
@@ -377,4 +430,72 @@
   font-size: 0.8rem;
   color: #94a3b8;
   margin-top: 1rem;
+}
+
+.invite-link-section {
+  background: var(--omni-surface);
+  border: 1px solid var(--omni-border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.invite-link-section p {
+  color: var(--omni-text-primary);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.invite-link-box {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.invite-link-box input {
+  flex: 1;
+  background: var(--omni-bg);
+  border: 1px solid var(--omni-border);
+  color: var(--omni-text-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.invite-link-box button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--omni-surface-hover);
+  border: 1px solid var(--omni-border);
+  color: var(--omni-text-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.invite-link-box button:hover {
+  background: var(--omni-border);
+}
+
+.role-select {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--omni-border);
+  border-radius: 6px;
+  background: var(--omni-surface);
+  color: var(--omni-text-primary);
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.text-red {
+  color: #ef4444;
+}
+
+.text-red:hover {
+  background: rgba(239, 68, 68, 0.1);
 }

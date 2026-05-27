@@ -9,6 +9,7 @@ export interface IUser {
   role?: string;
   github?: string;
   linkedin?: string;
+  website?: string;
   location?: string;
   skills?: string[];
   lab?: any;

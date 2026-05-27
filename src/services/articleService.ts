@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc, query, limit, setDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, limit, setDoc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
 export interface Article {
@@ -50,14 +50,7 @@ export const articleService = {
     const collectionToUpdate = isHomeArticle ? COLLECTION_NAME : ACADEMIC_COLLECTION;
     const ref = doc(db, collectionToUpdate, id);
     try {
-      // Como o setDoc no seed pode não ter criado o stats, vamos fazer um fetch antes ou assumir que o Firebase mergeia. 
-      // Para evitar erros de "nested path not found", faremos via setDoc merge ou getDoc + update.
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        const data = snap.data();
-        const currentViews = data.stats?.views || 0;
-        await setDoc(ref, { stats: { views: currentViews + 1 } }, { merge: true });
-      }
+      await updateDoc(ref, { 'stats.views': increment(1) });
     } catch (e) {
       console.error(e);
     }
@@ -68,12 +61,7 @@ export const articleService = {
     const collectionToUpdate = isHomeArticle ? COLLECTION_NAME : ACADEMIC_COLLECTION;
     const ref = doc(db, collectionToUpdate, id);
     try {
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        const data = snap.data();
-        const currentDowns = data.stats?.downloads || 0;
-        await setDoc(ref, { stats: { downloads: currentDowns + 1 } }, { merge: true });
-      }
+      await updateDoc(ref, { 'stats.downloads': increment(1) });
     } catch (e) {
       console.error(e);
     }

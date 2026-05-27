@@ -1,0 +1,217 @@
+.npm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: npm-fadeIn 0.2s ease-out;
+}
+
+.npm-modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 550px;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: npm-slideUp 0.3s ease-out;
+  box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.npm-modal-content::-webkit-scrollbar {
+  display: none;
+}
+
+.npm-btn-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.npm-btn-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.npm-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.npm-icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.npm-icon-orange {
+  background: rgba(249, 115, 22, 0.1);
+  color: #f97316;
+}
+
+.npm-header h2 {
+  font-size: 1.4rem;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.npm-header p {
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.npm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.npm-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.npm-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.npm-char-counter {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.npm-form-group label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.npm-required {
+  color: #ef4444;
+}
+
+.npm-form-group textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #334155;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.npm-form-group textarea:focus {
+  border-color: #3b82f6;
+}
+
+.npm-textarea-vertical {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.npm-modal-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 2rem;
+}
+
+.npm-modal-btn-cancel {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.npm-modal-btn-cancel:hover {
+  background: #f3f4f6;
+}
+
+.npm-modal-btn-submit {
+  background: #3b82f6;
+  border: none;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.npm-modal-btn-submit:hover {
+  background: #2563eb;
+}
+
+.npm-modal-btn-submit:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+@keyframes npm-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes npm-slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .npm-modal-content {
+    padding: 1.5rem 1rem;
+  }
+  .npm-header p {
+    font-size: 0.9rem;
+  }
+}

@@ -9,6 +9,9 @@ import {
   Settings
 } from 'lucide-react';
 import LabTeamTab from '../../../../fragments/Lab/LabTeamTab';
+import BancadaTab from '../../../../fragments/Lab/BancadaTab';
+import AreaComumTab from '../../../../fragments/Lab/AreaComumTab';
+import CadernoTab from '../../../../fragments/Lab/CadernoTab';
 import './styles.css';
 
 const LabWorkspace: React.FC = () => {
@@ -78,28 +81,15 @@ const LabWorkspace: React.FC = () => {
         {/* Área de Conteúdo Principal */}
         <main className="workspace-main-content">
           {activeTab === 'bancada' && (
-            <div className="workspace-placeholder-tab anim-fade-up">
-              <FlaskConical size={48} className="placeholder-icon" />
-              <h3>Bancada Virtual e LIMS</h3>
-              <p>Atalhos para ferramentas do Workbench e gestão de recursos (Agendamento de equipamentos e Inventário).</p>
-              <button className="cmmt-btn-primary" onClick={() => navigate('/lab/inventory')}>Acessar Inventário</button>
-            </div>
+            <BancadaTab labId={id || '1'} />
           )}
 
           {activeTab === 'forum' && (
-            <div className="workspace-placeholder-tab anim-fade-up">
-              <MessageSquare size={48} className="placeholder-icon" />
-              <h3>Área Comum (Shared)</h3>
-              <p>Fórum interno, mural de recados e repositório de dados/datasets compartilhados entre a equipe.</p>
-            </div>
+            <AreaComumTab labId={id || '1'} />
           )}
 
           {activeTab === 'caderno' && (
-            <div className="workspace-placeholder-tab anim-fade-up">
-              <Book size={48} className="placeholder-icon" />
-              <h3>Área Pessoal (Private)</h3>
-              <p>Caderno de Pesquisa (Lab Notebook) e diário de fotos de experimentos (culturas, microscópio).</p>
-            </div>
+            <CadernoTab labId={id || '1'} />
           )}
 
           {activeTab === 'gestao' && (

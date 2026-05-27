@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   User,
@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../../../../src/contexts/AuthContext';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../../../src/config/firebaseConfig';
 import './styles.css';
 
 type SettingsSection = 'profile' | 'security' | 'notifications' | 'privacy' | 'appearance';
@@ -23,6 +25,56 @@ const Settings: React.FC = () => {
   const { currentUser, userProfile, logout } = useAuth();
   const navigate = useNavigate();
 
+  // --- ESTADO DO FORMULÁRIO DE PERFIL ---
+  const [formData, setFormData] = useState({
+    name: '',
+    headline: '',
+    bio: '',
+    location: '',
+    website: '',
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (userProfile) {
+      setFormData({
+        name: userProfile.name || '',
+        headline: userProfile.headline || '',
+        bio: userProfile.bio || '',
+        location: userProfile.location || '',
+        website: userProfile.website || '',
+      });
+    }
+  }, [userProfile]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSaveProfile = async () => {
+    if (!currentUser) return;
+    setIsSaving(true);
+    setSaveMessage(null);
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, {
+        name: formData.name,
+        headline: formData.headline,
+        bio: formData.bio,
+        location: formData.location,
+        website: formData.website,
+      });
+      setSaveMessage('✅ Perfil atualizado com sucesso!');
+      setTimeout(() => setSaveMessage(null), 3000);
+    } catch (error) {
+      console.error('Erro ao salvar perfil:', error);
+      setSaveMessage('❌ Erro ao salvar. Tente novamente.');
+      setTimeout(() => setSaveMessage(null), 4000);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -65,7 +117,8 @@ const Settings: React.FC = () => {
                   type="text"
                   className="form-control"
                   placeholder="Seu nome"
-                  defaultValue={userProfile?.name || ''}
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
                 />
 
               </div>
@@ -75,6 +128,8 @@ const Settings: React.FC = () => {
                   type="text"
                   className="form-control"
                   placeholder="Ex: Pesquisador em Biotecnologia"
+                  value={formData.headline}
+                  onChange={(e) => handleInputChange('headline', e.target.value)}
                 />
               </div>
             </div>
@@ -85,6 +140,8 @@ const Settings: React.FC = () => {
                 className="form-control"
                 rows={4}
                 placeholder="Conte um pouco sobre sua trajetória..."
+                value={formData.bio}
+                onChange={(e) => handleInputChange('bio', e.target.value)}
               ></textarea>
             </div>
 
@@ -96,6 +153,8 @@ const Settings: React.FC = () => {
                     type="text"
                     className="form-control"
                     placeholder="Ex: São Paulo, Brasil"
+                    value={formData.location}
+                    onChange={(e) => handleInputChange('location', e.target.value)}
                   />
                 </div>
               </div>
@@ -105,11 +164,20 @@ const Settings: React.FC = () => {
                   type="text"
                   className="form-control"
                   placeholder="https://seusite.com"
+                  value={formData.website}
+                  onChange={(e) => handleInputChange('website', e.target.value)}
                 />
               </div>
             </div>
 
-            <button className="save-button">Salvar Alterações</button>
+            {saveMessage && <p className="save-feedback">{saveMessage}</p>}
+            <button 
+              className="save-button" 
+              onClick={handleSaveProfile}
+              disabled={isSaving}
+            >
+              {isSaving ? 'Salvando...' : 'Salvar Alterações'}
+            </button>
           </div>
         );
 

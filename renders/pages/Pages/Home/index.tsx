@@ -19,14 +19,7 @@ const Home: React.FC = () => {
         if (data.length > 0) {
           setArticles(data);
         } else {
-          // Auto-seed: Se o banco estiver vazio, popula automaticamente
-          console.log("Banco de dados vazio. Executando seed automático...");
-          const { seedFirebaseDatabase } = await import('../../../../src/lib/firebase/seed');
-          await seedFirebaseDatabase();
-          
-          // Busca novamente após o seed
-          const newData = await articleService.getLatestArticles(10);
-          setArticles(newData);
+          console.warn("Banco de dados vazio. Artigos não encontrados.");
         }
       } catch (err) {
         console.error("Erro ao carregar artigos:", err);
