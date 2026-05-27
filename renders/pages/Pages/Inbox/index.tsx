@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Image as ImageIcon, Smile, Search, MoreVertical, Info, Edit, Phone, Video, X, Paperclip, FileText, Check, CheckCheck, ArrowLeft } from 'lucide-react';
+import { Send, Image as ImageIcon, Search, Info, Edit, Phone, Video, X, Paperclip, FileText, CheckCheck, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { chatService } from '../../../../src/services/chatService';
 import type { ChatRoom, ChatMessage } from '../../../../src/services/chatService';
@@ -30,7 +30,7 @@ const Inbox: React.FC = () => {
       setShowDetails(false);
       return;
     }
-    
+
     // Marca como lido localmente e no Firebase
     chatService.markAsRead(activeChatId, currentUser.uid);
 
@@ -50,11 +50,11 @@ const Inbox: React.FC = () => {
   // Obtem os dados do contato baseado no dicionario de "users" no chatRoom
   const getContactInfo = (chat: ChatRoom) => {
     if (!currentUser || !chat.users) return { name: 'Desconhecido', avatar: '', headline: 'Pesquisador', department: 'Depto. de Biotecnologia' };
-    
+
     // O contato é a chave que não é o currentUser.uid
     const contactId = chat.participants.find(id => id !== currentUser.uid) || currentUser.uid;
     const contactData = chat.users[contactId];
-    
+
     return {
       id: contactId,
       name: contactData?.name || 'Desconhecido',
@@ -66,10 +66,10 @@ const Inbox: React.FC = () => {
 
   const handleSendMessage = async () => {
     if (!inputText.trim() || !activeChatId || !currentUser) return;
-    
+
     const textToSend = inputText.trim();
     setInputText(''); // Limpa o input rápido por UX
-    
+
     const contactId = activeChat?.participants.find(id => id !== currentUser.uid) || currentUser.uid;
 
     try {
@@ -113,10 +113,10 @@ const Inbox: React.FC = () => {
             const contact = getContactInfo(chat);
             const unreadCount = chat.unreadCount?.[currentUser?.uid || ''] || 0;
             const isActive = activeChatId === chat.id;
-            
+
             return (
-              <div 
-                key={chat.id} 
+              <div
+                key={chat.id}
                 className={`inbox-contact-item ${isActive ? 'active' : ''}`}
                 onClick={() => setActiveChatId(chat.id)}
               >
@@ -139,7 +139,7 @@ const Inbox: React.FC = () => {
               </div>
             );
           })}
-          
+
           {chats.length === 0 && (
             <p className="inbox-empty-text">
               Nenhuma conversa iniciada. Acesse o perfil de um pesquisador para enviar uma mensagem.
@@ -181,17 +181,17 @@ const Inbox: React.FC = () => {
                   <span>{formatDate(messages[0].createdAt)}</span>
                 </div>
               )}
-              
+
               {messages.map((msg) => {
                 const isMe = msg.senderId === currentUser?.uid;
-                
+
                 return (
                   <div key={msg.id} className={`inbox-bubble-wrapper ${isMe ? 'me' : 'them'}`}>
                     <div className={`inbox-bubble ${isMe ? 'bubble-me' : 'bubble-them'}`}>
                       <p>{msg.text}</p>
                     </div>
                     <span className="inbox-bubble-time">
-                      {formatTime(msg.createdAt)} 
+                      {formatTime(msg.createdAt)}
                       {isMe && <CheckCheck size={14} className="inbox-read-check" />}
                     </span>
                   </div>
@@ -203,9 +203,9 @@ const Inbox: React.FC = () => {
             <footer className="inbox-chat-input-area">
               <div className="inbox-input-wrapper">
                 <button className="inbox-input-icon"><Paperclip size={18} /></button>
-                <input 
-                  type="text" 
-                  placeholder="Escreva uma mensagem..." 
+                <input
+                  type="text"
+                  placeholder="Escreva uma mensagem..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -217,7 +217,7 @@ const Inbox: React.FC = () => {
         ) : (
           <div className="inbox-empty-state">
             <div className="inbox-empty-icon">
-               <Send size={48} />
+              <Send size={48} />
             </div>
             <h2>Suas Mensagens</h2>
             <p>Selecione um contato na lista ao lado ou inicie uma nova conversa.</p>
@@ -232,7 +232,7 @@ const Inbox: React.FC = () => {
             <h3>Detalhes</h3>
             <button className="inbox-icon-btn" onClick={() => setShowDetails(false)}><X size={18} /></button>
           </header>
-          
+
           <div className="inbox-details-profile">
             <img src={contactInfo.avatar} alt={contactInfo.name} className="inbox-details-avatar" />
             <h4>{contactInfo.name}</h4>
@@ -245,7 +245,7 @@ const Inbox: React.FC = () => {
               <h5>ARQUIVOS RECENTES</h5>
               <a href="#">Ver todos</a>
             </div>
-            
+
             <div className="inbox-file-item">
               <div className="inbox-file-icon blue"><FileText size={18} /></div>
               <div className="inbox-file-info">
@@ -253,7 +253,7 @@ const Inbox: React.FC = () => {
                 <span>2.4 MB • Hoje, 10:20</span>
               </div>
             </div>
-            
+
             <div className="inbox-file-item">
               <div className="inbox-file-icon orange"><FileText size={18} /></div>
               <div className="inbox-file-info">

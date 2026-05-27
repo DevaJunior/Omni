@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Search as SearchIcon, Compass, BookOpen, Users, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
+import { Search as SearchIcon, Compass, BookOpen, Users, ArrowRight, Loader2 } from 'lucide-react';
+import { searchService, type SearchResult } from '../../../../src/services/searchService';
 import './styles.css';
 
 const SearchPage: React.FC = () => {
@@ -8,9 +9,32 @@ const SearchPage: React.FC = () => {
   const query = searchParams.get('q') || '';
   
   const [activeTab, setActiveTab] = useState('all');
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // Mock temporário para forçar o empty state e mostrar a UI de sugestões pedida.
-  const results: any[] = []; 
+  useEffect(() => {
+    const fetchResults = async () => {
+      if (!query.trim()) {
+        setResults([]);
+        return;
+      }
+      setLoading(true);
+      const data = await searchService.globalSearch(query);
+      setResults(data);
+      setLoading(false);
+    };
+    
+    fetchResults();
+  }, [query]);
+
+  // Filtra de acordo com a tab
+  const filteredResults = results.filter(r => {
+    if (activeTab === 'all') return true;
+    if (activeTab === 'articles' && r.type === 'article') return true;
+    if (activeTab === 'projects' && r.type === 'project') return true;
+    if (activeTab === 'people' && r.type === 'user') return true;
+    return false;
+  }); 
 
   return (
     <div className="search-page-container">
@@ -24,7 +48,12 @@ const SearchPage: React.FC = () => {
         </div>
       </div>
       
-      {results.length === 0 ? (
+      {loading ? (
+        <div style={{ padding: '60px', textAlign: 'center', color: '#64748b' }}>
+          <Loader2 size={40} className="spinner" style={{ animation: 'spin 1s linear infinite', margin: '0 auto 20px' }} />
+          <p>Buscando na base Omni...</p>
+        </div>
+      ) : filteredResults.length === 0 ? (
         <div className="empty-search-state">
           <div className="empty-search-hero">
             <div className="empty-search-icon-wrapper">
@@ -49,7 +78,7 @@ const SearchPage: React.FC = () => {
                 </div>
                 <h4>Fitorremediação de Efluentes Têxteis</h4>
                 <p>Estudo completo sobre uso de macrófitas aquáticas e lógica p-fuzzy no monitoramento de bacias.</p>
-                <button className="suggestion-link-btn">Acessar <ArrowRight size={16} /></button>
+                <Link to="/article/fitorremediacao" className="suggestion-link-btn" style={{ textDecoration: 'none' }}>Acessar <ArrowRight size={16} /></Link>
               </div>
 
               <div className="suggestion-card">
@@ -61,7 +90,7 @@ const SearchPage: React.FC = () => {
                 </div>
                 <h4>Acqua Solutions Lab</h4>
                 <p>Comunidade de pesquisadores desenvolvendo técnicas inovadoras de purificação hídrica e química ambiental.</p>
-                <button className="suggestion-link-btn">Acessar <ArrowRight size={16} /></button>
+                <Link to="/lab/acqua" className="suggestion-link-btn" style={{ textDecoration: 'none' }}>Acessar <ArrowRight size={16} /></Link>
               </div>
 
               <div className="suggestion-card">
@@ -73,15 +102,35 @@ const SearchPage: React.FC = () => {
                 </div>
                 <h4>Lógica P-Fuzzy em Modelos Biológicos</h4>
                 <p>Fórum aberto com 45 especialistas debatendo métricas e mitigação de incertezas em biologia computacional.</p>
-                <button className="suggestion-link-btn">Acessar <ArrowRight size={16} /></button>
+                <Link to="/discussion/pfuzzy-bio" className="suggestion-link-btn" style={{ textDecoration: 'none' }}>Acessar <ArrowRight size={16} /></Link>
               </div>
 
             </div>
           </div>
         </div>
       ) : (
-        <div className="search-results-list">
-          {/* A renderização dos resultados de pesquisa real vai aqui */}
+        <div className="search-results-list" style={{ padding: '20px 40px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {filteredResults.map(res => (
+            <Link key={res.id + res.type} to={res.url} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div style={{ display: 'flex', gap: '20px', padding: '20px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', alignItems: 'center', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }} onMouseOver={(e) => e.currentTarget.style.borderColor = '#6c5ce7'} onMouseOut={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}>
+                {res.image ? (
+                  <img src={res.image} alt={res.title} style={{ width: '64px', height: '64px', borderRadius: res.type === 'user' ? '50%' : '8px', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '64px', height: '64px', borderRadius: res.type === 'user' ? '50%' : '8px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+                    {res.type === 'user' ? <Users size={32} /> : <BookOpen size={32} />}
+                  </div>
+                )}
+                <div style={{ flex: 1 }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6c5ce7', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {res.type === 'user' ? 'Pesquisador' : res.type === 'article' ? 'Publicação' : 'Projeto'}
+                  </span>
+                  <h3 style={{ margin: '4px 0', fontSize: '1.2rem', color: '#1e293b' }}>{res.title}</h3>
+                  <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>{res.subtitle}</p>
+                </div>
+                <ArrowRight size={20} color="#94a3b8" />
+              </div>
+            </Link>
+          ))}
         </div>
       )}
     </div>
