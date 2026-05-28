@@ -5,6 +5,7 @@ import { communityService } from '../../../../src/services/communityService';
 import type { Project } from '../../../../src/types/community';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import CreateProjectModal from '../../../../renders/modals/CreateProjectModal';
+import { useAuth } from '../../../../src/contexts/AuthContext';
 import './styles.css';
 
 interface ProjectsTabProps {
@@ -14,7 +15,10 @@ interface ProjectsTabProps {
 
 const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) => {
   const navigate = useNavigate();
+  const { userProfile } = useAuth();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  
+  const canCreateProject = /pesquisador|professor|laboratório|admin/i.test(userProfile?.role || '');
 
   const [projectsList, setProjectsList] = useState<(Project & { icon: React.ReactNode })[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,15 +92,17 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
 
   return (
     <div className="cmmt-projects-list">
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
-      <button
-        className="cmmt-btn-primary"
-        onClick={() => setIsCreateModalOpen(true)}
-      >
-        <Briefcase size={18} style={{ marginRight: '8px' }} />
-        Criar Projeto
-      </button>
-    </div>
+      {canCreateProject && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+          <button
+            className="cmmt-btn-primary"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            <Briefcase size={18} style={{ marginRight: '8px' }} />
+            Criar Projeto
+          </button>
+        </div>
+      )}
       
       {hasMore && !searchQuery && (
         <button 
