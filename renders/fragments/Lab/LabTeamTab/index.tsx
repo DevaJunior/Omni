@@ -3,6 +3,9 @@ import { Trash2, Edit2, ShieldAlert, Check, X as XIcon, Plus, Copy, CheckCircle2
 import { collection, query, where, getDocs, doc, updateDoc, getDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../../../../src/config/firebaseConfig';
 import { useAuth } from '../../../../src/contexts/AuthContext';
+import { useToastStore } from '../../../../src/stores/toastStore';
+import { useConfirmStore } from '../../../../src/stores/confirmStore';
+import Skeleton from '../../../components/Skeleton';
 import NewRoleModal from '../../../modals/NewRoleModal';
 import './styles.css';
 
@@ -13,6 +16,8 @@ interface LabTeamTabProps {
 
 const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
   const { userProfile } = useAuth();
+  const { addToast } = useToastStore();
+  const { requestConfirm } = useConfirmStore();
   const [activeTab, setActiveTab] = useState<'membros' | 'solicitacoes' | 'hierarquia'>('solicitacoes');
 
   // Estados de dados
@@ -39,7 +44,7 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
     setLoading(true);
     try {
       const labDoc = await getDoc(doc(db, 'labs', labId));
-      let currentRoles: any[] = [];
+      let currentRoles: Record<string, unknown>[] = [];
       if (labDoc.exists()) {
         currentRoles = labDoc.data().customRoles || [];
         setRoles(currentRoles);
@@ -99,11 +104,11 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
           role: 'Pesquisador'
         }
       });
-      alert('Usuário aceito com sucesso!');
+      addToast('Usuário aceito com sucesso!', 'success');
       fetchData();
     } catch (e) {
       console.error(e);
-      alert('Erro ao aceitar solicitação.');
+      addToast('Erro ao aceitar solicitação.', 'error');
     }
   };
 
@@ -124,16 +129,25 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
   // ==============================
   // AÇÕES: MEMBROS
   // ==============================
-  const handleRemoveMember = async (userId: string) => {
-    if (!confirm('Tem certeza que deseja remover este usuário do laboratório?')) return;
-    try {
-      await updateDoc(doc(db, 'users', userId), {
-        lab: null
-      });
-      fetchData();
-    } catch (e) {
-      console.error(e);
-    }
+  const handleRemoveMember = (userId: string) => {
+    requestConfirm({
+      title: 'Remover Membro',
+      message: 'Tem certeza que deseja remover este usuário do laboratório?',
+      isDanger: true,
+      confirmText: 'Remover',
+      onConfirm: async () => {
+        try {
+          await updateDoc(doc(db, 'users', userId), {
+            lab: null
+          });
+          fetchData();
+          addToast('Usuário removido', 'success');
+        } catch (e) {
+          console.error(e);
+          addToast('Erro ao remover usuário', 'error');
+        }
+      }
+    });
   };
 
   const handleChangeRole = async (userId: string, newRoleName: string) => {
@@ -143,16 +157,17 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
       });
       // Update local state temporarily for immediate feedback
       setMembers(prev => prev.map(m => m.id === userId ? { ...m, lab: { ...m.lab, role: newRoleName } } : m));
+      addToast('Cargo alterado com sucesso', 'success');
     } catch (e) {
       console.error("Erro ao mudar cargo", e);
-      alert("Erro ao alterar cargo do membro.");
+      addToast('Erro ao alterar cargo do membro.', 'error');
     }
   };
 
   const copyInviteLink = () => {
     const link = `${window.location.origin}/lab/${labId}/join`;
     navigator.clipboard.writeText(link);
-    alert('Link de convite copiado!');
+    addToast('Link de convite copiado!', 'success');
   };
 
   // ==============================
@@ -177,24 +192,33 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
       setIsRoleModalOpen(false);
       setEditingRole(null);
       fetchData();
+      addToast('Cargo salvo com sucesso', 'success');
     } catch (e) {
       console.error(e);
-      alert("Erro ao salvar cargo.");
+      addToast('Erro ao salvar cargo.', 'error');
     }
   };
 
-  const handleDeleteRole = async (role: any) => {
+  const handleDeleteRole = (role: Record<string, unknown>) => {
     if (!labId) return;
-    if (!confirm(`Tem certeza que deseja excluir o cargo '${role.name}'?`)) return;
-    try {
-      await updateDoc(doc(db, 'labs', labId), {
-        customRoles: arrayRemove(role)
-      });
-      fetchData();
-    } catch (e) {
-      console.error(e);
-      alert("Erro ao deletar cargo.");
-    }
+    requestConfirm({
+      title: 'Excluir Cargo',
+      message: `Tem certeza que deseja excluir o cargo '${role.name}'?`,
+      isDanger: true,
+      confirmText: 'Excluir',
+      onConfirm: async () => {
+        try {
+          await updateDoc(doc(db, 'labs', labId), {
+            customRoles: arrayRemove(role)
+          });
+          fetchData();
+          addToast('Cargo deletado com sucesso', 'success');
+        } catch (e) {
+          console.error(e);
+          addToast('Erro ao deletar cargo.', 'error');
+        }
+      }
+    });
   };
 
   // RENDER PÚBLICO
@@ -248,7 +272,11 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
 
       <div className="lab-team-content">
         {loading ? (
-          <p className="loading-msg">Carregando dados...</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px 0' }}>
+            <Skeleton type="card" height="100px" />
+            <Skeleton type="card" height="100px" />
+            <Skeleton type="card" height="100px" />
+          </div>
         ) : (
           <>
             {/* ABA MEMBROS */}

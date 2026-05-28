@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../../../src/stores/toastStore';
 import React, { useState, useRef } from 'react';
 import {
   ArrowLeft, Bold, Italic, List, Link as LinkIcon, Image, Send,
@@ -17,6 +18,7 @@ const RESEARCH_AREAS = ['Biotecnologia', 'Matemática', 'Química', 'Biologia', 
 const DISCIPLINES = ['Biologia Molecular', 'Genética', 'Biologia Celular', 'Bioquímica', 'Fisiologia', 'Cálculo', 'Lógica Fuzzy', 'Estruturas de Dados'];
 
 const PublishNote: React.FC = () => {
+  const { addToast } = useToastStore();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -86,7 +88,7 @@ const PublishNote: React.FC = () => {
   const handlePublish = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || selectedAreas.length === 0 || selectedDisciplines.length === 0 || !content) {
-      alert("Preencha o título, ao menos uma área, uma disciplina e o conteúdo antes de publicar.");
+      addToast("Preencha o título, ao menos uma área, uma disciplina e o conteúdo antes de publicar.", 'error');
       return;
     }
 
@@ -108,11 +110,11 @@ const PublishNote: React.FC = () => {
       };
 
       await learnService.createNote(newNote);
-      alert("Resumo publicado com sucesso na Comunidade Omni!");
+      addToast("Resumo publicado com sucesso na Comunidade Omni!", 'success');
       navigate('/learn');
     } catch (err) {
       console.error("Erro ao publicar nota", err);
-      alert("Erro ao publicar resumo. Tente novamente.");
+      addToast("Erro ao publicar resumo. Tente novamente.", 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -120,10 +122,10 @@ const PublishNote: React.FC = () => {
 
   const handleSaveDraft = () => {
     if (!title) {
-      alert("Dê pelo menos um título ao seu resumo antes de salvá-mo como rascunho.");
+      addToast("Dê pelo menos um título ao seu resumo antes de salvá-mo como rascunho.", 'info');
       return;
     }
-    alert("Resumo salvo nos rascunhos locais com sucesso!");
+    addToast("Resumo salvo nos rascunhos locais com sucesso!", 'success');
     navigate('/learn'); // Pode optar por não navegar caso queira que o usuário continue na tela
   };
 

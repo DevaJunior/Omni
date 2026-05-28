@@ -9,6 +9,9 @@ import ScrollToTop from './config/ScrollToTop';
 // Páginas Principais
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import LoadingOverlay from './components/LoadingOverlay'; // Valid path?
+import ToastContainer from '../renders/components/ToastContainer';
+import GlobalConfirm from '../renders/components/GlobalConfirm';
 import Login from '../renders/pages/Auth/Login/index';
 
 import Home from './../renders/pages/Pages/Home';
@@ -55,6 +58,9 @@ const App: React.FC = () => {
           {/* Todas as outras rotas: Protegidas e com Navbar */}
           <Route path="*" element={
             <>
+              <LoadingOverlay />
+              <ToastContainer />
+              <GlobalConfirm />
               <Navbar />
               <main>
                 <Routes>

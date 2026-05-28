@@ -18,6 +18,9 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
 
   const [projectsList, setProjectsList] = useState<(Project & { icon: React.ReactNode })[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [lastVisible, setLastVisible] = useState<any>(null);
+  const [hasMore, setHasMore] = useState(true);
 
   // Mapeamento dinâmico de ícones com base no tipo vindo do banco
   const getIconForProjectType = (type: string) => {
@@ -27,20 +30,32 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
     }
   };
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const data = await communityService.getProjects();
-        setProjectsList(data.map(p => ({
-          ...p,
-          icon: getIconForProjectType(p.type)
-        })));
-      } catch (error) {
-        console.error("Erro ao carregar projetos:", error);
-      } finally {
-        setLoading(false);
+  const fetchProjects = async (isLoadMore = false) => {
+    if (isLoadMore) setLoadingMore(true);
+    else setLoading(true);
+
+    try {
+      const response = await communityService.getProjectsPaginated(6, isLoadMore ? lastVisible : null);
+      if (isLoadMore) {
+        setProjectsList(prev => {
+          const newItems = response.data.filter(p => !prev.find((ext: any) => ext.id === p.id));
+          return [...prev, ...newItems].map(p => ({ ...p, icon: getIconForProjectType(p.type) })) as any;
+        });
+      } else {
+        setProjectsList(response.data.map((p: any) => ({ ...p, icon: getIconForProjectType(p.type) })) as any);
       }
-    };
+      
+      setLastVisible(response.lastDoc);
+      setHasMore(response.data.length === 6 && response.lastDoc !== null);
+    } catch (error) {
+      console.error("Erro ao carregar projetos:", error);
+    } finally {
+      if (isLoadMore) setLoadingMore(false);
+      else setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchProjects();
   }, []);
 
@@ -82,8 +97,19 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
         Criar Projeto
       </button>
     </div>
-
-    {filteredProjects.length === 0 ? (
+      
+      {hasMore && !searchQuery && (
+        <button 
+          className="btn-primary" 
+          onClick={() => fetchProjects(true)}
+          disabled={loadingMore}
+          style={{ width: '100%', padding: '12px', marginTop: '16px', display: 'flex', justifyContent: 'center' }}
+        >
+          {loadingMore ? 'Carregando...' : 'Carregar Mais Projetos'}
+        </button>
+      )}
+      
+      {filteredProjects.length === 0 ? (
       <EmptyStateSearch
         searchQuery={searchQuery}
         onClear={onClear || (() => { })}

@@ -1,24 +1,25 @@
-import { collection, doc, setDoc, deleteDoc, getDoc, getDocs, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, setDoc, deleteDoc, getDoc, getDocs, query, orderBy,  Timestamp } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
+import { FIREBASE_ROUTES } from '../config/routes';
 
 export interface IBookmark {
   targetId: string;
   type: 'article' | 'project' | 'discussion' | 'note';
   title: string;
-  savedAt: any;
+  savedAt: Timestamp | Date | string | null;
 }
 
 export const bookmarkService = {
   // Verifica se um item está salvo
   async checkIsBookmarked(userId: string, targetId: string): Promise<boolean> {
-    const bookmarkRef = doc(db, 'users', userId, 'bookmarks', targetId);
+    const bookmarkRef = doc(db, FIREBASE_ROUTES.USERS, userId, FIREBASE_ROUTES.BOOKMARKS, targetId);
     const snap = await getDoc(bookmarkRef);
     return snap.exists();
   },
 
   // Alterna o estado de salvamento (salva se não estiver salvo, remove se estiver)
   async toggleBookmark(userId: string, targetId: string, type: 'article' | 'project' | 'discussion' | 'note', title: string): Promise<boolean> {
-    const bookmarkRef = doc(db, 'users', userId, 'bookmarks', targetId);
+    const bookmarkRef = doc(db, FIREBASE_ROUTES.USERS, userId, FIREBASE_ROUTES.BOOKMARKS, targetId);
     const snap = await getDoc(bookmarkRef);
 
     if (snap.exists()) {
@@ -29,7 +30,7 @@ export const bookmarkService = {
         targetId,
         type,
         title,
-        savedAt: serverTimestamp()
+        savedAt: Date.now() as any
       };
       await setDoc(bookmarkRef, bookmarkData);
       return true; // Retorna true indicando que foi salvo
@@ -39,7 +40,7 @@ export const bookmarkService = {
   // Retorna todos os itens salvos pelo usuário
   async getUserBookmarks(userId: string): Promise<IBookmark[]> {
     const q = query(
-      collection(db, 'users', userId, 'bookmarks'),
+      collection(db, FIREBASE_ROUTES.USERS, userId, FIREBASE_ROUTES.BOOKMARKS),
       orderBy('savedAt', 'desc')
     );
     const snap = await getDocs(q);

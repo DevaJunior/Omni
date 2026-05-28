@@ -1,11 +1,13 @@
-import { collection, getDocs, doc, getDoc, arrayUnion, setDoc, increment, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, arrayUnion, setDoc, increment, deleteDoc, query, limit, startAfter, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
+import { FIREBASE_ROUTES } from '../config/routes';
 import type { Article, Project, Discussion, LabPartner } from '../types/community';
+import type { IUser } from '../types/index';
 
 export const communityService = {
   // Artigos
   async getArticles(): Promise<Article[]> {
-    const querySnapshot = await getDocs(collection(db, "articles"));
+    const querySnapshot = await getDocs(collection(db, FIREBASE_ROUTES.ARTICLES));
     const data: Article[] = [];
     querySnapshot.forEach((doc) => {
       data.push({ id: doc.id, ...doc.data() } as Article);
@@ -13,8 +15,21 @@ export const communityService = {
     return data;
   },
 
+  async getArticlesPaginated(limitCount: number = 10, lastDocSnap: any = null): Promise<{ data: Article[], lastDoc: any }> {
+    let q = query(collection(db, FIREBASE_ROUTES.ARTICLES), limit(limitCount));
+    if (lastDocSnap) {
+      q = query(q, startAfter(lastDocSnap));
+    }
+    const querySnapshot = await getDocs(q);
+    const data: Article[] = [];
+    querySnapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() } as Article);
+    });
+    return { data, lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null };
+  },
+
   async getArticleById(id: string): Promise<Article | null> {
-    const docSnap = await getDoc(doc(db, "articles", id));
+    const docSnap = await getDoc(doc(db, FIREBASE_ROUTES.ARTICLES, id));
     if (docSnap.exists()) {
       return { id: docSnap.id, ...docSnap.data() } as Article;
     }
@@ -23,7 +38,7 @@ export const communityService = {
 
   // Projetos
   async getProjects(): Promise<Project[]> {
-    const querySnapshot = await getDocs(collection(db, "projects"));
+    const querySnapshot = await getDocs(collection(db, FIREBASE_ROUTES.PROJECTS));
     const data: Project[] = [];
     querySnapshot.forEach((doc) => {
       data.push({ id: doc.id, ...doc.data() } as Project);
@@ -32,8 +47,22 @@ export const communityService = {
   },
 
   // Discussões (Feed)
+  
+  async getProjectsPaginated(limitCount: number = 10, lastDocSnap: any = null): Promise<{ data: Project[], lastDoc: any }> {
+    let q = query(collection(db, FIREBASE_ROUTES.PROJECTS), limit(limitCount));
+    if (lastDocSnap) {
+      q = query(q, startAfter(lastDocSnap));
+    }
+    const querySnapshot = await getDocs(q);
+    const data: Project[] = [];
+    querySnapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() } as Project);
+    });
+    return { data, lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null };
+  },
+
   async getDiscussions(): Promise<Discussion[]> {
-    const querySnapshot = await getDocs(collection(db, "discussions"));
+    const querySnapshot = await getDocs(collection(db, FIREBASE_ROUTES.DISCUSSIONS));
     const data: Discussion[] = [];
     querySnapshot.forEach((doc) => {
       data.push({ id: doc.id, ...doc.data() } as Discussion);
@@ -42,22 +71,36 @@ export const communityService = {
     return data.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
   },
 
-  async getDiscussionById(id: string): Promise<any | null> {
-    const docSnap = await getDoc(doc(db, "discussions", id));
+  
+  async getDiscussionsPaginated(limitCount: number = 10, lastDocSnap: any = null): Promise<{ data: Discussion[], lastDoc: any }> {
+    let q = query(collection(db, FIREBASE_ROUTES.DISCUSSIONS), orderBy('date', 'desc'), limit(limitCount));
+    if (lastDocSnap) {
+      q = query(q, startAfter(lastDocSnap));
+    }
+    const querySnapshot = await getDocs(q);
+    const data: Discussion[] = [];
+    querySnapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() } as Discussion);
+    });
+    return { data, lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null };
+  },
+
+  async getDiscussionById(id: string): Promise<Discussion | null> {
+    const docSnap = await getDoc(doc(db, FIREBASE_ROUTES.DISCUSSIONS, id));
     if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() };
+      return { id: docSnap.id, ...docSnap.data() } as Discussion;
     }
     return null;
   },
 
   async createDiscussion(discussionData: Omit<Discussion, 'id'>): Promise<string> {
-    const docRef = doc(collection(db, "discussions"));
+    const docRef = doc(collection(db, FIREBASE_ROUTES.DISCUSSIONS));
     await setDoc(docRef, discussionData);
     return docRef.id;
   },
 
-  async addReply(discussionId: string, replyData: any): Promise<void> {
-    const docRef = doc(db, "discussions", discussionId);
+  async addReply(discussionId: string, replyData: Record<string, unknown>): Promise<void> {
+    const docRef = doc(db, FIREBASE_ROUTES.DISCUSSIONS, discussionId);
     // Para simplificar, vamos colocar os replies dentro do array de replies na própria doc
     // e incrementar a contagem de comentários.
     await setDoc(docRef, {
@@ -68,7 +111,7 @@ export const communityService = {
   },
 
   async voteDiscussion(discussionId: string, userId: string): Promise<{liked: boolean, likesCount: number}> {
-    const docRef = doc(db, "discussions", discussionId);
+    const docRef = doc(db, FIREBASE_ROUTES.DISCUSSIONS, discussionId);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) throw new Error("Discussão não encontrada");
     
@@ -96,12 +139,12 @@ export const communityService = {
   },
 
   async deleteDiscussion(discussionId: string): Promise<void> {
-    await deleteDoc(doc(db, "discussions", discussionId));
+    await deleteDoc(doc(db, FIREBASE_ROUTES.DISCUSSIONS, discussionId));
   },
 
   // Laboratórios Parceiros
   async getLabs(): Promise<LabPartner[]> {
-    const querySnapshot = await getDocs(collection(db, "labs"));
+    const querySnapshot = await getDocs(collection(db, FIREBASE_ROUTES.LABS));
     const labsData: LabPartner[] = [];
     querySnapshot.forEach(doc => {
       labsData.push({ id: doc.id, name: doc.data().name });
@@ -110,23 +153,23 @@ export const communityService = {
   },
 
   // Busca todos os usuários do banco e retorna aleatoriamente 3 que o logado AINDA NÃO segue e não seja ele mesmo
-  async getSuggestedUsers(currentUserId: string): Promise<any[]> {
+  async getSuggestedUsers(currentUserId: string): Promise<IUser[]> {
     try {
       // Pega dados do logado para ver a array de seguindo
-      const currentUserDoc = await getDoc(doc(db, "users", currentUserId));
+      const currentUserDoc = await getDoc(doc(db, FIREBASE_ROUTES.USERS, currentUserId));
       let following: string[] = [];
       if (currentUserDoc.exists() && currentUserDoc.data().following) {
          following = currentUserDoc.data().following;
       }
 
       // Busca todos os usuários (por ser protótipo; numa base de milhões seria query mais elaborada ou edge functions)
-      const usersSnap = await getDocs(collection(db, "users"));
-      const allUsers: any[] = [];
+      const usersSnap = await getDocs(collection(db, FIREBASE_ROUTES.USERS));
+      const allUsers: IUser[] = [];
       
       usersSnap.forEach(uDoc => {
         const data = uDoc.data();
         if (uDoc.id !== currentUserId && !following.includes(uDoc.id)) {
-           allUsers.push({ id: uDoc.id, ...data });
+           allUsers.push({ id: uDoc.id, ...data } as IUser);
         }
       });
 
@@ -142,7 +185,7 @@ export const communityService = {
   // Seguir um usuário real no firebase
   async followUser(currentUserId: string, targetUserId: string): Promise<boolean> {
     try {
-      const userRef = doc(db, "users", currentUserId);
+      const userRef = doc(db, FIREBASE_ROUTES.USERS, currentUserId);
       await setDoc(userRef, { following: arrayUnion(targetUserId) }, { merge: true });
       return true;
     } catch (e) {
@@ -162,7 +205,7 @@ export const communityService = {
       
       const tagCounts: Record<string, number> = {};
       
-      const addTags = (items: any[]) => {
+      const addTags = (items: Array<Article | Project | Discussion>) => {
         items.forEach(item => {
           if (Array.isArray(item.tags)) {
             item.tags.forEach((tag: string) => {

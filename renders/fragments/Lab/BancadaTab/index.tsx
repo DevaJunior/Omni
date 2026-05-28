@@ -90,21 +90,21 @@ const BancadaTab: React.FC<BancadaTabProps> = ({ labId }) => {
         </div>
         
         <div className="reservations-list">
-          {reservations.length > 0 ? reservations.map((res: any, index: number) => (
-            <React.Fragment key={res.id}>
+          {reservations.length > 0 ? reservations.map((res: Record<string, unknown>, index: number) => (
+            <React.Fragment key={(res as any).id}>
               <div className="reservation-item">
                 <div className="res-left">
                   <div className="res-icon">
                     <Clock size={20} />
                   </div>
                   <div className="res-info">
-                    <h5>{res.equipmentName}</h5>
-                    <span>Reservado por {res.userName}</span>
+                    <h5>{(res as any).equipmentName}</h5>
+                    <span>Reservado por {(res as any).userName}</span>
                   </div>
                 </div>
                 <div className="res-right">
-                  <span className={`res-badge ${res.status === 'Agendado' ? 'badge-agendado' : 'badge-em-uso'}`}>{res.status}</span>
-                  <span className="res-time"><Calendar size={14} /> {res.date}, {res.startTime} - {res.endTime}</span>
+                  <span className={`res-badge ${(res as any).status === 'Agendado' ? 'badge-agendado' : 'badge-em-uso'}`}>{(res as any).status}</span>
+                  <span className="res-time"><Calendar size={14} /> {(res as any).date}, {(res as any).startTime} - {(res as any).endTime}</span>
                 </div>
               </div>
               {index < reservations.length - 1 && <div className="res-divider"></div>}

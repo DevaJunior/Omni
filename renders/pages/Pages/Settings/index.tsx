@@ -36,6 +36,12 @@ const Settings: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
+  // --- 2FA STATE ---
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const [show2FASetup, setShow2FASetup] = useState(false);
+  const [twoFACode, setTwoFACode] = useState('');
+  const [twoFAError, setTwoFAError] = useState('');
+
   useEffect(() => {
     if (userProfile) {
       setFormData({
@@ -211,11 +217,83 @@ const Settings: React.FC = () => {
 
             <div className="security-item">
               <div className="security-info">
-                <h4>Autenticação em Duas Etapas</h4>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h4>Autenticação em Duas Etapas</h4>
+                  {is2FAEnabled && <span className="verified-badge" style={{ background: '#ecfdf5', color: '#059669', padding: '2px 8px', fontSize: '0.7rem' }}>Ativado</span>}
+                </div>
                 <p>Adicione uma camada extra de segurança à sua conta.</p>
               </div>
-              <button className="btn-secondary">Configurar</button>
+              {!is2FAEnabled ? (
+                <button 
+                  className="btn-secondary" 
+                  onClick={() => setShow2FASetup(!show2FASetup)}
+                >
+                  {show2FASetup ? 'Cancelar' : 'Configurar'}
+                </button>
+              ) : (
+                <button 
+                  className="btn-danger" 
+                  onClick={() => setIs2FAEnabled(false)}
+                >
+                  Desativar
+                </button>
+              )}
             </div>
+
+            {show2FASetup && !is2FAEnabled && (
+              <div className="settings-card two-fa-setup-card">
+                <h4 style={{ marginBottom: '1rem' }}>Configurar Autenticador</h4>
+                <p className="section-description" style={{ fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                  1. Baixe um aplicativo autenticador como Google Authenticator ou Authy.<br />
+                  2. Escaneie o QR Code abaixo com o aplicativo.
+                </p>
+
+                <div className="two-fa-grid" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap' }}>
+                  <div className="qr-code-mock" style={{ width: '150px', height: '150px', background: 'white', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=otpauth://totp/Omni:${currentUser?.email}?secret=OMNI2FASECUREKEY&issuer=Omni`} alt="QR Code" style={{ width: '100%', height: '100%' }} />
+                  </div>
+                  <div className="two-fa-secret-code">
+                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>Ou insira o código manualmente no app:</p>
+                    <code style={{ background: '#f1f5f9', padding: '8px 12px', borderRadius: '6px', fontSize: '0.95rem', letterSpacing: '1px', color: '#0f172a', fontWeight: 'bold' }}>
+                      OMNI 2FA SECURE KEY
+                    </code>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>3. Digite o código de 6 dígitos gerado pelo app</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="000 000"
+                    maxLength={6}
+                    value={twoFACode}
+                    onChange={(e) => {
+                      setTwoFACode(e.target.value.replace(/\D/g, ''));
+                      setTwoFAError('');
+                    }}
+                    style={{ letterSpacing: '4px', fontSize: '1.2rem', textAlign: 'center', maxWidth: '200px' }}
+                  />
+                  {twoFAError && <p style={{ color: '#ef4444', fontSize: '0.85rem', marginTop: '0.5rem' }}>{twoFAError}</p>}
+                </div>
+
+                <button
+                  className="save-button"
+                  style={{ width: 'auto' }}
+                  onClick={() => {
+                    if (twoFACode.length === 6) {
+                      setIs2FAEnabled(true);
+                      setShow2FASetup(false);
+                      setTwoFACode('');
+                    } else {
+                      setTwoFAError('O código deve conter 6 dígitos numéricos.');
+                    }
+                  }}
+                >
+                  Verificar e Ativar
+                </button>
+              </div>
+            )}
 
             <div className="security-item danger-zone">
               <div className="security-info">

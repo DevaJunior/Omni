@@ -14,5 +14,9 @@ export interface IUser {
   department?: string;
   skills?: string[];
   following?: string[];
-  lab?: any;
+  lab?: {
+    id: string;
+    role: string;
+    name?: string;
+  };
 }

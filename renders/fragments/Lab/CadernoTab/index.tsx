@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../../src/stores/toastStore';
 import React, { useState, useEffect } from 'react';
 import { 
   Calendar,
@@ -6,6 +7,7 @@ import {
 import { collection, query, where, onSnapshot, addDoc, doc, deleteDoc, orderBy } from 'firebase/firestore';
 import { db } from '../../../../src/config/firebaseConfig';
 import { useAuth } from '../../../../src/contexts/AuthContext';
+import Skeleton from '../../../components/Skeleton';
 import NewEntryModal from '../../../modals/NewEntryModal';
 import ConfirmModal from '../../../../renders/components/ConfirmModal';
 import './styles.css';
@@ -15,6 +17,7 @@ interface CadernoTabProps {
 }
 
 const CadernoTab: React.FC<CadernoTabProps> = ({ labId }) => {
+  const { addToast } = useToastStore();
   const { currentUser } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [entries, setEntries] = useState<any[]>([]);
@@ -64,7 +67,7 @@ const CadernoTab: React.FC<CadernoTabProps> = ({ labId }) => {
     return () => unsubscribe();
   }, [labId, currentUser]);
 
-  const handleCreateEntry = async (data: any) => {
+  const handleCreateEntry = async (data: Record<string, unknown>) => {
     if (!currentUser) return;
     try {
       await addDoc(collection(db, 'lab_notebooks'), {
@@ -75,7 +78,7 @@ const CadernoTab: React.FC<CadernoTabProps> = ({ labId }) => {
       });
     } catch (e) {
       console.error("Erro ao criar entrada no caderno:", e);
-      alert('Ocorreu um erro ao salvar sua anotação.');
+      addToast('Ocorreu um erro ao salvar sua anotação.', 'error');
     }
   };
 
@@ -116,7 +119,10 @@ const CadernoTab: React.FC<CadernoTabProps> = ({ labId }) => {
 
       <div className="caderno-grid">
         {loading ? (
-          <p className="loading-msg" style={{gridColumn: '1 / -1'}}>Carregando seu caderno...</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', gridColumn: '1 / -1', padding: '24px 0' }}>
+            <Skeleton type="card" height="150px" />
+            <Skeleton type="card" height="150px" />
+          </div>
         ) : entries.length === 0 ? (
           <p className="empty-msg" style={{gridColumn: '1 / -1'}}>Nenhuma anotação. Crie sua primeira entrada no caderno!</p>
         ) : (

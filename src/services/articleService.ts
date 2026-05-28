@@ -1,5 +1,6 @@
-import { collection, getDocs, doc, getDoc, query, limit, updateDoc, increment } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, limit, updateDoc, increment, Timestamp, startAfter } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
+import { FIREBASE_ROUTES } from '../config/routes';
 
 export interface Article {
   id: string;
@@ -7,7 +8,7 @@ export interface Article {
   desc: string;
   image: string;
   category: string;
-  createdAt?: any;
+  createdAt?: Timestamp | Date | string;
   stats?: {
     views: number;
     downloads: number;
@@ -15,8 +16,8 @@ export interface Article {
   };
 }
 
-const COLLECTION_NAME = 'articles_home'; 
-const ACADEMIC_COLLECTION = 'articles';
+const COLLECTION_NAME = FIREBASE_ROUTES.ARTICLES_HOME; 
+const ACADEMIC_COLLECTION = FIREBASE_ROUTES.ARTICLES;
 
 export const articleService = {
   // Busca os artigos de destaque mais recentes
@@ -37,6 +38,20 @@ export const articleService = {
   },
   
   // Busca um artigo da Home pelo ID
+  
+  async getArticlesPaginated(limitCount: number = 10, lastDocSnap: any = null): Promise<{ data: Article[], lastDoc: any }> {
+    let q = query(collection(db, ACADEMIC_COLLECTION), limit(limitCount));
+    if (lastDocSnap) {
+      q = query(q, startAfter(lastDocSnap));
+    }
+    const querySnapshot = await getDocs(q);
+    const data: Article[] = [];
+    querySnapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() } as Article);
+    });
+    return { data, lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null };
+  },
+
   async getArticleById(id: string): Promise<Article | null> {
     const docSnap = await getDoc(doc(db, COLLECTION_NAME, id));
     if (docSnap.exists()) {

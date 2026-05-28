@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../../src/stores/toastStore';
 import './styles.css';
 import React, { useState, useEffect } from 'react';
 import {
@@ -25,6 +26,7 @@ import type { IUser } from '../../../../src/types';
 
 
 const UserProfile: React.FC = () => {
+  const { addToast } = useToastStore();
   const { currentUser, userProfile } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -44,7 +46,7 @@ const UserProfile: React.FC = () => {
         const dQuery = query(collection(db, "discussions"), where("authorId", "==", userData.id));
         const dSnap = await getDocs(dQuery);
         const dData = dSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
-        setUserDiscussions(dData.sort((a: any, b: any) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()));
+        setUserDiscussions(dData.sort((a: { date: string }, b: { date: string }) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()));
 
         const pQuery = query(collection(db, "projects"), where("coordinator", "==", userData.name));
         const pSnap = await getDocs(pQuery);
@@ -133,10 +135,10 @@ const UserProfile: React.FC = () => {
 
       // Atualizar o state local
       setUserData({ ...userData, [type]: downloadURL });
-      alert(`${type === 'avatar' ? 'Foto de perfil' : 'Capa'} atualizada com sucesso!`);
+      addToast(`${type === 'avatar' ? 'Foto de perfil' : 'Capa'} atualizada com sucesso!`, 'success');
     } catch (err) {
       console.error(`Erro ao fazer upload do ${type}:`, err);
-      alert(`Ocorreu um erro ao atualizar ${type === 'avatar' ? 'a foto' : 'a capa'}.`);
+      addToast(`Ocorreu um erro ao atualizar ${type === 'avatar' ? 'a foto' : 'a capa'}.`, 'error');
     } finally {
       setIsUploading(false);
     }

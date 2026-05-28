@@ -5,7 +5,7 @@ import './styles.css';
 interface NewEntryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: Record<string, unknown>) => void;
 }
 
 const NewEntryModal: React.FC<NewEntryModalProps> = ({ isOpen, onClose, onSubmit }) => {

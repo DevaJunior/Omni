@@ -34,7 +34,7 @@ const Login: React.FC = () => {
       await loginWithGoogle();
       // No Desktop (signInWithPopup), o código aguarda e chega aqui normalmente.
       // No Mobile (signInWithRedirect), a página é redirecionada antes desta linha executar.
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setErrorText("Não foi possível autenticar. Janela foi fechada ou erro de conexão.");
       setIsAuthenticating(false);

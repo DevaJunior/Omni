@@ -39,18 +39,36 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
 
   const [articlesList, setArticlesList] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [lastVisible, setLastVisible] = useState<any>(null);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchArticles = async (isLoadMore = false) => {
+    if (isLoadMore) setLoadingMore(true);
+    else setLoading(true);
+
+    try {
+      const response = await communityService.getArticlesPaginated(6, isLoadMore ? lastVisible : null);
+      if (isLoadMore) {
+        setArticlesList(prev => {
+          const newItems = response.data.filter(p => !prev.find((ext: any) => ext.id === p.id));
+          return [...prev, ...newItems] as any;
+        });
+      } else {
+        setArticlesList(response.data as any);
+      }
+      
+      setLastVisible(response.lastDoc);
+      setHasMore(response.data.length === 6 && response.lastDoc !== null);
+    } catch (error) {
+      console.error("Erro ao carregar artigos:", error);
+    } finally {
+      if (isLoadMore) setLoadingMore(false);
+      else setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const data = await communityService.getArticles();
-        setArticlesList(data);
-      } catch (error) {
-        console.error("Erro ao carregar artigos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchArticles();
   }, []);
 
@@ -214,6 +232,17 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
             </article>
           ))}
         </div>
+        
+        {hasMore && !searchQuery && (
+          <button 
+            className="btn-primary" 
+            onClick={() => fetchArticles(true)}
+            disabled={loadingMore}
+            style={{ width: '100%', padding: '12px', marginTop: '16px', display: 'flex', justifyContent: 'center' }}
+          >
+            {loadingMore ? 'Carregando...' : 'Carregar Mais Artigos'}
+          </button>
+        )}
       </section>
 
     </div>

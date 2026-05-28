@@ -1,3 +1,4 @@
+import Navbar from '../../../../menus/Navbar';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // 1. IMPORT NECESSÁRIO
 import {
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 import { labService } from '../../../../../src/services/labService';
 import type { Tool } from '../../../../../src/types/lab';
+import Skeleton from '../../../../components/Skeleton';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
 
@@ -65,7 +67,22 @@ const Lab: React.FC = () => {
     return matchesSearch && tool.category === activeCategory;
   });
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Bancada...</div>;
+  if (loading) return (
+    <>
+      <Navbar />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '100px 40px' }}>
+        <Skeleton type="title" height="40px" width="30%" />
+        <Skeleton type="text" height="20px" width="50%" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
+           <Skeleton type="card" height="150px" />
+           <Skeleton type="card" height="150px" />
+           <Skeleton type="card" height="150px" />
+           <Skeleton type="card" height="150px" />
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
 
   return (
     <>

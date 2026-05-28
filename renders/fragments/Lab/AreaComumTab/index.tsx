@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../../src/stores/toastStore';
 import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle2,
@@ -10,6 +11,7 @@ import { db } from '../../../../src/config/firebaseConfig';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import NewPostModal from '../../../modals/NewPostModal';
 import ConfirmModal from '../../../components/ConfirmModal';
+import Skeleton from '../../../components/Skeleton';
 import './styles.css';
 
 interface AreaComumTabProps {
@@ -17,6 +19,7 @@ interface AreaComumTabProps {
 }
 
 const AreaComumTab: React.FC<AreaComumTabProps> = ({ labId }) => {
+  const { addToast } = useToastStore();
   const { currentUser, userProfile } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [posts, setPosts] = useState<any[]>([]);
@@ -81,7 +84,7 @@ const AreaComumTab: React.FC<AreaComumTabProps> = ({ labId }) => {
       });
     } catch (e) {
       console.error("Erro ao criar post:", e);
-      alert('Ocorreu um erro ao criar o post.');
+      addToast('Ocorreu um erro ao criar o post.', 'error');
     }
   };
 
@@ -102,10 +105,10 @@ const AreaComumTab: React.FC<AreaComumTabProps> = ({ labId }) => {
     });
   };
 
-  const handleToggleLike = async (post: any) => {
+  const handleToggleLike = async (post: Record<string, unknown>) => {
     if (!currentUser) return;
-    const postRef = doc(db, 'lab_posts', post.id);
-    const hasLiked = post.likes?.includes(currentUser.uid);
+    const postRef = doc(db, 'lab_posts', (post as any).id);
+    const hasLiked = (post as any).likes?.includes(currentUser.uid);
     try {
       if (hasLiked) {
         await updateDoc(postRef, {
@@ -193,12 +196,15 @@ const AreaComumTab: React.FC<AreaComumTabProps> = ({ labId }) => {
 
       <div className="mural-posts-list">
         {loading ? (
-          <p className="loading-msg">Carregando posts...</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px 0' }}>
+            <Skeleton type="card" height="150px" />
+            <Skeleton type="card" height="150px" />
+          </div>
         ) : posts.length === 0 ? (
           <p className="empty-msg">Nenhum post no mural ainda. Seja o primeiro a publicar!</p>
         ) : (
           posts.map((post) => {
-            const hasLiked = post.likes?.includes(currentUser?.uid);
+            const hasLiked = (post as any).likes?.includes(currentUser?.uid);
             const isAuthor = currentUser?.uid === post.authorId;
             const isAdmin = userProfile?.lab?.role?.toLowerCase().includes('admin') || userProfile?.lab?.role?.toLowerCase() === 'pi';
             const canDelete = isAuthor || isAdmin;
@@ -251,21 +257,21 @@ const AreaComumTab: React.FC<AreaComumTabProps> = ({ labId }) => {
                 {expandedPostId === post.id && (
                   <div className="post-comments-section">
                     <div className="comments-list">
-                      {post.comments?.map((comment: any) => (
-                        <div key={comment.id} className="comment-item">
+                      {post.comments?.map((comment: Record<string, unknown>) => (
+                        <div key={(comment as any).id} className="comment-item">
                           <div className="comment-avatar">
                             {comment.authorAvatar ? (
-                              <img src={comment.authorAvatar} alt={comment.authorName} />
+                              <img src={(comment as any).authorAvatar || ''} alt={(comment as any).authorName || ''} />
                             ) : (
-                              <div className="avatar-placeholder">{getInitials(comment.authorName)}</div>
+                              <div className="avatar-placeholder">{getInitials((comment as any).authorName || '')}</div>
                             )}
                           </div>
                           <div className="comment-content-box">
                             <div className="comment-header">
-                              <span className="comment-author">{comment.authorName}</span>
-                              <span className="comment-time">{formatTime(comment.createdAt)}</span>
+                              <span className="comment-author">{(comment as any).authorName}</span>
+                              <span className="comment-time">{formatTime((comment as any).createdAt || 0)}</span>
                             </div>
-                            <p className="comment-text">{comment.content}</p>
+                            <p className="comment-text">{(comment as any).content}</p>
                           </div>
                           {(currentUser?.uid === comment.authorId || isAdmin) && (
                             <button className="icon-btn-ghost text-red comment-delete" onClick={() => handleDeleteComment(post.id, comment)}>

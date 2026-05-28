@@ -36,6 +36,9 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
 
   const [posts, setPosts] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [lastVisible, setLastVisible] = useState<any>(null);
+  const [hasMore, setHasMore] = useState(true);
   const [newPostText, setNewPostText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState({
@@ -45,14 +48,28 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     onConfirm: () => { }
   });
 
-  const fetchDiscussions = async () => {
+  const fetchDiscussions = async (isLoadMore = false) => {
+    if (isLoadMore) setLoadingMore(true);
+    else setLoading(true);
+
     try {
-      const data = await communityService.getDiscussions();
-      setPosts(data);
+      const response = await communityService.getDiscussionsPaginated(5, isLoadMore ? lastVisible : null);
+      if (isLoadMore) {
+        setPosts(prev => {
+          const newPosts = response.data.filter(p => !prev.find(ext => ext.id === p.id));
+          return [...prev, ...newPosts];
+        });
+      } else {
+        setPosts(response.data);
+      }
+      
+      setLastVisible(response.lastDoc);
+      setHasMore(response.data.length === 5 && response.lastDoc !== null);
     } catch (error) {
       console.error("Erro ao carregar feed:", error);
     } finally {
-      setLoading(false);
+      if (isLoadMore) setLoadingMore(false);
+      else setLoading(false);
     }
   };
 
@@ -98,15 +115,15 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     if (!searchQuery) return 1;
     const q = searchQuery.toLowerCase();
     let score = 0;
-    if (post.title && post.title.toLowerCase().includes(q)) score += 10;
-    if (post.content.toLowerCase().includes(q)) score += 5;
-    if (post.author.toLowerCase().includes(q)) score += 3;
-    if (post.tags.some((tag: string) => tag.toLowerCase().includes(q))) score += 1;
+    if (((post as any).title && (post as any).title.toLowerCase()).includes(q)) score += 10;
+    if (((post as any).content?.toLowerCase?.() || "").includes(q)) score += 5;
+    if (((post as any).author?.toLowerCase?.() || "").includes(q)) score += 3;
+    if (((post as any).tags?.some || (() => false))((tag: string) => tag.toLowerCase().includes(q))) score += 1;
     return score;
   };
 
   const filteredPosts = [...posts]
-    .map(p => ({ ...p, _searchScore: getSearchScore(p) }))
+    .map((p: any) => ({ ...p, _searchScore: getSearchScore(p as any) }))
     .filter(p => p._searchScore > 0)
     .sort((a, b) => {
       if (searchQuery) return b._searchScore - a._searchScore;
@@ -234,6 +251,17 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
             </div>
           </article>
         ))
+      )}
+      
+      {hasMore && !searchQuery && (
+        <button 
+          className="btn-primary" 
+          onClick={() => fetchDiscussions(true)}
+          disabled={loadingMore}
+          style={{ width: '100%', padding: '12px', marginTop: '16px', display: 'flex', justifyContent: 'center' }}
+        >
+          {loadingMore ? 'Carregando...' : 'Carregar Mais'}
+        </button>
       )}
       <ConfirmModal
         isOpen={confirmConfig.isOpen}

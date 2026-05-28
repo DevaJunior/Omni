@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../../../src/stores/toastStore';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
@@ -15,6 +16,7 @@ import CadernoTab from '../../../../fragments/Lab/CadernoTab';
 import './styles.css';
 
 const LabWorkspace: React.FC = () => {
+  const { addToast } = useToastStore();
   const navigate = useNavigate();
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState<'bancada' | 'forum' | 'caderno' | 'gestao'>('bancada');
@@ -71,7 +73,7 @@ const LabWorkspace: React.FC = () => {
           
           <button 
             className="workspace-nav-btn"
-            onClick={() => alert('Configurações do Lab em breve!')}
+            onClick={() => addToast('Configurações do Lab em breve!', 'info')}
           >
             <Settings size={18} />
             Configurações

@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../src/stores/toastStore';
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
@@ -13,6 +14,7 @@ interface EquipmentReservationModalProps {
 }
 
 const EquipmentReservationModal: React.FC<EquipmentReservationModalProps> = ({ isOpen, onClose, labId, onSuccess }) => {
+  const { addToast } = useToastStore();
   const { userProfile } = useAuth();
   const [equipmentName, setEquipmentName] = useState('');
   const [date, setDate] = useState('');
@@ -25,7 +27,7 @@ const EquipmentReservationModal: React.FC<EquipmentReservationModalProps> = ({ i
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userProfile) {
-      alert("Você precisa estar logado para agendar um equipamento.");
+      addToast("Você precisa estar logado para agendar um equipamento.", 'info');
       return;
     }
 
@@ -47,7 +49,7 @@ const EquipmentReservationModal: React.FC<EquipmentReservationModalProps> = ({ i
       onClose();
     } catch (error) {
       console.error("Erro ao agendar equipamento:", error);
-      alert("Ocorreu um erro ao agendar o equipamento.");
+      addToast("Ocorreu um erro ao agendar o equipamento.", 'error');
     } finally {
       setIsSubmitting(false);
     }

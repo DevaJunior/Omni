@@ -1,3 +1,4 @@
+import Navbar from '../../../../menus/Navbar';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -5,6 +6,7 @@ import {
 } from 'lucide-react';
 import { learnService } from '../../../../../src/services/learnService';
 import type { StudyNote } from '../../../../../src/types/learn';
+import Skeleton from '../../../../components/Skeleton';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
 
@@ -47,7 +49,21 @@ const Learn: React.FC = () => {
     // A lógica de incrementar o Like viria aqui
   };
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Estudos...</div>;
+  if (loading) return (
+    <>
+      <Navbar />
+      <div style={{ padding: '100px 40px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <Skeleton type="title" width="40%" height="40px" />
+        <Skeleton type="text" width="60%" height="20px" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', marginTop: '20px' }}>
+           <Skeleton type="card" height="200px" />
+           <Skeleton type="card" height="200px" />
+           <Skeleton type="card" height="200px" />
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
 
   return (
     <>

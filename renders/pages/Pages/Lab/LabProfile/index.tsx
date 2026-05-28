@@ -1,3 +1,4 @@
+import type { Project } from '../../../../../src/types/community';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -144,7 +145,7 @@ const LabProfile: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleApplyToProject = (project: any) => {
+  const handleApplyToProject = (project: Project) => {
     setSelectedProject(project);
     setIsProjectModalOpen(true);
   };
@@ -269,28 +270,28 @@ const LabProfile: React.FC = () => {
               {/* Lista de Publicações */}
               {activeTab === 'publicacoes' && (
                 <div className="lab-publications-list">
-                  {labData.publications?.length > 0 ? labData.publications.map((pub: any) => (
-                    <article key={pub.id} className="lab-pub-card-clean">
+                  {labData.publications?.length > 0 ? labData.publications.map((pub: Record<string, unknown>) => (
+                    <article key={(pub as any).id} className="lab-pub-card-clean">
                       <div className="lab-pub-top">
                         <span className="lab-pub-type-tag">
-                          <BookOpen size={16} /> {pub.type || "Publicação Científica"}
+                          <BookOpen size={16} /> {(pub as any).type || "Publicação Científica"}
                         </span>
                         <span className={`lab-pub-access ${pub.isFree ? 'open' : 'paywall'}`}>
                           {pub.isFree ? 'Open Access' : 'Paywall'}
                         </span>
                       </div>
 
-                      <h3 className="lab-pub-title">{pub.title}</h3>
-                      <p className="lab-pub-authors">{pub.authors || "Autores não listados"}</p>
+                      <h3 className="lab-pub-title">{(pub as any).title}</h3>
+                      <p className="lab-pub-authors">{(pub as any).authors || "Autores não listados"}</p>
 
                       <div className="lab-pub-meta-clean">
-                        <strong>{pub.journal}</strong>
-                        <span><Calendar size={14} /> {pub.date}</span>
+                        <strong>{(pub as any).journal}</strong>
+                        <span><Calendar size={14} /> {(pub as any).date}</span>
                       </div>
 
                       <div className="lab-pub-bottom">
                         <div className="lab-pub-tags-clean">
-                          {pub.tags?.map((tag: string) => <span key={tag}>{tag}</span>)}
+                          {(pub as any).tags?.map((tag: string) => <span key={tag}>{tag}</span>)}
                         </div>
                         <button
                           className="lab-pub-link-btn"

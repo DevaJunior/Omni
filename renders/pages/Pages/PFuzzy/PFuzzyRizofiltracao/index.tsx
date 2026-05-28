@@ -1,6 +1,9 @@
+import { useToastStore } from '../../../../../src/stores/toastStore';
 import React, { useState, useEffect } from 'react';
 import { Settings2, ArrowRight, Activity, Sprout, TestTube2, Calculator, ArrowLeft, Lightbulb, FileText, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import Papa from 'papaparse';
 import { calcularSistemaCompleto, type PFuzzyRizofiltracaoParams, type PFuzzyRizofiltracaoResult } from './engine';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
@@ -37,6 +40,7 @@ const FuzzyPlot = ({ curva, valor, color }: { curva: number[], valor: number, co
 
 const PFuzzyRizofiltracao: React.FC = () => {
   const navigate = useNavigate(); // <-- Hook de navegação adicionado
+  const { addToast } = useToastStore();
 
   const [params, setParams] = useState<PFuzzyRizofiltracaoParams>({
     ph: 7.0, ce: 1500, luz: 1000,
@@ -58,6 +62,45 @@ const PFuzzyRizofiltracao: React.FC = () => {
 
   const updateParam = (key: keyof PFuzzyRizofiltracaoParams, val: string) => {
     setParams(prev => ({ ...prev, [key]: parseFloat(val) }));
+  };
+
+  const exportPDF = () => {
+    if (!result) return;
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Relatório P-Fuzzy - Omni", 20, 20);
+    
+    doc.setFontSize(12);
+    doc.text("1. Variáveis Ambientais", 20, 40);
+    doc.text(`pH: ${params.ph.toFixed(1)} | CE: ${params.ce} µS/cm | Luz: ${params.luz} PPFD`, 30, 50);
+    
+    doc.text("2. Fatores Fisiológicos", 20, 65);
+    doc.text(`FT: ${params.ft.toFixed(1)} | Fenologia: ${params.fen}% | Raiz: ${params.raiz.toFixed(1)}`, 30, 75);
+    
+    doc.text("3. Parâmetros Operacionais", 20, 90);
+    doc.text(`Conc: ${params.conc} mg/L | Tempo: ${params.tempo} dias | Biomassa: ${params.bio} g`, 30, 100);
+
+    doc.setFontSize(14);
+    doc.text(`Eficiência Global: ${result.final.toFixed(2)}%`, 20, 120);
+    doc.save("relatorio-pfuzzy.pdf");
+    addToast('Relatório PDF exportado com sucesso', 'success');
+  };
+
+  const exportCSV = () => {
+    if (!result) return;
+    const data = [{
+      pH: params.ph, CE: params.ce, Luz: params.luz,
+      FT: params.ft, Fenologia: params.fen, Raiz: params.raiz,
+      Concentracao: params.conc, Tempo: params.tempo, Biomassa: params.bio,
+      EficienciaGlobal: result.final.toFixed(2)
+    }];
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "relatorio-pfuzzy.csv";
+    link.click();
+    addToast('Dados CSV exportados com sucesso', 'success');
   };
 
   // <-- FUNÇÃO INTELIGENTE GERADORA DE INSIGHTS -->
@@ -214,13 +257,13 @@ const PFuzzyRizofiltracao: React.FC = () => {
                   </div>
 
                   <div className="pf-export-card" style={{ marginTop: '1.5rem', display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                    <button className="cmmt-btn-outline" onClick={() => alert('Exportando para PDF...')}>
+                    <button className="cmmt-btn-outline" onClick={exportPDF}>
                       <FileText size={16} style={{ marginRight: '5px' }} /> PDF
                     </button>
-                    <button className="cmmt-btn-outline" onClick={() => alert('Exportando para CSV...')}>
+                    <button className="cmmt-btn-outline" onClick={exportCSV}>
                       <Download size={16} style={{ marginRight: '5px' }} /> CSV
                     </button>
-                    <button className="cmmt-btn-outline" onClick={() => alert('Exportando para Excel...')}>
+                    <button className="cmmt-btn-outline" onClick={exportCSV}>
                       <Download size={16} style={{ marginRight: '5px' }} /> Excel
                     </button>
                   </div>

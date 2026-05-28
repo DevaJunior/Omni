@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../src/stores/toastStore';
 import React, { useState, useRef } from 'react';
 import { X, UploadCloud, FileText } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
@@ -14,6 +15,7 @@ interface ProjectApplicationModalProps {
 }
 
 const ProjectApplicationModal: React.FC<ProjectApplicationModalProps> = ({ isOpen, onClose, project, labId }) => {
+  const { addToast } = useToastStore();
   const { userProfile } = useAuth();
   const [coverLetter, setCoverLetter] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -31,12 +33,12 @@ const ProjectApplicationModal: React.FC<ProjectApplicationModalProps> = ({ isOpe
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userProfile) {
-      alert("Você precisa estar logado para se candidatar.");
+      addToast("Você precisa estar logado para se candidatar.", 'info');
       return;
     }
     
     if (!resumeFile) {
-      alert("Por favor, anexe o seu currículo.");
+      addToast("Por favor, anexe o seu currículo.", 'info');
       return;
     }
 
@@ -65,11 +67,11 @@ const ProjectApplicationModal: React.FC<ProjectApplicationModalProps> = ({ isOpe
         appliedAt: serverTimestamp()
       });
 
-      alert("Candidatura enviada com sucesso!");
+      addToast("Candidatura enviada com sucesso!", 'success');
       onClose();
     } catch (error) {
       console.error("Erro ao enviar candidatura:", error);
-      alert("Ocorreu um erro. Tente novamente.");
+      addToast("Ocorreu um erro. Tente novamente.", 'error');
     } finally {
       setIsSubmitting(false);
     }

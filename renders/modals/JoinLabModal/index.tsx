@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../src/stores/toastStore';
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Building2, UploadCloud, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -24,6 +25,7 @@ const MOCK_COURSES = [
 ];
 
 const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labId, labName, onSuccess }) => {
+  const { addToast } = useToastStore();
   const { userProfile } = useAuth();
   const [currentUser, setCurrentUser] = useState({ name: "Carregando..." });
 
@@ -141,7 +143,7 @@ const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labId, lab
       }, 2000);
     } catch (error) {
       console.error("Erro ao enviar solicitação:", error);
-      alert("Houve um erro ao enviar sua solicitação.");
+      addToast("Houve um erro ao enviar sua solicitação.", 'error');
     } finally {
       setIsSubmitting(false);
     }

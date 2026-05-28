@@ -49,10 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           website: '',
           location: '',
           skills: [],
-          lab: {
-            name: 'Laboratório Independente',
-            role: 'Pesquisador Principal'
-          }
+          lab: { id: '1', name: 'Laboratório Independente', role: 'Pesquisador Principal' }
         };
         await setDoc(userRef, newUser);
       }

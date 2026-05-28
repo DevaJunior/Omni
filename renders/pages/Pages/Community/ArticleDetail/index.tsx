@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../../../src/stores/toastStore';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -18,6 +19,7 @@ import { useAuth } from '../../../../../src/contexts/AuthContext';
 import './styles.css';
 
 const ArticleDetail: React.FC = () => {
+  const { addToast } = useToastStore();
   const navigate = useNavigate();
   // Capturando o ID pela rota para buscar os dados corretos
   const { id } = useParams();
@@ -81,7 +83,7 @@ const ArticleDetail: React.FC = () => {
 
   const handleToggleBookmark = async () => {
     if (!userProfile) {
-      alert("Faça login para salvar artigos.");
+      addToast("Faça login para salvar artigos.", 'info');
       return;
     }
     if (!article) return;
@@ -105,7 +107,7 @@ const ArticleDetail: React.FC = () => {
         ...article,
         stats: { ...article.stats, downloads: article.stats.downloads + 1 }
       });
-      alert("Iniciando download simulado...");
+      addToast("Iniciando download simulado...", 'info');
     }
   };
 
@@ -157,7 +159,7 @@ const ArticleDetail: React.FC = () => {
             <section className="art-section">
               <h2>Palavras-chave</h2>
               <div className="art-tags-list">
-                {article.tags?.map((tag: any) => (
+                {article.tags?.map((tag: string) => (
                   <span key={tag} className="art-tag">{tag}</span>
                 ))}
               </div>
@@ -224,10 +226,10 @@ const ArticleDetail: React.FC = () => {
               <h3>Artigos Relacionados</h3>
               <ul className="art-related-list">
                 {article.related && article.related.length > 0 ? (
-                  article.related.map((rel: any) => (
+                  article.related.map((rel: { id: string, title: string, type: string }) => (
                     <li key={rel.id}>
                       <a href={`/article/${rel.id}`}>{rel.title}</a>
-                      <span>{rel.journal} • {rel.year}</span>
+                      <span>{(rel as any).journal} • {(rel as any).year}</span>
                     </li>
                   ))
                 ) : (

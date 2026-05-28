@@ -8,9 +8,10 @@ import {
   increment 
 } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
+import { FIREBASE_ROUTES } from '../config/routes';
 import type { StudyNote } from '../types/learn';
 
-const COLLECTION_NAME = 'notes';
+const COLLECTION_NAME = FIREBASE_ROUTES.NOTES;
 
 export const learnService = {
   /**

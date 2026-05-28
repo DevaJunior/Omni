@@ -215,7 +215,7 @@ const DiscussionDetail: React.FC = () => {
             <div className="disc-post-body">
               <p>{discussion.content}</p>
               <div className="disc-post-tags">
-                {discussion.tags.map((tag: any) => (
+                {discussion.tags.map((tag: string) => (
                   <span key={tag} className="disc-tag">{tag}</span>
                 ))}
               </div>
@@ -275,32 +275,32 @@ const DiscussionDetail: React.FC = () => {
               {(!discussion.replies || discussion.replies.length === 0) ? (
                 <p style={{ color: 'var(--text-muted)' }}>Seja o primeiro a responder esta discussão!</p>
               ) : (
-                discussion.replies.map((reply: any) => (
-                  <div key={reply.id} className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
+                discussion.replies.map((reply: Record<string, unknown>) => (
+                  <div key={(reply as any).id} className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
                     <img 
-                      src={reply.avatar} 
-                      alt={reply.author} 
+                      src={(reply as any).avatar} 
+                      alt={(reply as any).author} 
                       className="disc-comment-avatar" 
-                      onClick={(e) => { e.stopPropagation(); if(reply.authorId) navigate(`/profile/${reply.authorId}`); }}
+                      onClick={(e) => { e.stopPropagation(); if((reply as any).authorId) navigate(`/profile/${(reply as any).authorId}`); }}
                       style={{ cursor: 'pointer' }}
                     />
                     <div className="disc-comment-content">
                       <div className="disc-comment-header">
                         <div className="disc-comment-author-info">
                           <h4 
-                            onClick={(e) => { e.stopPropagation(); if(reply.authorId) navigate(`/profile/${reply.authorId}`); }}
+                            onClick={(e) => { e.stopPropagation(); if((reply as any).authorId) navigate(`/profile/${(reply as any).authorId}`); }}
                             style={{ cursor: 'pointer' }}
                           >
-                            {reply.author} {reply.isAuthor && <span className="disc-author-badge">Autor</span>}
+                            {(reply as any).author} {reply.isAuthor && <span className="disc-author-badge">Autor</span>}
                           </h4>
-                          <span>{reply.role} • {reply.time}</span>
+                          <span>{(reply as any).role} • {(reply as any).time}</span>
                         </div>
                       </div>
-                      <p className="disc-comment-text">{reply.content}</p>
+                      <p className="disc-comment-text">{(reply as any).content}</p>
                       <div className="disc-comment-actions">
                         <div className="disc-vote-group-small">
                           <button className="disc-action-btn-icon"><ChevronUp size={16} /></button>
-                          <span className="disc-vote-count-small">{reply.likes}</span>
+                          <span className="disc-vote-count-small">{(reply as any).likes}</span>
                           <button className="disc-action-btn-icon"><ChevronDown size={16} /></button>
                         </div>
                         <button className="disc-action-btn-small">Responder</button>

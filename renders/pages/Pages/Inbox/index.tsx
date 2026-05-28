@@ -1,3 +1,4 @@
+import { useToastStore } from '../../../../src/stores/toastStore';
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Image as ImageIcon, Search, Info, Edit, Phone, Video, X, Paperclip, FileText, CheckCheck, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../../../src/contexts/AuthContext';
@@ -6,6 +7,7 @@ import type { ChatRoom, ChatMessage } from '../../../../src/services/chatService
 import './styles.css';
 
 const Inbox: React.FC = () => {
+  const { addToast } = useToastStore();
   const { currentUser } = useAuth();
   const [chats, setChats] = useState<ChatRoom[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
@@ -93,7 +95,7 @@ const Inbox: React.FC = () => {
       
     } catch (err) {
       console.error("Erro ao fazer upload do arquivo", err);
-      alert("Erro ao fazer upload do arquivo.");
+      addToast("Erro ao fazer upload do arquivo.", 'error');
     } finally {
       setIsUploading(false);
       // Reseta o input
@@ -117,15 +119,15 @@ const Inbox: React.FC = () => {
     }
   };
 
-  const formatTime = (dateObj: any) => {
+  const formatTime = (dateObj: Date | number | { seconds: number, nanoseconds: number }) => {
     if (!dateObj) return '';
-    const date = dateObj.toDate ? dateObj.toDate() : new Date(dateObj);
+    const date = (dateObj as any)?.toDate ? (dateObj as any).toDate() : new Date(dateObj as any);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const formatDate = (dateObj: any) => {
+  const formatDate = (dateObj: Date | number | { seconds: number, nanoseconds: number }) => {
     if (!dateObj) return '';
-    const date = dateObj.toDate ? dateObj.toDate() : new Date(dateObj);
+    const date = (dateObj as any)?.toDate ? (dateObj as any).toDate() : new Date(dateObj as any);
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }).toUpperCase();
   };
 
@@ -165,7 +167,7 @@ const Inbox: React.FC = () => {
                   <div className="inbox-contact-top">
                     <h4>{contact.name}</h4>
                     <span className="inbox-contact-time">
-                      {chat.updatedAt ? formatTime(chat.updatedAt) : ''}
+                      {chat.updatedAt ? formatTime(chat.updatedAt as any) : ''}
                     </span>
                   </div>
                   <div className="inbox-contact-bottom">
@@ -215,7 +217,7 @@ const Inbox: React.FC = () => {
             <div className="inbox-chat-history">
               {messages.length > 0 && (
                 <div className="inbox-date-separator">
-                  <span>{formatDate(messages[0].createdAt)}</span>
+                  <span>{formatDate(messages[0].createdAt as any)}</span>
                 </div>
               )}
 
@@ -228,7 +230,7 @@ const Inbox: React.FC = () => {
                       <p>{msg.text}</p>
                     </div>
                     <span className="inbox-bubble-time">
-                      {formatTime(msg.createdAt)}
+                      {formatTime(msg.createdAt as any)}
                       {isMe && <CheckCheck size={14} className="inbox-read-check" />}
                     </span>
                   </div>

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Search as SearchIcon, BookOpen, Users, ArrowRight, Loader2, X, TrendingUp, FileText } from 'lucide-react';
+import { Search as SearchIcon, BookOpen, Users, ArrowRight,  X, TrendingUp, FileText } from 'lucide-react';
 import { searchService, type SearchResult } from '../../../../src/services/searchService';
+
+
+import Skeleton from '../../../components/Skeleton';
 import './styles.css';
 
 const SearchPage: React.FC = () => {
@@ -11,6 +14,7 @@ const SearchPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(10);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -21,6 +25,7 @@ const SearchPage: React.FC = () => {
       setLoading(true);
       const data = await searchService.globalSearch(query);
       setResults(data);
+      setVisibleCount(10);
       setLoading(false);
     };
 
@@ -55,9 +60,10 @@ const SearchPage: React.FC = () => {
       </div>
 
       {loading ? (
-        <div style={{ padding: '60px', textAlign: 'center', color: '#64748b' }}>
-          <Loader2 size={40} className="spinner" style={{ animation: 'spin 1s linear infinite', margin: '0 auto 20px' }} />
-          <p>Buscando na base Omni...</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px 40px' }}>
+          <Skeleton type="card" height="100px" />
+          <Skeleton type="card" height="100px" />
+          <Skeleton type="card" height="100px" />
         </div>
       ) : filteredResults.length === 0 ? (
         <div className="empty-search-state">
@@ -104,9 +110,9 @@ const SearchPage: React.FC = () => {
         </div>
       ) : (
         <div className="search-results-list" style={{ padding: '20px 40px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {filteredResults.map(res => (
-            <Link key={res.id + res.type} to={res.url} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div style={{ display: 'flex', gap: '20px', padding: '20px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', alignItems: 'center', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }} onMouseOver={(e) => e.currentTarget.style.borderColor = '#6c5ce7'} onMouseOut={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}>
+          {filteredResults.slice(0, visibleCount).map((res) => (
+            <Link to={res.url} key={res.id} style={{ textDecoration: 'none' }}>
+              <div className="search-result-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', transition: 'all 0.2s ease', cursor: 'pointer' }}>
                 {res.image ? (
                   <img src={res.image} alt={res.title} style={{ width: '64px', height: '64px', borderRadius: res.type === 'user' ? '50%' : '8px', objectFit: 'cover' }} />
                 ) : (
@@ -126,6 +132,16 @@ const SearchPage: React.FC = () => {
             </Link>
           ))}
         </div>
+      )}
+
+      {filteredResults.length > visibleCount && (
+        <button 
+          className="btn-secondary" 
+          onClick={() => setVisibleCount(prev => prev + 10)}
+          style={{ width: '100%', padding: '12px', marginTop: '24px', display: 'flex', justifyContent: 'center' }}
+        >
+          Carregar Mais Resultados
+        </button>
       )}
     </div>
   );

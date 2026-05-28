@@ -1,26 +1,27 @@
-import { collection, doc, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, getDocs, updateDoc, setDoc, increment, arrayUnion } from 'firebase/firestore';
+import { collection, doc, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, getDocs, updateDoc, setDoc, increment, arrayUnion, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../config/firebaseConfig';
+import { FIREBASE_ROUTES } from '../config/routes';
 import type { IUser } from '../types/index';
 
 export interface ChatMessage {
   id?: string;
   senderId: string;
   text: string;
-  createdAt: any;
+  createdAt: Timestamp | Date | string | null;
 }
 
 export interface ChatRoom {
   id: string;
   participants: string[];
   lastMessage: string;
-  updatedAt: any;
+  updatedAt: Timestamp | Date | string | null;
   users?: Record<string, Partial<IUser>>; // Cache de dados dos usuários (nome, avatar, headline, department)
   unreadCount?: Record<string, number>;
   sharedFiles?: { id: string, name: string, size: string, date: string, type: 'pdf' | 'csv' | 'doc' | 'image' | string, url: string }[];
 }
 
-const CHATS_COLLECTION = 'chats';
+const CHATS_COLLECTION = FIREBASE_ROUTES.CHATS;
 
 export const chatService = {
   // Inicializa ou recupera um chat entre dois usuários
@@ -49,7 +50,7 @@ export const chatService = {
     const newChat: Partial<ChatRoom> = {
       participants: [currentUserId, targetUserId],
       lastMessage: '',
-      updatedAt: serverTimestamp(),
+      updatedAt: Date.now() as any,
       users: {
         [currentUserId]: { 
           name: currentUserData.name, 
@@ -127,7 +128,7 @@ export const chatService = {
     const chatRef = doc(db, CHATS_COLLECTION, chatId);
     await updateDoc(chatRef, {
       lastMessage: text,
-      updatedAt: serverTimestamp(),
+      updatedAt: Date.now() as any,
       [`unreadCount.${targetId}`]: increment(1)
     });
   },

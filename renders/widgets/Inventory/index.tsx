@@ -3,6 +3,10 @@ import { ArrowLeft, Database, Search, Plus, AlertTriangle, CheckCircle2, Clock, 
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../../src/config/firebaseConfig';
+import jsPDF from 'jspdf';
+import Papa from 'papaparse';
+import { useToastStore } from '../../../src/stores/toastStore';
+import Skeleton from '../../components/Skeleton';
 import './styles.css';
 import Footer from '../../menus/Footer';
 import { useAuth } from '../../../src/contexts/AuthContext';
@@ -24,6 +28,7 @@ interface Reagent {
 const Inventory: React.FC = () => {
   const navigate = useNavigate();
   const { userProfile } = useAuth();
+  const { addToast } = useToastStore();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | ReagentStatus>('all');
@@ -82,7 +87,59 @@ const Inventory: React.FC = () => {
     };
   }, [inventoryState]);
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Inventário...</div>;
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Relatório de Inventário - Omni", 20, 20);
+    doc.setFontSize(10);
+    
+    let y = 30;
+    filteredReagents.forEach((item, index) => {
+      if (y > 280) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(`${index + 1}. ${item.name} (CAS: ${item.cas}) - ${item.quantity} ${item.unit} | Local: ${item.location} | Validade: ${item.expiration} [${item.status.toUpperCase()}]`, 20, y);
+      y += 10;
+    });
+
+    doc.save("inventario.pdf");
+    addToast('Inventário exportado em PDF', 'success');
+  };
+
+  const exportCSV = () => {
+    const data = filteredReagents.map(r => ({
+      Nome: r.name,
+      CAS: r.cas,
+      Quantidade: r.quantity,
+      Unidade: r.unit,
+      Localizacao: r.location,
+      Validade: r.expiration,
+      Status: r.status
+    }));
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "inventario.csv";
+    link.click();
+    addToast('Inventário exportado em CSV', 'success');
+  };
+
+  if (loading) return (
+    <>
+      <div className="tool-page-wrapper">
+        <div className="tool-container">
+          <div style={{ padding: '100px 40px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <Skeleton type="title" width="40%" height="40px" />
+            <Skeleton type="text" width="60%" height="20px" />
+            <Skeleton type="card" height="300px" />
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
 
   return (
     <>
@@ -149,7 +206,7 @@ const Inventory: React.FC = () => {
                       <p>Nenhum reagente encontrado com estes filtros.</p>
                     </div>
                   ) : (
-                    filteredReagents.map((reagent: any) => (
+                    filteredReagents.map((reagent: Reagent) => (
                       <div key={reagent.id} className={`inventory-item-card status-${reagent.status}`}>
                         <div className="reagent-main-info">
                           <h3>{reagent.name}</h3>
@@ -212,6 +269,15 @@ const Inventory: React.FC = () => {
                       <span>Vencidos / Zerados</span>
                       <p>{stats.expired} itens</p>
                     </div>
+                  </div>
+
+                  <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <button className="cmmt-btn-outline" style={{ width: '100%' }} onClick={exportPDF}>
+                      Exportar PDF
+                    </button>
+                    <button className="cmmt-btn-outline" style={{ width: '100%' }} onClick={exportCSV}>
+                      Exportar CSV
+                    </button>
                   </div>
                 </div>
 

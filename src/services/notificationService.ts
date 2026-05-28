@@ -1,5 +1,6 @@
-import { collection, query, orderBy, limit, onSnapshot, doc, updateDoc, writeBatch } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, doc, updateDoc, writeBatch, Timestamp } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
+import { FIREBASE_ROUTES } from '../config/routes';
 
 export type NotificationType = 'like' | 'mention' | 'invite' | 'comment' | 'system';
 
@@ -12,7 +13,7 @@ export interface NotificationData {
   link?: string;
   senderId?: string;
   senderAvatar?: string;
-  createdAt: any; // Timestamp do Firebase
+  createdAt: Timestamp | Date | string | null;
 }
 
 export const notificationService = {
@@ -24,7 +25,7 @@ export const notificationService = {
    * @returns Unsubscribe function
    */
   subscribeToNotifications(userId: string, callback: (notifications: NotificationData[]) => void, limitCount = 20) {
-    const notificationsRef = collection(db, 'users', userId, 'notifications');
+    const notificationsRef = collection(db, FIREBASE_ROUTES.USERS, userId, FIREBASE_ROUTES.NOTIFICATIONS);
     const q = query(notificationsRef, orderBy('createdAt', 'desc'), limit(limitCount));
 
     return onSnapshot(q, (snapshot) => {
@@ -40,7 +41,7 @@ export const notificationService = {
    * Marca uma notificação como lida
    */
   async markAsRead(userId: string, notificationId: string) {
-    const notifRef = doc(db, 'users', userId, 'notifications', notificationId);
+    const notifRef = doc(db, FIREBASE_ROUTES.USERS, userId, FIREBASE_ROUTES.NOTIFICATIONS, notificationId);
     await updateDoc(notifRef, { read: true });
   },
 
@@ -50,7 +51,7 @@ export const notificationService = {
   async markAllAsRead(userId: string, notificationIds: string[]) {
     const batch = writeBatch(db);
     notificationIds.forEach(id => {
-      const notifRef = doc(db, 'users', userId, 'notifications', id);
+      const notifRef = doc(db, FIREBASE_ROUTES.USERS, userId, FIREBASE_ROUTES.NOTIFICATIONS, id);
       batch.update(notifRef, { read: true });
     });
     await batch.commit();

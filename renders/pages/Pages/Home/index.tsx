@@ -7,6 +7,7 @@ import { communityService } from '../../../../src/services/communityService';
 import type { LabPartner } from '../../../../src/types/community';
 
 import Footer from './../../../menus/Footer/index';
+import Skeleton from '../../../components/Skeleton';
 
 const Home: React.FC = () => {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -149,10 +150,10 @@ const Home: React.FC = () => {
 
           <div className="articles-grid" ref={sliderRef}>
             {isLoading ? (
-              <div style={{ display: 'flex', gap: '2rem', padding: '1rem' }}>
-                <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
-                <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
-                <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
+              <div style={{ display: 'flex', gap: '2rem', padding: '1rem', width: '100%', overflow: 'hidden' }}>
+                <Skeleton type="card" width="300px" height="400px" />
+                <Skeleton type="card" width="300px" height="400px" />
+                <Skeleton type="card" width="300px" height="400px" />
               </div>
             ) : (
               articles.map((art) => (
