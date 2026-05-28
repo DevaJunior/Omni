@@ -61,13 +61,13 @@ const mockNotes = [
 
 const projectsDatabase = [
   {
-    id: "101", title: "Projeto de Pesquisa: Rizo Filtração de Metais Pesados", institution: "Phyton Research & UNIFAL-MG", type: "Pesquisa Acadêmica", location: "Alfenas-MG (Híbrido)", deadline: "Fluxo Contínuo", status: "Aberto", coordinator: "Dra. Helena Ribeiro", grant: "Bolsa FAPEMIG (R$ 2.100,00/mês)",
+    id: "101", labId: "1", title: "Projeto de Pesquisa: Rizo Filtração de Metais Pesados", institution: "Phyton Research & UNIFAL-MG", type: "Pesquisa Acadêmica", location: "Alfenas-MG (Híbrido)", deadline: "Fluxo Contínuo", status: "Aberto", coordinator: "Dra. Helena Ribeiro", grant: "Bolsa FAPEMIG (R$ 2.100,00/mês)",
     description: "O Laboratório de Biotecnologia Ambiental está recrutando pesquisadores para integrar um projeto multidisciplinar focado na fitorremediação...",
     requirements: ["Estar matriculado em programa de Mestrado ou Doutorado..."],
     responsibilities: ["Coletar e tabular dados de crescimento..."], tags: ["Rizofiltração", "P-Fuzzy", "Python", "Biotecnologia"]
   },
   {
-    id: "102", title: "Bolsa de Mestrado em Biotecnologia", institution: "Laboratório Neurolab", type: "Bolsa de Estudos", location: "Presencial", deadline: "30 de Novembro, 2026", status: "Aberto", coordinator: "Prof. Dr. Rafael Mendes", grant: "Bolsa CAPES",
+    id: "102", labId: "1", title: "Bolsa de Mestrado em Biotecnologia", institution: "Phyton Research", type: "Bolsa de Estudos", location: "Presencial", deadline: "30 de Novembro, 2026", status: "Aberto", coordinator: "Prof. Dr. Rafael Mendes", grant: "Bolsa CAPES",
     description: "Oportunidade para desenvolver plataformas integradas de auxílio laboratorial e bioinformática.",
     requirements: ["Graduação completa..."], responsibilities: ["Desenhar..."], tags: ["Mestrado", "React", "TypeScript", "Bioinformática"]
   }

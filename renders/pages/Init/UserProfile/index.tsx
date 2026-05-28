@@ -15,8 +15,9 @@ import {
   Bookmark
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../../src/config/firebaseConfig';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../../../../src/config/firebaseConfig';
 import Footer from '../../../menus/Footer';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import type { IUser } from '../../../../src/types';
@@ -30,6 +31,7 @@ const UserProfile: React.FC = () => {
 
   const [userData, setUserData] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -86,6 +88,36 @@ const UserProfile: React.FC = () => {
 
   const isOwnProfile = !id || id === currentUser?.uid;
 
+  const handleFileUpload = async (file: File, type: 'avatar' | 'cover') => {
+    if (!currentUser || !userData) return;
+    setIsUploading(true);
+
+    try {
+      const uniqueName = `${Date.now()}_${file.name}`;
+      const storageRef = ref(storage, `users/${currentUser.uid}/${type}s/${uniqueName}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      await new Promise<void>((resolve, reject) => {
+        uploadTask.on('state_changed', null, reject, () => resolve());
+      });
+
+      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+
+      // Atualizar no Firestore
+      const userRef = doc(db, "users", currentUser.uid);
+      await updateDoc(userRef, { [type]: downloadURL });
+
+      // Atualizar o state local
+      setUserData({ ...userData, [type]: downloadURL });
+      alert(`${type === 'avatar' ? 'Foto de perfil' : 'Capa'} atualizada com sucesso!`);
+    } catch (err) {
+      console.error(`Erro ao fazer upload do ${type}:`, err);
+      alert(`Ocorreu um erro ao atualizar ${type === 'avatar' ? 'a foto' : 'a capa'}.`);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <>
       <div className="user-profile-wrapper">
@@ -104,7 +136,18 @@ const UserProfile: React.FC = () => {
               className="profile-cover-img"
             />
             {isOwnProfile && (
-              <button className="btn-edit-cover"><Edit3 size={16} /> Editar Capa</button>
+              <label className="btn-edit-cover" style={{ cursor: 'pointer' }}>
+                <Edit3 size={16} /> {isUploading ? 'Atualizando...' : 'Editar Capa'}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  style={{ display: 'none' }} 
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) handleFileUpload(e.target.files[0], 'cover');
+                  }}
+                  disabled={isUploading}
+                />
+              </label>
             )}
           </div>
 
@@ -112,8 +155,26 @@ const UserProfile: React.FC = () => {
 
             {/* SIDEBAR ESQUERDA: Info Pessoal */}
             <aside className="profile-sidebar">
-              <div className="profile-avatar-wrapper">
+              <div className="profile-avatar-wrapper" style={{ position: 'relative' }}>
                 <img src={userData.avatar || "https://ui-avatars.com/api/?name=" + (userData.name || "User")} alt={userData.name} className="profile-avatar" />
+                {isOwnProfile && (
+                  <label 
+                    className="btn-edit-avatar" 
+                    style={{ position: 'absolute', bottom: '0', right: '0', background: '#5d5fef', color: '#fff', padding: '6px', borderRadius: '50%', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
+                    title="Editar foto de perfil"
+                  >
+                    <Edit3 size={16} />
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      style={{ display: 'none' }} 
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) handleFileUpload(e.target.files[0], 'avatar');
+                      }}
+                      disabled={isUploading}
+                    />
+                  </label>
+                )}
               </div>
 
               <div className="profile-basic-info">

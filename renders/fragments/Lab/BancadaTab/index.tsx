@@ -4,15 +4,42 @@ import {
   CalendarDays, 
   FileText, 
   Clock,
-  Calendar
+  Calendar,
+  Plus
 } from 'lucide-react';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { db } from '../../../../src/config/firebaseConfig';
+import EquipmentReservationModal from '../../../modals/EquipmentReservationModal/index';
 import './styles.css';
 
 interface BancadaTabProps {
   labId: string;
 }
 
-const BancadaTab: React.FC<BancadaTabProps> = ({ labId: _labId }) => {
+const BancadaTab: React.FC<BancadaTabProps> = ({ labId }) => {
+  const [reservations, setReservations] = React.useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const fetchReservations = async () => {
+    if (!labId) return;
+    try {
+      const q = query(
+        collection(db, 'equipment_reservations'),
+        where('labId', '==', labId),
+        orderBy('createdAt', 'desc')
+      );
+      const snap = await getDocs(q);
+      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setReservations(data);
+    } catch (error) {
+      console.error("Erro ao buscar agendamentos", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchReservations();
+  }, [labId]);
+
   return (
     <div className="bancada-tab-container anim-fade-up">
       <div className="bancada-header-simple">
@@ -55,47 +82,45 @@ const BancadaTab: React.FC<BancadaTabProps> = ({ labId: _labId }) => {
       <div className="bancada-reservations-section">
         <div className="reservations-header">
           <h4>Equipamentos: Próximas Reservas</h4>
-          <button className="text-link-green">Ver todos</button>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <button className="text-link-green" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', border: '1px solid #10b981', padding: '0.25rem 0.75rem', borderRadius: '4px' }}>
+              <Plus size={16} /> Agendar
+            </button>
+          </div>
         </div>
         
         <div className="reservations-list">
-          {/* Reservation 1 */}
-          <div className="reservation-item">
-            <div className="res-left">
-              <div className="res-icon">
-                <Clock size={20} />
+          {reservations.length > 0 ? reservations.map((res: any, index: number) => (
+            <React.Fragment key={res.id}>
+              <div className="reservation-item">
+                <div className="res-left">
+                  <div className="res-icon">
+                    <Clock size={20} />
+                  </div>
+                  <div className="res-info">
+                    <h5>{res.equipmentName}</h5>
+                    <span>Reservado por {res.userName}</span>
+                  </div>
+                </div>
+                <div className="res-right">
+                  <span className={`res-badge ${res.status === 'Agendado' ? 'badge-agendado' : 'badge-em-uso'}`}>{res.status}</span>
+                  <span className="res-time"><Calendar size={14} /> {res.date}, {res.startTime} - {res.endTime}</span>
+                </div>
               </div>
-              <div className="res-info">
-                <h5>Microscópio Confocal</h5>
-                <span>Reservado por Dra. Helena Ribeiro</span>
-              </div>
-            </div>
-            <div className="res-right">
-              <span className="res-badge badge-agendado">Agendado</span>
-              <span className="res-time"><Calendar size={14} /> Hoje, 14:00 - 16:00</span>
-            </div>
-          </div>
-
-          <div className="res-divider"></div>
-
-          {/* Reservation 2 */}
-          <div className="reservation-item">
-            <div className="res-left">
-              <div className="res-icon">
-                <Clock size={20} />
-              </div>
-              <div className="res-info">
-                <h5>Centrífuga Refrigerada</h5>
-                <span>Reservado por Carlos Eduardo</span>
-              </div>
-            </div>
-            <div className="res-right">
-              <span className="res-badge badge-em-uso">Em uso</span>
-              <span className="res-time"><Calendar size={14} /> Hoje, 16:30 - 17:30</span>
-            </div>
-          </div>
+              {index < reservations.length - 1 && <div className="res-divider"></div>}
+            </React.Fragment>
+          )) : (
+            <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>Nenhum agendamento encontrado para este laboratório.</div>
+          )}
         </div>
       </div>
+
+      <EquipmentReservationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        labId={labId}
+        onSuccess={fetchReservations}
+      />
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Building2, UploadCloud, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../../../src/config/firebaseConfig';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../../../src/config/firebaseConfig';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import './styles.css';
 
@@ -38,7 +39,7 @@ const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labId, lab
   const [showDropdown, setShowDropdown] = useState(false);
   const [filteredCourses, setFilteredCourses] = useState<string[]>([]);
   const [selectedCourse, setSelectedCourse] = useState("");
-  const [fileAttached, setFileAttached] = useState(false);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -81,7 +82,9 @@ const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labId, lab
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFileAttached(true);
+      setResumeFile(e.target.files[0]);
+    } else {
+      setResumeFile(null);
     }
   };
 
@@ -95,12 +98,22 @@ const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labId, lab
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedCourse || !ra || !fileAttached || !userProfile) return; 
+    if (!selectedCourse || !ra || !resumeFile || !userProfile) return; 
 
     setIsSubmitting(true);
     
     try {
-      // Salva a solicitação na coleção 'lab_requests' do Firebase
+      // 1. Upload do currículo
+      const uniqueName = `${Date.now()}_${resumeFile.name}`;
+      const storageRef = ref(storage, `lab_requests/${labId}/${userProfile.id}/${uniqueName}`);
+      const uploadTask = uploadBytesResumable(storageRef, resumeFile);
+      
+      await new Promise<void>((resolve, reject) => {
+        uploadTask.on('state_changed', null, reject, () => { resolve(); });
+      });
+      const resumeUrl = await getDownloadURL(uploadTask.snapshot.ref);
+
+      // 2. Salva a solicitação na coleção 'lab_requests'
       await addDoc(collection(db, 'lab_requests'), {
         labId,
         labName,
@@ -109,7 +122,8 @@ const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labId, lab
         course: selectedCourse,
         ra: ra,
         coverLetter: coverLetter,
-        status: 'pending', // Status inicial. Quando aceito, muda para 'accepted'
+        resumeUrl: resumeUrl,
+        status: 'pending',
         createdAt: serverTimestamp()
       });
 
@@ -123,7 +137,7 @@ const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labId, lab
         setCourseSearch("");
         setSelectedCourse("");
         setRa("");
-        setFileAttached(false);
+        setResumeFile(null);
       }, 2000);
     } catch (error) {
       console.error("Erro ao enviar solicitação:", error);
@@ -219,17 +233,17 @@ const JoinLabModal: React.FC<JoinLabModalProps> = ({ isOpen, onClose, labId, lab
 
               <div className="jl-form-group">
                 <label>CURRÍCULO (PDF) <span className="jl-required">*</span></label>
-                <label className={`jl-file-upload ${fileAttached ? 'attached' : ''}`}>
+                <label className={`jl-file-upload ${resumeFile ? 'attached' : ''}`}>
                   <input type="file" accept=".pdf" onChange={handleFileChange} required />
                   <UploadCloud size={24} className="jl-upload-icon" />
-                  <span>{fileAttached ? "Currículo Anexado" : "Clique para anexar arquivo"}</span>
+                  <span>{resumeFile ? `Anexado: ${resumeFile.name}` : "Clique para anexar arquivo"}</span>
                 </label>
               </div>
 
               <button
                 type="submit"
                 className="jl-btn-submit"
-                disabled={!selectedCourse || !ra || !fileAttached || isSubmitting}
+                disabled={!selectedCourse || !ra || !resumeFile || isSubmitting}
               >
                 {isSubmitting ? "Enviando..." : "Enviar Solicitação"} <ChevronRight size={18} />
               </button>

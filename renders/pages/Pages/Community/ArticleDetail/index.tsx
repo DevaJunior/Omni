@@ -13,15 +13,19 @@ import {
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
 import { articleService } from '../../../../../src/services/articleService';
+import { bookmarkService } from '../../../../../src/services/bookmarkService';
+import { useAuth } from '../../../../../src/contexts/AuthContext';
 import './styles.css';
 
 const ArticleDetail: React.FC = () => {
   const navigate = useNavigate();
   // Capturando o ID pela rota para buscar os dados corretos
   const { id } = useParams();
+  const { userProfile } = useAuth();
 
   const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -68,6 +72,27 @@ const ArticleDetail: React.FC = () => {
     };
     fetchArticle();
   }, [id]);
+
+  useEffect(() => {
+    if (userProfile?.id && id) {
+      bookmarkService.checkIsBookmarked(userProfile.id, id).then(setIsSaved);
+    }
+  }, [userProfile, id]);
+
+  const handleToggleBookmark = async () => {
+    if (!userProfile) {
+      alert("Faça login para salvar artigos.");
+      return;
+    }
+    if (!article) return;
+
+    try {
+      const saved = await bookmarkService.toggleBookmark(userProfile.id, id!, 'article', article.title);
+      setIsSaved(saved);
+    } catch (err) {
+      console.error("Erro ao salvar bookmark:", err);
+    }
+  };
 
   const handleDownload = () => {
     // Incrementa download
@@ -158,9 +183,13 @@ const ArticleDetail: React.FC = () => {
               </button>
 
               <div className="art-secondary-actions">
-                <button className="art-btn-icon-text">
-                  <Bookmark size={18} />
-                  Salvar
+                <button 
+                  className="art-btn-icon-text" 
+                  onClick={handleToggleBookmark} 
+                  style={isSaved ? { color: 'var(--primary)', fontWeight: 500 } : {}}
+                >
+                  <Bookmark size={18} fill={isSaved ? 'currentColor' : 'none'} />
+                  {isSaved ? "Salvo" : "Salvar"}
                 </button>
                 <button className="art-btn-icon-text">
                   <Quote size={18} />

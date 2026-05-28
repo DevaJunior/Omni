@@ -22,6 +22,7 @@ import { useAuth } from '../../../../../src/contexts/AuthContext';
 import LabTeamTab from '../../../../fragments/Lab/LabTeamTab';
 import Footer from '../../../../menus/Footer';
 import JoinLabModal from './../../../../modals/JoinLabModal/index';
+import ProjectApplicationModal from './../../../../modals/ProjectApplicationModal/index';
 
 const LabProfile: React.FC = () => {
   const navigate = useNavigate();
@@ -32,7 +33,12 @@ const LabProfile: React.FC = () => {
   
   const { userProfile } = useAuth();
   const [labData, setLabData] = useState<any>(null);
+  const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Estados do Modal de Candidatura
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
 
   // Utilizando o estado para atualizar o botão principal após sucesso do modal ou fetch
   const [hasRequested, setHasRequested] = useState(false);
@@ -50,6 +56,12 @@ const LabProfile: React.FC = () => {
         
         if (labSnap.exists()) {
           setLabData({ id: labSnap.id, ...labSnap.data() });
+
+          // Buscar projetos (oportunidades) do lab
+          const pQuery = query(collection(db, 'projects'), where('labId', '==', id));
+          const pSnap = await getDocs(pQuery);
+          const pData = pSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          setProjects(pData);
         } else {
           setLabData(null);
         }
@@ -87,6 +99,11 @@ const LabProfile: React.FC = () => {
 
   const handleRequestJoin = () => {
     setIsModalOpen(true);
+  };
+
+  const handleApplyToProject = (project: any) => {
+    setSelectedProject(project);
+    setIsProjectModalOpen(true);
   };
 
   if (loading) {
@@ -239,8 +256,51 @@ const LabProfile: React.FC = () => {
                 </div>
               )}
 
-              {/* Placeholder para outras abas */}
-              {activeTab === 'oportunidades' && <div className="lab-placeholder-tab">Sem projetos ativos ou oportunidades abertas no momento.</div>}
+              {/* Aba de Oportunidades / Projetos */}
+              {activeTab === 'oportunidades' && (
+                <div className="lab-projects-list">
+                  {projects.length > 0 ? projects.map((proj: any) => (
+                    <article key={proj.id} className="lab-pub-card-clean" style={{ borderLeft: '4px solid #a5a6f6' }}>
+                      <div className="lab-pub-top">
+                        <span className="lab-pub-type-tag">
+                          <Briefcase size={16} /> {proj.type || "Oportunidade"}
+                        </span>
+                        <span className="lab-pub-access open" style={{ background: '#ecfdf5', color: '#10b981', border: '1px solid #10b981' }}>
+                          {proj.status}
+                        </span>
+                      </div>
+
+                      <h3 className="lab-pub-title">{proj.title}</h3>
+                      <p className="lab-pub-authors">Coordenador: {proj.coordinator}</p>
+                      
+                      {proj.grant && (
+                        <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>
+                          <strong>Bolsa:</strong> {proj.grant}
+                        </p>
+                      )}
+
+                      <div className="lab-pub-meta-clean">
+                        <strong><MapPin size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }}/> {proj.location}</strong>
+                        <span><Calendar size={14} /> Fechamento: {proj.deadline}</span>
+                      </div>
+
+                      <div className="lab-pub-bottom">
+                        <div className="lab-pub-tags-clean">
+                          {proj.tags?.map((tag: string) => <span key={tag}>{tag}</span>)}
+                        </div>
+                        <button
+                          className="lab-btn-solid"
+                          onClick={() => handleApplyToProject(proj)}
+                        >
+                          Candidatar-se <ArrowRight size={14} />
+                        </button>
+                      </div>
+                    </article>
+                  )) : (
+                    <div className="lab-placeholder-tab">Sem projetos ativos ou oportunidades abertas no momento.</div>
+                  )}
+                </div>
+              )}
               
               {activeTab === 'equipe_publica' && <LabTeamTab mode="public" labId={labData.id} />}
             </div>
@@ -316,6 +376,13 @@ const LabProfile: React.FC = () => {
         labId={labData.id}
         labName={labData.name}
         onSuccess={() => setHasRequested(true)} // Recebe o sinal de envio para atualizar o botão na tela
+      />
+
+      <ProjectApplicationModal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+        project={selectedProject}
+        labId={labData.id}
       />
 
       <Footer />
