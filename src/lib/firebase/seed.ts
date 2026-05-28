@@ -73,6 +73,7 @@ const projectsDatabase = [
   }
 ];
 
+
 const discussionsDatabase = [
   {
     id: "1", author: "Dra. Helena Ribeiro", role: "Pesquisadora em Biorremediação", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330", time: "Há 2 horas",
@@ -124,8 +125,8 @@ const homeArticlesDatabase = [
 ];
 
 const allLabs = [
-  { 
-    id: '1', 
+  {
+    id: '1',
     name: "Phyton Research",
     institution: "Universidade Federal de Alfenas",
     verified: true,
@@ -151,8 +152,8 @@ const allLabs = [
       { id: 2, title: "Sustentabilidade e Modelagem", journal: "Biotechnology Advances", authors: "Silva, M.; Ribeiro, H. M." }
     ]
   },
-  { 
-    id: '2', 
+  {
+    id: '2',
     name: "Biogen",
     institution: "Universidade de São Paulo (USP)",
     verified: true,
@@ -165,8 +166,8 @@ const allLabs = [
     publications: [],
     featuredArticles: []
   },
-  { 
-    id: '3', 
+  {
+    id: '3',
     name: "Neurolab",
     institution: "Universidade Estadual de Campinas (UNICAMP)",
     verified: false,
@@ -179,8 +180,8 @@ const allLabs = [
     publications: [],
     featuredArticles: []
   },
-  { 
-    id: '4', 
+  {
+    id: '4',
     name: "Genesis Labs",
     institution: "Instituto de Ciências Biomédicas",
     verified: true,
@@ -207,7 +208,7 @@ export async function seedFirebaseDatabase() {
     // 1. Criar Perfil de Usuário
     console.log("Populando Users...");
     await setDoc(doc(db, "users", userData.id), userData);
-    
+
     // Outros usuários
     for (const u of mockOtherUsers) {
       await setDoc(doc(db, "users", u.id), u);
