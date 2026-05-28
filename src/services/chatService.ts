@@ -1,5 +1,6 @@
 import { collection, doc, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, getDocs, updateDoc, setDoc, increment, arrayUnion } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../config/firebaseConfig';
 import type { IUser } from '../types/index';
 
 export interface ChatMessage {
@@ -16,7 +17,7 @@ export interface ChatRoom {
   updatedAt: any;
   users?: Record<string, Partial<IUser>>; // Cache de dados dos usuários (nome, avatar, headline, department)
   unreadCount?: Record<string, number>;
-  sharedFiles?: { id: string, name: string, size: string, date: string, type: 'pdf' | 'csv' | 'doc' | 'image' }[];
+  sharedFiles?: { id: string, name: string, size: string, date: string, type: 'pdf' | 'csv' | 'doc' | 'image' | string, url: string }[];
 }
 
 const CHATS_COLLECTION = 'chats';
@@ -139,8 +140,33 @@ export const chatService = {
     });
   },
 
-  // Simula o envio de um arquivo para o chat
-  async simulateFileUpload(chatId: string, fileData: { id: string, name: string, size: string, date: string, type: 'pdf' | 'csv' | 'doc' | 'image' }) {
+  // Faz o upload de um arquivo para o Storage e retorna a URL
+  async uploadFileToChat(chatId: string, file: File, onProgress?: (progress: number) => void): Promise<string> {
+    const uniqueName = `${Date.now()}_${file.name}`;
+    const storageRef = ref(storage, `chats/${chatId}/${uniqueName}`);
+    
+    return new Promise((resolve, reject) => {
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          if (onProgress) onProgress(progress);
+        }, 
+        (error) => {
+          console.error("Erro no upload", error);
+          reject(error);
+        }, 
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadURL);
+        }
+      );
+    });
+  },
+
+  // Adiciona o registro do arquivo compartilhado no chatRoom
+  async addSharedFile(chatId: string, fileData: { id: string, name: string, size: string, date: string, type: string, url: string }) {
     const chatRef = doc(db, CHATS_COLLECTION, chatId);
     await updateDoc(chatRef, {
       sharedFiles: arrayUnion(fileData)

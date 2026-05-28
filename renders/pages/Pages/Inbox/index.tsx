@@ -14,6 +14,10 @@ const Inbox: React.FC = () => {
   const [showDetails, setShowDetails] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   // 1. Carregar lista de conversas
   useEffect(() => {
     if (!currentUser) return;
@@ -64,19 +68,36 @@ const Inbox: React.FC = () => {
     };
   };
 
-  const handleSimulateAttachment = async () => {
-    if (!activeChatId) return;
-    const file = {
-      id: Date.now().toString(),
-      name: `Relatorio_Lab_${Math.floor(Math.random() * 100)}.pdf`,
-      size: '1.2 MB',
-      date: new Date().toLocaleDateString('pt-BR'),
-      type: 'pdf' as const
-    };
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !activeChatId || !currentUser) return;
+
+    setIsUploading(true);
     try {
-      await chatService.simulateFileUpload(activeChatId, file);
+      const url = await chatService.uploadFileToChat(activeChatId, file);
+      
+      const fileData = {
+        id: Date.now().toString(),
+        name: file.name,
+        size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+        date: new Date().toLocaleDateString('pt-BR'),
+        type: file.type.includes('pdf') ? 'pdf' : (file.type.includes('image') ? 'image' : 'doc'),
+        url: url
+      };
+
+      await chatService.addSharedFile(activeChatId, fileData);
+      
+      // Envia uma mensagem no chat informando o envio
+      const contactId = activeChat?.participants.find(id => id !== currentUser.uid) || currentUser.uid;
+      await chatService.sendMessage(activeChatId, currentUser.uid, contactId, `Enviou um arquivo: ${file.name}`);
+      
     } catch (err) {
-      console.error("Erro ao simular anexo", err);
+      console.error("Erro ao fazer upload do arquivo", err);
+      alert("Erro ao fazer upload do arquivo.");
+    } finally {
+      setIsUploading(false);
+      // Reseta o input
+      event.target.value = '';
     }
   };
 
@@ -218,15 +239,44 @@ const Inbox: React.FC = () => {
 
             <footer className="inbox-chat-input-area">
               <div className="inbox-input-wrapper">
-                <button className="inbox-input-icon" onClick={handleSimulateAttachment} title="Simular Anexo (Test)"><Paperclip size={18} /></button>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  style={{ display: 'none' }} 
+                  onChange={handleFileUpload}
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"
+                />
+                <input 
+                  type="file" 
+                  ref={imageInputRef} 
+                  style={{ display: 'none' }} 
+                  onChange={handleFileUpload}
+                  accept="image/*"
+                />
+                <button 
+                  className="inbox-input-icon" 
+                  onClick={() => fileInputRef.current?.click()} 
+                  title="Anexar Arquivo"
+                  disabled={isUploading}
+                >
+                  <Paperclip size={18} />
+                </button>
                 <input
                   type="text"
-                  placeholder="Escreva uma mensagem..."
+                  placeholder={isUploading ? "Enviando arquivo..." : "Escreva uma mensagem..."}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  disabled={isUploading}
                 />
-                <button className="inbox-input-icon"><ImageIcon size={18} /></button>
+                <button 
+                  className="inbox-input-icon" 
+                  onClick={() => imageInputRef.current?.click()}
+                  title="Anexar Imagem"
+                  disabled={isUploading}
+                >
+                  <ImageIcon size={18} />
+                </button>
               </div>
             </footer>
           </>
@@ -264,13 +314,15 @@ const Inbox: React.FC = () => {
 
             {activeChat.sharedFiles && activeChat.sharedFiles.length > 0 ? (
               activeChat.sharedFiles.map((file) => (
-                <div key={file.id} className="inbox-file-item">
-                  <div className={`inbox-file-icon ${file.type === 'pdf' ? 'orange' : 'blue'}`}><FileText size={18} /></div>
-                  <div className="inbox-file-info">
-                    <h6>{file.name}</h6>
-                    <span>{file.size} • {file.date}</span>
+                <a key={file.id} href={file.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div className="inbox-file-item">
+                    <div className={`inbox-file-icon ${file.type === 'pdf' ? 'orange' : 'blue'}`}><FileText size={18} /></div>
+                    <div className="inbox-file-info">
+                      <h6>{file.name}</h6>
+                      <span>{file.size} • {file.date}</span>
+                    </div>
                   </div>
-                </div>
+                </a>
               ))
             ) : (
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Nenhum arquivo compartilhado nesta conversa.</p>
