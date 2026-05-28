@@ -13,5 +13,6 @@ export interface IUser {
   location?: string;
   department?: string;
   skills?: string[];
+  following?: string[];
   lab?: any;
 }

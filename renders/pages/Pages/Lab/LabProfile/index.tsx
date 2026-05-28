@@ -15,7 +15,7 @@ import {
   FlaskConical,
   ArrowRight
 } from 'lucide-react';
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
@@ -43,6 +43,9 @@ const LabProfile: React.FC = () => {
   // Utilizando o estado para atualizar o botão principal após sucesso do modal ou fetch
   const [hasRequested, setHasRequested] = useState(false);
   const [requestStatus, setRequestStatus] = useState<string | null>(null);
+
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -96,6 +99,33 @@ const LabProfile: React.FC = () => {
 
   // O estado real de filiação lido do perfil no Firebase ou via requisição aceita (fallback para testes)
   const isFiliado = userProfile?.lab?.name === labData?.name || userProfile?.lab?.id === labData?.id || requestStatus === 'accepted';
+
+  useEffect(() => {
+    if (id && userProfile?.following?.includes(id)) {
+      setIsFollowing(true);
+    } else {
+      setIsFollowing(false);
+    }
+  }, [userProfile, id]);
+
+  const handleFollowToggle = async () => {
+    if (!userProfile || !id) return;
+    setIsFollowLoading(true);
+    try {
+      const userRef = doc(db, 'users', userProfile.id);
+      if (isFollowing) {
+        await updateDoc(userRef, { following: arrayRemove(id) });
+        setIsFollowing(false);
+      } else {
+        await updateDoc(userRef, { following: arrayUnion(id) });
+        setIsFollowing(true);
+      }
+    } catch (err) {
+      console.error("Erro ao seguir lab:", err);
+    } finally {
+      setIsFollowLoading(false);
+    }
+  };
 
   const handleRequestJoin = () => {
     setIsModalOpen(true);
@@ -158,7 +188,14 @@ const LabProfile: React.FC = () => {
                   </div>
 
                   <div className="lab-action-buttons">
-                    <button className="lab-btn-outline">Seguir</button>
+                    <button 
+                      className={`lab-btn-outline ${isFollowing ? 'following' : ''}`} 
+                      onClick={handleFollowToggle}
+                      disabled={isFollowLoading}
+                      style={isFollowing ? { backgroundColor: '#f1f5f9', color: '#0f172a', borderColor: '#cbd5e1' } : {}}
+                    >
+                      {isFollowLoading ? 'Aguarde...' : isFollowing ? 'Seguindo' : 'Seguir'}
+                    </button>
                     <button
                       className={`lab-btn-solid ${isFiliado ? 'filiado' : hasRequested ? 'requested' : ''}`}
                       onClick={handleRequestJoin}
