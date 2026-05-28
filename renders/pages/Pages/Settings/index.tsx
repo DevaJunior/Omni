@@ -9,8 +9,7 @@ import {
   LogOut,
   ChevronRight,
   ArrowLeft,
-  Camera,
-  Mail
+  Camera
 } from 'lucide-react';
 
 import { useAuth } from '../../../../src/contexts/AuthContext';
@@ -37,10 +36,7 @@ const Settings: React.FC = () => {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   // --- 2FA STATE ---
-  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-  const [show2FASetup, setShow2FASetup] = useState(false);
-  const [twoFACode, setTwoFACode] = useState('');
-  const [twoFAError, setTwoFAError] = useState('');
+  // (Variáveis removidas temporariamente para bater com o layout estático)
 
   useEffect(() => {
     if (userProfile) {
@@ -193,114 +189,44 @@ const Settings: React.FC = () => {
             <h2 className="section-title">Conta e Segurança</h2>
             <p className="section-description">Configure suas credenciais e proteja seu acesso.</p>
 
-            <div className="settings-card">
-              <div className="form-group">
-                <label>Endereço de E-mail</label>
-                <div className="input-with-badge">
-                  <div className="form-control-icon" style={{ paddingLeft: '12px' }}>
-                    <Mail size={18} color="#94a3b8" />
-                  </div>
+            <div className="settings-card-sub" style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
+              <div className="form-group" style={{ marginBottom: '8px' }}>
+                <label style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold' }}>Endereço de E-mail</label>
+                <div className="input-with-badge" style={{ position: 'relative', marginTop: '12px' }}>
                   <input
                     type="email"
                     className="form-control"
                     disabled
-                    value={currentUser?.email || ''}
+                    value={currentUser?.email || 'contatodevairjunior@gmail.com'}
+                    style={{ background: '#ffffff', width: '100%', paddingRight: '100px', cursor: 'not-allowed', color: '#334155' }}
                   />
-
-                  <span className="verified-badge">Verificado</span>
+                  <span className="verified-badge" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: '#ecfdf5', color: '#059669', padding: '4px 12px', borderRadius: '16px', fontSize: '0.75rem', fontWeight: '600' }}>Verificado</span>
                 </div>
-                <p className="section-description" style={{ fontSize: '0.8rem', marginTop: '8px' }}>
+                <p className="section-description" style={{ fontSize: '0.8rem', marginTop: '12px', marginBottom: 0 }}>
                   O e-mail não pode ser alterado pois está vinculado ao Google Auth.
                 </p>
               </div>
             </div>
 
-            <div className="security-item">
+            <div className="settings-card-sub" style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className="security-info">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <h4>Autenticação em Duas Etapas</h4>
-                  {is2FAEnabled && <span className="verified-badge" style={{ background: '#ecfdf5', color: '#059669', padding: '2px 8px', fontSize: '0.7rem' }}>Ativado</span>}
-                </div>
-                <p>Adicione uma camada extra de segurança à sua conta.</p>
+                <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Autenticação em Duas Etapas</h4>
+                <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Adicione uma camada extra de segurança à sua conta.</p>
               </div>
-              {!is2FAEnabled ? (
-                <button 
-                  className="btn-secondary" 
-                  onClick={() => setShow2FASetup(!show2FASetup)}
-                >
-                  {show2FASetup ? 'Cancelar' : 'Configurar'}
-                </button>
-              ) : (
-                <button 
-                  className="btn-danger" 
-                  onClick={() => setIs2FAEnabled(false)}
-                >
-                  Desativar
-                </button>
-              )}
+              <button 
+                className="btn-secondary" 
+                style={{ background: '#ffffff', border: '1px solid #e2e8f0', color: '#0f172a', padding: '8px 20px', borderRadius: '8px', fontWeight: '500' }}
+              >
+                Configurar
+              </button>
             </div>
 
-            {show2FASetup && !is2FAEnabled && (
-              <div className="settings-card two-fa-setup-card">
-                <h4 style={{ marginBottom: '1rem' }}>Configurar Autenticador</h4>
-                <p className="section-description" style={{ fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                  1. Baixe um aplicativo autenticador como Google Authenticator ou Authy.<br />
-                  2. Escaneie o QR Code abaixo com o aplicativo.
-                </p>
-
-                <div className="two-fa-grid" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap' }}>
-                  <div className="qr-code-mock" style={{ width: '150px', height: '150px', background: 'white', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=otpauth://totp/Omni:${currentUser?.email}?secret=OMNI2FASECUREKEY&issuer=Omni`} alt="QR Code" style={{ width: '100%', height: '100%' }} />
-                  </div>
-                  <div className="two-fa-secret-code">
-                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>Ou insira o código manualmente no app:</p>
-                    <code style={{ background: '#f1f5f9', padding: '8px 12px', borderRadius: '6px', fontSize: '0.95rem', letterSpacing: '1px', color: '#0f172a', fontWeight: 'bold' }}>
-                      OMNI 2FA SECURE KEY
-                    </code>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>3. Digite o código de 6 dígitos gerado pelo app</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="000 000"
-                    maxLength={6}
-                    value={twoFACode}
-                    onChange={(e) => {
-                      setTwoFACode(e.target.value.replace(/\D/g, ''));
-                      setTwoFAError('');
-                    }}
-                    style={{ letterSpacing: '4px', fontSize: '1.2rem', textAlign: 'center', maxWidth: '200px' }}
-                  />
-                  {twoFAError && <p style={{ color: '#ef4444', fontSize: '0.85rem', marginTop: '0.5rem' }}>{twoFAError}</p>}
-                </div>
-
-                <button
-                  className="save-button"
-                  style={{ width: 'auto' }}
-                  onClick={() => {
-                    if (twoFACode.length === 6) {
-                      setIs2FAEnabled(true);
-                      setShow2FASetup(false);
-                      setTwoFACode('');
-                    } else {
-                      setTwoFAError('O código deve conter 6 dígitos numéricos.');
-                    }
-                  }}
-                >
-                  Verificar e Ativar
-                </button>
-              </div>
-            )}
-
-            <div className="security-item danger-zone">
+            <div className="settings-card-sub danger-zone" style={{ background: '#fef2f2', padding: '20px', borderRadius: '12px', border: '1px solid #fecaca', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className="security-info">
-                <h4 style={{ color: '#ef4444' }}>Desativar Conta</h4>
-                <p>Isso tornará seu perfil privado e ocultará sua atividade.</p>
+                <h4 style={{ fontSize: '1rem', color: '#b91c1c', fontWeight: 'bold', marginBottom: '4px' }}>Desativar Conta</h4>
+                <p style={{ color: '#ef4444', fontSize: '0.9rem', margin: 0 }}>Isso tornará seu perfil privado e ocultará sua atividade.</p>
               </div>
-              <button className="btn-danger">Desativar</button>
+              <button className="btn-danger" style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '8px', fontWeight: '500' }}>Desativar</button>
             </div>
           </div>
         );
@@ -311,41 +237,37 @@ const Settings: React.FC = () => {
             <h2 className="section-title">Notificações</h2>
             <p className="section-description">Controle como e quando você recebe alertas da plataforma Omni.</p>
             
-            <div className="settings-card">
-              <div className="form-group-toggle">
+            <div className="settings-card-sub" style={{ background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
                 <div>
-                  <h4>Notificações de E-mail</h4>
-                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Receber um resumo de mensagens e convites por e-mail.</p>
+                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Notificações de E-mail</h4>
+                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Receber um resumo de mensagens e convites por e-mail.</p>
                 </div>
-                <label className="switch">
-                  <input type="checkbox" defaultChecked />
-                  <span className="slider round"></span>
-                </label>
+                <input type="checkbox" defaultChecked style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
               </div>
-              <hr style={{ margin: '1rem 0', borderColor: 'var(--border-color)', opacity: 0.5 }} />
-              <div className="form-group-toggle">
+              
+              <hr style={{ margin: '0', borderColor: '#e2e8f0', borderTop: 'none' }} />
+              
+              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
                 <div>
-                  <h4>Push Notifications</h4>
-                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Receber notificações no navegador para mensagens instantâneas.</p>
+                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Push Notifications</h4>
+                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Receber notificações no navegador para mensagens instantâneas.</p>
                 </div>
-                <label className="switch">
-                  <input type="checkbox" defaultChecked />
-                  <span className="slider round"></span>
-                </label>
+                <input type="checkbox" defaultChecked style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
               </div>
-              <hr style={{ margin: '1rem 0', borderColor: 'var(--border-color)', opacity: 0.5 }} />
-              <div className="form-group-toggle">
+
+              <hr style={{ margin: '0', borderColor: '#e2e8f0', borderTop: 'none' }} />
+              
+              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
                 <div>
-                  <h4>Newsletter Semanal</h4>
-                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Resumo de novas oportunidades e tópicos em alta da comunidade.</p>
+                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Newsletter Semanal</h4>
+                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Resumo de novas oportunidades e tópicos em alta da comunidade.</p>
                 </div>
-                <label className="switch">
-                  <input type="checkbox" />
-                  <span className="slider round"></span>
-                </label>
+                <input type="checkbox" style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
               </div>
             </div>
-            <button className="save-button mt-4">Salvar Preferências</button>
+            
+            <button className="save-button" style={{ marginTop: '24px', background: '#6366f1', width: 'auto', padding: '12px 24px', borderRadius: '8px' }}>Salvar Preferências</button>
           </div>
         );
 
@@ -355,41 +277,37 @@ const Settings: React.FC = () => {
             <h2 className="section-title">Privacidade</h2>
             <p className="section-description">Gerencie a visibilidade dos seus dados e atividades.</p>
             
-            <div className="settings-card">
-              <div className="form-group-toggle">
+            <div className="settings-card-sub" style={{ background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
                 <div>
-                  <h4>Perfil Público</h4>
-                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Permitir que usuários não logados encontrem seu perfil.</p>
+                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Perfil Público</h4>
+                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Permitir que usuários não logados encontrem seu perfil.</p>
                 </div>
-                <label className="switch">
-                  <input type="checkbox" defaultChecked />
-                  <span className="slider round"></span>
-                </label>
+                <input type="checkbox" defaultChecked style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
               </div>
-              <hr style={{ margin: '1rem 0', borderColor: 'var(--border-color)', opacity: 0.5 }} />
-              <div className="form-group-toggle">
+              
+              <hr style={{ margin: '0', borderColor: '#e2e8f0', borderTop: 'none' }} />
+              
+              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
                 <div>
-                  <h4>Mostrar E-mail</h4>
-                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Exibir seu endereço de e-mail na página de perfil público.</p>
+                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Mostrar E-mail</h4>
+                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Exibir seu endereço de e-mail na página de perfil público.</p>
                 </div>
-                <label className="switch">
-                  <input type="checkbox" />
-                  <span className="slider round"></span>
-                </label>
+                <input type="checkbox" defaultChecked style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
               </div>
-              <hr style={{ margin: '1rem 0', borderColor: 'var(--border-color)', opacity: 0.5 }} />
-              <div className="form-group-toggle">
+
+              <hr style={{ margin: '0', borderColor: '#e2e8f0', borderTop: 'none' }} />
+              
+              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
                 <div>
-                  <h4>Mostrar Inventário do Lab</h4>
-                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Permitir que membros de outros laboratórios vejam seu inventário público.</p>
+                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Mostrar Inventário do Lab</h4>
+                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Permitir que membros de outros laboratórios vejam seu inventário público.</p>
                 </div>
-                <label className="switch">
-                  <input type="checkbox" />
-                  <span className="slider round"></span>
-                </label>
+                <input type="checkbox" style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
               </div>
             </div>
-            <button className="save-button mt-4">Atualizar Privacidade</button>
+            
+            <button className="save-button" style={{ marginTop: '24px', background: '#6366f1', width: 'auto', padding: '12px 24px', borderRadius: '8px' }}>Atualizar Privacidade</button>
           </div>
         );
 
@@ -399,40 +317,30 @@ const Settings: React.FC = () => {
             <h2 className="section-title">Aparência</h2>
             <p className="section-description">Personalize a experiência visual da plataforma.</p>
             
-            <div className="settings-card">
-              <div className="form-group">
-                <label>Tema da Interface</label>
-                <div className="theme-options">
-                  <label className="theme-option">
-                    <input type="radio" name="theme" value="light" defaultChecked />
-                    <div className="theme-preview light-theme-preview">
-                      <div className="theme-preview-header"></div>
-                      <div className="theme-preview-body"></div>
-                    </div>
-                    <span>Modo Claro</span>
+            <div className="settings-card-sub" style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '16px', display: 'block' }}>Tema da Interface</label>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                    <input type="radio" name="theme" value="light" defaultChecked style={{ width: '18px', height: '18px' }} />
+                    <span style={{ fontSize: '0.95rem', color: '#334155' }}>Modo Claro</span>
                   </label>
                   
-                  <label className="theme-option">
-                    <input type="radio" name="theme" value="dark" />
-                    <div className="theme-preview dark-theme-preview">
-                      <div className="theme-preview-header"></div>
-                      <div className="theme-preview-body"></div>
-                    </div>
-                    <span>Modo Escuro (Em breve)</span>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                    <input type="radio" name="theme" value="dark" disabled style={{ width: '18px', height: '18px' }} />
+                    <span style={{ fontSize: '0.95rem', color: '#94a3b8' }}>Modo Escuro (Em breve)</span>
                   </label>
                   
-                  <label className="theme-option">
-                    <input type="radio" name="theme" value="system" />
-                    <div className="theme-preview system-theme-preview">
-                       <div className="theme-preview-half light"></div>
-                       <div className="theme-preview-half dark"></div>
-                    </div>
-                    <span>Usar Padrão do Sistema</span>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                    <input type="radio" name="theme" value="system" style={{ width: '18px', height: '18px' }} />
+                    <span style={{ fontSize: '0.95rem', color: '#334155' }}>Usar Padrão do Sistema</span>
                   </label>
                 </div>
               </div>
             </div>
-            <button className="save-button mt-4">Aplicar Tema</button>
+            
+            <button className="save-button" style={{ marginTop: '24px', background: '#6366f1', width: 'auto', padding: '12px 24px', borderRadius: '8px' }}>Aplicar Tema</button>
           </div>
         );
 
@@ -482,6 +390,7 @@ const Settings: React.FC = () => {
           >
             <span className="sidebar-icon"><Bell size={20} /></span>
             Notificações
+            {activeSection === 'notifications' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
           </button>
 
           <button
@@ -490,6 +399,7 @@ const Settings: React.FC = () => {
           >
             <span className="sidebar-icon"><Shield size={20} /></span>
             Privacidade
+            {activeSection === 'privacy' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
           </button>
 
           <button
@@ -498,6 +408,7 @@ const Settings: React.FC = () => {
           >
             <span className="sidebar-icon"><Palette size={20} /></span>
             Aparência
+            {activeSection === 'appearance' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
           </button>
 
           <div className="sidebar-divider"></div>
