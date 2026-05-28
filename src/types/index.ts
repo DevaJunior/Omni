@@ -11,6 +11,7 @@ export interface IUser {
   linkedin?: string;
   website?: string;
   location?: string;
+  department?: string;
   skills?: string[];
   lab?: any;
 }

@@ -49,7 +49,7 @@ const Inbox: React.FC = () => {
 
   // Obtem os dados do contato baseado no dicionario de "users" no chatRoom
   const getContactInfo = (chat: ChatRoom) => {
-    if (!currentUser || !chat.users) return { name: 'Desconhecido', avatar: '', headline: 'Pesquisador', department: 'Depto. de Biotecnologia' };
+    if (!currentUser || !chat.users) return { name: 'Desconhecido', avatar: '', headline: 'Pesquisador', department: 'Sem departamento' };
 
     // O contato é a chave que não é o currentUser.uid
     const contactId = chat.participants.find(id => id !== currentUser.uid) || currentUser.uid;
@@ -59,9 +59,25 @@ const Inbox: React.FC = () => {
       id: contactId,
       name: contactData?.name || 'Desconhecido',
       avatar: contactData?.avatar || `https://ui-avatars.com/api/?name=User`,
-      headline: contactData?.headline || 'Pesquisador Sênior',
-      department: 'Depto. de Biotecnologia' // Mockado para UI
+      headline: contactData?.headline || 'Pesquisador',
+      department: contactData?.department || 'Sem departamento'
     };
+  };
+
+  const handleSimulateAttachment = async () => {
+    if (!activeChatId) return;
+    const file = {
+      id: Date.now().toString(),
+      name: `Relatorio_Lab_${Math.floor(Math.random() * 100)}.pdf`,
+      size: '1.2 MB',
+      date: new Date().toLocaleDateString('pt-BR'),
+      type: 'pdf' as const
+    };
+    try {
+      await chatService.simulateFileUpload(activeChatId, file);
+    } catch (err) {
+      console.error("Erro ao simular anexo", err);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -202,7 +218,7 @@ const Inbox: React.FC = () => {
 
             <footer className="inbox-chat-input-area">
               <div className="inbox-input-wrapper">
-                <button className="inbox-input-icon"><Paperclip size={18} /></button>
+                <button className="inbox-input-icon" onClick={handleSimulateAttachment} title="Simular Anexo (Test)"><Paperclip size={18} /></button>
                 <input
                   type="text"
                   placeholder="Escreva uma mensagem..."
@@ -246,21 +262,19 @@ const Inbox: React.FC = () => {
               <a href="#">Ver todos</a>
             </div>
 
-            <div className="inbox-file-item">
-              <div className="inbox-file-icon blue"><FileText size={18} /></div>
-              <div className="inbox-file-info">
-                <h6>Matriz_PFuzzy_v2.csv</h6>
-                <span>2.4 MB • Hoje, 10:20</span>
-              </div>
-            </div>
-
-            <div className="inbox-file-item">
-              <div className="inbox-file-icon orange"><FileText size={18} /></div>
-              <div className="inbox-file-info">
-                <h6>Relatorio_Preliminar.pdf</h6>
-                <span>1.1 MB • Ontem</span>
-              </div>
-            </div>
+            {activeChat.sharedFiles && activeChat.sharedFiles.length > 0 ? (
+              activeChat.sharedFiles.map((file) => (
+                <div key={file.id} className="inbox-file-item">
+                  <div className={`inbox-file-icon ${file.type === 'pdf' ? 'orange' : 'blue'}`}><FileText size={18} /></div>
+                  <div className="inbox-file-info">
+                    <h6>{file.name}</h6>
+                    <span>{file.size} • {file.date}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Nenhum arquivo compartilhado nesta conversa.</p>
+            )}
           </div>
 
           <div className="inbox-details-search">

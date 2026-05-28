@@ -26,8 +26,8 @@ const userData = {
 };
 
 const mockOtherUsers = [
-  { id: "uid_ana_costa", name: "Ana Costa", headline: "Doutoranda em Bioquímica | UNICAMP", avatar: "", following: [] },
-  { id: "uid_rafael_mendes", name: "Rafael Mendes", headline: "Pesquisador em Química Analítica", avatar: "", following: [] }
+  { id: "uid_ana_costa", name: "Ana Costa", headline: "Doutoranda em Bioquímica | UNICAMP", department: "Depto. de Bioquímica", avatar: "https://ui-avatars.com/api/?name=Ana+Costa", following: [] },
+  { id: "uid_rafael_mendes", name: "Rafael Mendes", headline: "Pesquisador em Química Analítica", department: "Depto. de Química Analítica", avatar: "https://ui-avatars.com/api/?name=Rafael+Mendes", following: [] }
 ];
 
 const mockInventory = [
@@ -86,8 +86,22 @@ const discussionsDatabase = [
 const articlesDatabase = [
   {
     id: "201", title: "Modelagem P-Fuzzy Aplicada na Fitorremediação de Ambientes Aquáticos", authors: "Ribeiro, H. M.; Costa, A. L.; Silva, M.", institutions: "Departamento de Biotecnologia, Universidade Federal de Alfenas (UNIFAL-MG)", journal: "Journal of Environmental Biotechnology", date: "Outubro, 2025", doi: "10.1016/j.jenvbio.2025.10.005",
-    abstract: "Este artigo propõe uma nova abordagem baseada na lógica P-Fuzzy...", tags: ["Fitorremediação", "Lógica P-Fuzzy", "Tratamento de Efluentes"], stats: { views: 1245, downloads: 340, citations: 12 }
+    abstract: "Este artigo propõe uma nova abordagem baseada na lógica P-Fuzzy...", tags: ["Fitorremediação", "Lógica P-Fuzzy", "Tratamento de Efluentes"], stats: { views: 1245, downloads: 340, citations: 12 },
+    content: "<h2>1. Introdução</h2><p>A contaminação de corpos hídricos por metais pesados representa um dos maiores desafios ambientais contemporâneos. A rizofiltração, técnica biotecnológica que utiliza sistemas radiculares de plantas para absorver, concentrar e precipitar metais tóxicos de efluentes, tem se mostrado uma alternativa sustentável e de baixo custo.</p><p>No entanto, a predição da eficiência deste processo enfrenta dificuldades inerentes à complexidade dos sistemas biológicos, onde variáveis como pH, temperatura e biomassa interagem de forma não-linear. Diante deste cenário, a aplicação da Lógica P-Fuzzy (Fuzzy Probabilística) surge como uma ferramenta promissora para modelar tais incertezas com maior acurácia.</p><h2>2. Materiais e Métodos</h2><p>Para a modelagem, os dados de entrada consistiram em concentrações iniciais de Cádmio (Cd) e Chumbo (Pb), tempo de exposição e desenvolvimento da biomassa radicular. Foi desenvolvido um algoritmo em Python integrado à plataforma Omni para o processamento das regras de inferência fuzzy.</p><h2>3. Resultados</h2><p>O modelo P-Fuzzy alcançou um coeficiente de correlação (R²) de 0.94 na predição da taxa de remoção de metais, superando o modelo linear clássico (R² = 0.78). A integração dos dados diretamente através da plataforma laboratorial agilizou o processamento em 40%.</p>",
+    related: [
+      { id: "rel1", title: "Fitorremediação de Cádmio utilizando macrófitas aquáticas em biorreatores.", journal: "Journal of Botany", year: "2024" },
+      { id: "rel2", title: "Comparativo entre Lógica Fuzzy e Redes Neurais na predição de qualidade da água.", journal: "Water Research", year: "2025" }
+    ]
   }
+];
+
+const mockCourses = [
+  { id: "c1", name: "Biotecnologia" },
+  { id: "c2", name: "Biologia" },
+  { id: "c3", name: "Ciência da Computação" },
+  { id: "c4", name: "Química" },
+  { id: "c5", name: "Farmácia" },
+  { id: "c6", name: "Medicina" },
 ];
 
 const homeArticlesDatabase = [
@@ -245,6 +259,12 @@ export async function seedFirebaseDatabase() {
     console.log("Populando Labs...");
     for (const lab of allLabs) {
       await setDoc(doc(db, "labs", lab.id), lab);
+    }
+
+    // 9. Criar Cursos
+    console.log("Populando Courses...");
+    for (const course of mockCourses) {
+      await setDoc(doc(db, "courses", course.id), course);
     }
 
     console.log("✅ Migração concluída com sucesso! Os mocks já podem ser deletados.");

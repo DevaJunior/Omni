@@ -1,4 +1,4 @@
-import { collection, doc, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, getDocs, updateDoc, setDoc, increment } from 'firebase/firestore';
+import { collection, doc, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, getDocs, updateDoc, setDoc, increment, arrayUnion } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import type { IUser } from '../types/index';
 
@@ -14,8 +14,9 @@ export interface ChatRoom {
   participants: string[];
   lastMessage: string;
   updatedAt: any;
-  users?: Record<string, Partial<IUser>>; // Cache de dados dos usuários (nome, avatar) para leitura rápida
+  users?: Record<string, Partial<IUser>>; // Cache de dados dos usuários (nome, avatar, headline, department)
   unreadCount?: Record<string, number>;
+  sharedFiles?: { id: string, name: string, size: string, date: string, type: 'pdf' | 'csv' | 'doc' | 'image' }[];
 }
 
 const CHATS_COLLECTION = 'chats';
@@ -49,13 +50,24 @@ export const chatService = {
       lastMessage: '',
       updatedAt: serverTimestamp(),
       users: {
-        [currentUserId]: { name: currentUserData.name, avatar: currentUserData.avatar },
-        [targetUserId]: { name: targetUserData.name, avatar: targetUserData.avatar }
+        [currentUserId]: { 
+          name: currentUserData.name, 
+          avatar: currentUserData.avatar,
+          headline: currentUserData.headline,
+          department: currentUserData.location // Usaremos location como aproximação de departamento se não houver
+        },
+        [targetUserId]: { 
+          name: targetUserData.name, 
+          avatar: targetUserData.avatar,
+          headline: targetUserData.headline,
+          department: targetUserData.location
+        }
       },
       unreadCount: {
         [currentUserId]: 0,
         [targetUserId]: 0
-      }
+      },
+      sharedFiles: []
     };
     
     await setDoc(chatRef, newChat);
@@ -124,6 +136,14 @@ export const chatService = {
     const chatRef = doc(db, CHATS_COLLECTION, chatId);
     await updateDoc(chatRef, {
       [`unreadCount.${currentUserId}`]: 0
+    });
+  },
+
+  // Simula o envio de um arquivo para o chat
+  async simulateFileUpload(chatId: string, fileData: { id: string, name: string, size: string, date: string, type: 'pdf' | 'csv' | 'doc' | 'image' }) {
+    const chatRef = doc(db, CHATS_COLLECTION, chatId);
+    await updateDoc(chatRef, {
+      sharedFiles: arrayUnion(fileData)
     });
   }
 };

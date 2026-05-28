@@ -6,7 +6,6 @@ import {
   Share2,
   Bookmark,
   Quote,
-  FileText,
   Users,
   Calendar,
   Link as LinkIcon
@@ -31,7 +30,7 @@ const ArticleDetail: React.FC = () => {
       try {
         // Tenta buscar primeiro em artigos acadêmicos
         let docSnap = await getDoc(doc(db, "articles", id));
-        
+
         if (docSnap.exists()) {
           setArticle({ id: docSnap.id, ...docSnap.data() });
           articleService.incrementViewCount(id, false);
@@ -40,7 +39,7 @@ const ArticleDetail: React.FC = () => {
           docSnap = await getDoc(doc(db, "articles_home", id));
           if (docSnap.exists()) {
             const data = docSnap.data();
-            
+
             // Incrementa view no Firebase em background
             articleService.incrementViewCount(id, true);
 
@@ -48,14 +47,16 @@ const ArticleDetail: React.FC = () => {
             setArticle({
               id: docSnap.id,
               ...data,
-              journal: "Omni Editorial",
-              authors: "Redação Omni",
-              institutions: "Plataforma Omni",
-              date: "Recente",
-              doi: "10.0000/omni.blog.home",
-              abstract: data.desc,
-              tags: [data.category, "Destaque"],
-              stats: data.stats || { views: 1, downloads: 0, citations: 0 }
+              journal: data.journal || "Omni Editorial",
+              authors: data.authors || "Redação Omni",
+              institutions: data.institutions || "Plataforma Omni",
+              date: data.date || "Recente",
+              doi: data.doi || "10.0000/omni.blog.home",
+              abstract: data.abstract || data.desc,
+              tags: data.tags || [data.category, "Destaque"],
+              stats: data.stats || { views: 1, downloads: 0, citations: 0 },
+              content: data.content || null,
+              related: data.related || []
             });
           }
         }
@@ -76,8 +77,8 @@ const ArticleDetail: React.FC = () => {
       const isHome = article.tags?.includes("Destaque");
       articleService.incrementDownloadCount(article.id, isHome);
       setArticle({
-         ...article,
-         stats: { ...article.stats, downloads: article.stats.downloads + 1 }
+        ...article,
+        stats: { ...article.stats, downloads: article.stats.downloads + 1 }
       });
       alert("Iniciando download simulado...");
     }
@@ -131,40 +132,17 @@ const ArticleDetail: React.FC = () => {
             <section className="art-section">
               <h2>Palavras-chave</h2>
               <div className="art-tags-list">
-                {article.tags.map((tag: any) => (
+                {article.tags?.map((tag: any) => (
                   <span key={tag} className="art-tag">{tag}</span>
                 ))}
               </div>
             </section>
 
-            <section className="art-section">
-              <h2>1. Introdução</h2>
-              <p>
-                A contaminação de corpos hídricos por metais pesados representa um dos maiores desafios ambientais contemporâneos. A rizofiltração, técnica biotecnológica que utiliza sistemas radiculares de plantas para absorver, concentrar e precipitar metais tóxicos de efluentes, tem se mostrado uma alternativa sustentável e de baixo custo.
-              </p>
-              <p>
-                No entanto, a predição da eficiência deste processo enfrenta dificuldades inerentes à complexidade dos sistemas biológicos, onde variáveis como pH, temperatura e biomassa interagem de forma não-linear. Diante deste cenário, a aplicação da Lógica P-Fuzzy (Fuzzy Probabilística) surge como uma ferramenta promissora para modelar tais incertezas com maior acurácia.
-              </p>
-            </section>
-
-            <section className="art-section">
-              <h2>2. Materiais e Métodos</h2>
-              <p>
-                Para a modelagem, os dados de entrada consistiram em concentrações iniciais de Cádmio (Cd) e Chumbo (Pb), tempo de exposição e desenvolvimento da biomassa radicular. Foi desenvolvido um algoritmo em Python integrado à plataforma Omni para o processamento das regras de inferência fuzzy.
-              </p>
-              {/* Espaço reservado para visualização de gráficos do laboratório */}
-              <div className="art-image-placeholder">
-                <FileText size={48} color="#a5a6f6" />
-                <span>Figura 1: Superfície de Inferência P-Fuzzy gerada pelo sistema.</span>
-              </div>
-            </section>
-
-            <section className="art-section">
-              <h2>3. Resultados</h2>
-              <p>
-                O modelo P-Fuzzy alcançou um coeficiente de correlação (R²) de 0.94 na predição da taxa de remoção de metais, superando o modelo linear clássico (R² = 0.78). A integração dos dados diretamente através da plataforma laboratorial agilizou o processamento em 40%.
-              </p>
-            </section>
+            {article.content ? (
+              <div className="art-dynamic-content" dangerouslySetInnerHTML={{ __html: article.content }} />
+            ) : (
+              <div style={{ padding: '20px 0', color: 'var(--text-muted)' }}>Conteúdo completo não disponível para este artigo.</div>
+            )}
           </article>
         </main>
 
@@ -216,14 +194,16 @@ const ArticleDetail: React.FC = () => {
             <div className="art-widget art-related-widget">
               <h3>Artigos Relacionados</h3>
               <ul className="art-related-list">
-                <li>
-                  <a href="#art1">Fitorremediação de Cádmio utilizando macrófitas aquáticas em biorreatores.</a>
-                  <span>Journal of Botany • 2024</span>
-                </li>
-                <li>
-                  <a href="#art2">Comparativo entre Lógica Fuzzy e Redes Neurais na predição de qualidade da água.</a>
-                  <span>Water Research • 2025</span>
-                </li>
+                {article.related && article.related.length > 0 ? (
+                  article.related.map((rel: any) => (
+                    <li key={rel.id}>
+                      <a href={`/article/${rel.id}`}>{rel.title}</a>
+                      <span>{rel.journal} • {rel.year}</span>
+                    </li>
+                  ))
+                ) : (
+                  <li><span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Nenhum artigo relacionado disponível.</span></li>
+                )}
               </ul>
             </div>
 
