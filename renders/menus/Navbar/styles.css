@@ -70,8 +70,12 @@
 .icon-btn {
   background: none;
   border: none;
+  padding: 0;
   cursor: pointer;
   color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-btn {
@@ -87,13 +91,17 @@
   display: none;
   background: none;
   border: none;
+  padding: 0;
   cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
   .menu-toggle {
-    display: block;
+    display: flex;
   }
 
   .nav-links {
@@ -111,6 +119,16 @@
 
   .nav-links.active {
     transform: translateY(0);
+  }
+
+  .search-container {
+    display: none !important;
+  }
+
+  .profile-btn {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0;
   }
 }
 

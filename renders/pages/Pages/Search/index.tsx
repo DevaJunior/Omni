@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Search as SearchIcon, Compass, BookOpen, Users, ArrowRight, Loader2 } from 'lucide-react';
+import { Search as SearchIcon, BookOpen, Users, ArrowRight, Loader2, X, TrendingUp, FileText } from 'lucide-react';
 import { searchService, type SearchResult } from '../../../../src/services/searchService';
 import './styles.css';
 
 const SearchPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
-  
+
   const [activeTab, setActiveTab] = useState('all');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ const SearchPage: React.FC = () => {
       setResults(data);
       setLoading(false);
     };
-    
+
     fetchResults();
   }, [query]);
 
@@ -34,12 +34,18 @@ const SearchPage: React.FC = () => {
     if (activeTab === 'projects' && r.type === 'project') return true;
     if (activeTab === 'people' && r.type === 'user') return true;
     return false;
-  }); 
+  });
 
   return (
     <div className="search-page-container">
       <div className="search-page-header">
-        <h1>Resultados da busca para <span>"{query}"</span></h1>
+        <div className="resultados-header-top">
+          <div className="resultados-para">Resultados para</div>
+          <Link to="/" className="search-close-btn" aria-label="Fechar busca">
+            <X size={20} />
+          </Link>
+        </div>
+        <h1>"{query}"</h1>
         <div className="search-tabs">
           <button className={`search-tab ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>Tudo</button>
           <button className={`search-tab ${activeTab === 'articles' ? 'active' : ''}`} onClick={() => setActiveTab('articles')}>Artigos</button>
@@ -47,7 +53,7 @@ const SearchPage: React.FC = () => {
           <button className={`search-tab ${activeTab === 'people' ? 'active' : ''}`} onClick={() => setActiveTab('people')}>Pessoas</button>
         </div>
       </div>
-      
+
       {loading ? (
         <div style={{ padding: '60px', textAlign: 'center', color: '#64748b' }}>
           <Loader2 size={40} className="spinner" style={{ animation: 'spin 1s linear infinite', margin: '0 auto 20px' }} />
@@ -56,54 +62,42 @@ const SearchPage: React.FC = () => {
       ) : filteredResults.length === 0 ? (
         <div className="empty-search-state">
           <div className="empty-search-hero">
-            <div className="empty-search-icon-wrapper">
-              <SearchIcon size={56} className="empty-search-icon" />
-            </div>
-            <h2>Nenhum resultado encontrado para "{query}"</h2>
-            <p>Verifique a ortografia, tente palavras mais genéricas ou navegue pelas nossas sugestões em alta.</p>
+            <SearchIcon size={48} className="empty-search-icon" />
+            <h2>Nenhum resultado exato</h2>
+            <p>Não encontramos documentos contendo "{query}".<br />Verifique a ortografia ou use termos mais amplos.</p>
           </div>
-          
+
           <div className="search-suggestions-section">
             <div className="suggestions-header">
-              <h3><Compass size={22} className="compass-icon" /> Tópicos Populares na Omni</h3>
+              <h3><TrendingUp size={16} className="trending-icon" /> Sugestões em alta</h3>
             </div>
             <div className="suggestions-grid">
-              
-              <div className="suggestion-card">
-                <div className="suggestion-card-header">
-                  <div className="suggestion-icon-bg purple">
-                    <BookOpen size={20} />
-                  </div>
-                  <span className="suggestion-badge">Artigo em Alta</span>
-                </div>
-                <h4>Fitorremediação de Efluentes Têxteis</h4>
-                <p>Estudo completo sobre uso de macrófitas aquáticas e lógica p-fuzzy no monitoramento de bacias.</p>
-                <Link to="/article/fitorremediacao" className="suggestion-link-btn" style={{ textDecoration: 'none' }}>Acessar <ArrowRight size={16} /></Link>
-              </div>
 
-              <div className="suggestion-card">
-                <div className="suggestion-card-header">
-                  <div className="suggestion-icon-bg blue">
-                    <Users size={20} />
+              <Link to="/article/fitorremediacao" style={{ textDecoration: 'none' }}>
+                <div className="suggestion-card">
+                  <div className="suggestion-card-top">
+                    <div className="suggestion-type">
+                      <FileText size={14} /> ARTIGO
+                    </div>
+                    <ArrowRight size={14} color="#cbd5e1" />
                   </div>
-                  <span className="suggestion-badge">Laboratório Destaque</span>
+                  <h4>Fitorremediação de Efluentes Têxteis</h4>
+                  <p>Dra. Helena Ribeiro</p>
                 </div>
-                <h4>Acqua Solutions Lab</h4>
-                <p>Comunidade de pesquisadores desenvolvendo técnicas inovadoras de purificação hídrica e química ambiental.</p>
-                <Link to="/lab/acqua" className="suggestion-link-btn" style={{ textDecoration: 'none' }}>Acessar <ArrowRight size={16} /></Link>
-              </div>
+              </Link>
 
-              <div className="suggestion-card">
-                <div className="suggestion-card-header">
-                  <div className="suggestion-icon-bg pink">
-                    <BookOpen size={20} />
+              <Link to="/topic/pfuzzy" style={{ textDecoration: 'none' }}>
+                <div className="suggestion-card">
+                  <div className="suggestion-card-top">
+                    <div className="suggestion-type">
+                      <TrendingUp size={14} /> TÓPICO
+                    </div>
+                    <ArrowRight size={14} color="#cbd5e1" />
                   </div>
-                  <span className="suggestion-badge">Discussão Relevante</span>
+                  <h4>Rizofiltração P-Fuzzy</h4>
+                  <p>Comunidade Omni</p>
                 </div>
-                <h4>Lógica P-Fuzzy em Modelos Biológicos</h4>
-                <p>Fórum aberto com 45 especialistas debatendo métricas e mitigação de incertezas em biologia computacional.</p>
-                <Link to="/discussion/pfuzzy-bio" className="suggestion-link-btn" style={{ textDecoration: 'none' }}>Acessar <ArrowRight size={16} /></Link>
-              </div>
+              </Link>
 
             </div>
           </div>

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info, Mail } from 'lucide-react';
+import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { notificationService, type NotificationData } from '../../../src/services/notificationService';
 import './styles.css';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   // Search state
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
         setIsNotificationsOpen(false);
       }
       if (isSearchOpen && searchInputRef.current && !searchInputRef.current.contains(event.target as Node) && !(event.target as Element).closest('.search-toggle')) {
-         setIsSearchOpen(false);
+        setIsSearchOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -107,12 +107,12 @@ const Navbar: React.FC = () => {
         </div>
 
         <div className="nav-actions">
-          
+
           {/* Global Search */}
           <form className={`search-container ${isSearchOpen ? 'open' : ''}`} onSubmit={handleSearchSubmit}>
-            <button 
-              type="button" 
-              className="icon-btn search-toggle" 
+            <button
+              type="button"
+              className="icon-btn search-toggle"
               onClick={() => {
                 setIsSearchOpen(!isSearchOpen);
                 if (!isSearchOpen) setTimeout(() => searchInputRef.current?.focus(), 100);
@@ -120,10 +120,10 @@ const Navbar: React.FC = () => {
             >
               <Search size={20} />
             </button>
-            <input 
+            <input
               ref={searchInputRef}
-              type="text" 
-              placeholder="Pesquisar artigos, projetos..." 
+              type="text"
+              placeholder="Pesquisar artigos, projetos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
@@ -133,14 +133,14 @@ const Navbar: React.FC = () => {
           {/* Notifications Panel */}
           {currentUser && (
             <div className="notifications-container" ref={notificationsRef}>
-              <button 
-                className="icon-btn notif-btn" 
+              <button
+                className="icon-btn notif-btn"
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               >
                 <Bell size={20} />
                 {unreadCount > 0 && <span className="notification-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
               </button>
-              
+
               {isNotificationsOpen && (
                 <div className="notifications-dropdown">
                   <div className="notifications-header">
@@ -159,9 +159,9 @@ const Navbar: React.FC = () => {
                       </div>
                     ) : (
                       notifications.map(notif => (
-                        <div 
-                          key={notif.id} 
-                          className={`notification-item ${!notif.read ? 'unread' : ''}`} 
+                        <div
+                          key={notif.id}
+                          className={`notification-item ${!notif.read ? 'unread' : ''}`}
                           onClick={() => handleNotificationClick(notif)}
                         >
                           <div className="notif-icon-wrapper">
@@ -182,7 +182,7 @@ const Navbar: React.FC = () => {
           )}
 
           {/* Inbox / Mensagens Menu */}
-          {currentUser && (
+          {/* {currentUser && (
             <button
               className={`icon-btn ${isActive('/inbox')}`}
               onClick={() => navigate('/inbox')}
@@ -190,7 +190,7 @@ const Navbar: React.FC = () => {
             >
               <Mail size={20} />
             </button>
-          )}
+          )} */}
 
           {/* Profile Menu */}
           <button

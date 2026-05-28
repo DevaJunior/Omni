@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { ArrowRight, Beaker, Users, BookOpen, ChevronRight, ChevronLeft, Code2 } from 'lucide-react';
+import { ArrowRight, Beaker, Users, BookOpen, ChevronRight, ChevronLeft, Code2, Search } from 'lucide-react';
 import './styles.css';
 import { useNavigate } from 'react-router-dom';
 import { articleService, type Article } from '../../../../src/services/articleService';
@@ -14,6 +14,8 @@ const Home: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [randomLabs, setRandomLabs] = useState<LabPartner[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
     const fetchArticlesAndLabs = async () => {
@@ -22,7 +24,7 @@ const Home: React.FC = () => {
           articleService.getLatestArticles(10),
           communityService.getLabs()
         ]);
-        
+
         if (data.length > 0) {
           setArticles(data);
         } else {
@@ -42,6 +44,29 @@ const Home: React.FC = () => {
   }, []);
 
 
+  const partnersContent = (
+    <>
+      {randomLabs.length > 0 ? (
+        randomLabs.map(lab => (
+          <span
+            key={lab.id}
+            style={{ cursor: 'pointer' }}
+            onClick={() => navigate(`/lab/${lab.id}`)}
+          >
+            {lab.name}
+          </span>
+        ))
+      ) : (
+        <>
+          <span>Phyton Research</span>
+          <span>Biogen</span>
+          <span>Neurolab</span>
+          <span>Genesis Labs</span>
+          <span>Acqua Solutions</span>
+        </>
+      )}
+    </>
+  );
 
   const scroll = (direction: 'left' | 'right') => {
     if (sliderRef.current) {
@@ -53,12 +78,38 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <div className="home-container">
+      <div className={`home-container ${isExiting ? 'home-fade-out' : ''}`}>
+
         {/* SECTION: HERO */}
         <section className="hero">
           <div className="hero-content">
             <span className="badge">OMNI | PLATAFORMA INTEGRADA DE PESQUISA</span>
             <h1>Simplifique a pesquisa. <br /><span>Otimize a ciência.</span></h1>
+
+            {/* MOBILE SEARCH BAR */}
+            <div className="home-mobile-search">
+              <form
+                className="mobile-search-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (searchQuery.trim()) {
+                    setIsExiting(true);
+                    setTimeout(() => {
+                      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+                    }, 300);
+                  }
+                }}
+              >
+                <Search size={20} className="mobile-search-icon" />
+                <input
+                  type="text"
+                  placeholder="Pesquise por artigos, projetos..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </form>
+            </div>
+
             <p>
               A Omni é sua suíte completa de ferramentas para análise de dados,
               colaboração e gerenciamento de experimentos, construída para especialistas e pesquisadores.
@@ -72,13 +123,17 @@ const Home: React.FC = () => {
           </div>
         </section>
 
+        <div className="partners-list partners-mobile-only">
+          {partnersContent}
+        </div>
+
         {/* SECTION: ÚLTIMOS ARTIGOS */}
         <section className="articles-section">
           <div className="articles-header">
             <div className="articles-title">
-              <h2>Últimos <br />artigos</h2>
+              <h2>Últimos <br className="mobile-hidden-br" />artigos</h2>
               <p>Bem-vindo à nossa seção de blog, onde o conhecimento encontra a inspiração. Explore artigos perspicazes, dicas de especialistas e as últimas tendências em nosso campo.</p>
-              <button className="btn-secondary" onClick={() => navigate('/community')}>
+              <button className="btn-secondary articles-btn-desktop" onClick={() => navigate('/community')}>
                 Ver todos
               </button>
             </div>
@@ -94,11 +149,11 @@ const Home: React.FC = () => {
 
           <div className="articles-grid" ref={sliderRef}>
             {isLoading ? (
-               <div style={{ display: 'flex', gap: '2rem', padding: '1rem' }}>
-                  <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
-                  <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
-                  <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
-               </div>
+              <div style={{ display: 'flex', gap: '2rem', padding: '1rem' }}>
+                <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
+                <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
+                <div className="article-skeleton" style={{ width: '300px', height: '400px', background: 'var(--card-bg)', borderRadius: '12px' }}></div>
+              </div>
             ) : (
               articles.map((art) => (
                 <div key={art.id} className="article-card">
@@ -108,7 +163,7 @@ const Home: React.FC = () => {
                   <div className="article-info">
                     <h3>{art.title}</h3>
                     <p>{art.desc}</p>
-                    <span className="read-more" onClick={() => navigate(`/article/${art.id}`)} style={{cursor: 'pointer'}}>
+                    <span className="read-more" onClick={() => navigate(`/article/${art.id}`)} style={{ cursor: 'pointer' }}>
                       Leia mais &rarr;
                     </span>
                   </div>
@@ -116,6 +171,10 @@ const Home: React.FC = () => {
               ))
             )}
           </div>
+
+          <button className="btn-secondary articles-btn-mobile" onClick={() => navigate('/community')}>
+            Ver todos
+          </button>
         </section>
 
         {/* SECTION: FERRAMENTAS E SERVIÇOS */}
@@ -153,26 +212,8 @@ const Home: React.FC = () => {
         <section className="footer-promo">
           <h3>A Omni acredita que a pesquisa deve ser fluida e acessível, capacitando os cientistas a atingir resultados inovadores com maior eficiência.</h3>
 
-          <div className="partners-list">
-            {randomLabs.length > 0 ? (
-              randomLabs.map(lab => (
-                <span 
-                  key={lab.id} 
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => navigate(`/lab/${lab.id}`)}
-                >
-                  {lab.name}
-                </span>
-              ))
-            ) : (
-              <>
-                <span>Phyton Research</span>
-                <span>Biogen</span>
-                <span>Neurolab</span>
-                <span>Genesis Labs</span>
-                <span>Acqua Solutions</span>
-              </>
-            )}
+          <div className="partners-list partners-desktop-only">
+            {partnersContent}
           </div>
 
           <button className="btn-outline" onClick={() => navigate('/community')}>
