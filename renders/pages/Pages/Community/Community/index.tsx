@@ -152,8 +152,8 @@ const Community: React.FC = () => {
               className={`cmmt-btn-outline-icon ${searchFilter ? 'cmmt-filter-active-btn' : ''}`}
               onClick={() => setShowFilterMenu(!showFilterMenu)}
             >
-              <Filter size={20} />
-              {searchFilter || "FILTRO"}
+              <Filter size={18} />
+              {searchFilter}
             </button>
 
             {/* Menu Dropdown do Filtro */}
@@ -225,9 +225,9 @@ const Community: React.FC = () => {
               <div className="cmmt-suggested-users">
                 {suggestedUsers.length > 0 ? (
                   suggestedUsers.map(user => (
-                    <div 
-                      key={user.id} 
-                      className="cmmt-user-item" 
+                    <div
+                      key={user.id}
+                      className="cmmt-user-item"
                       onClick={() => navigate(`/profile/${user.id}`)}
                       style={{ cursor: 'pointer' }}
                     >
@@ -235,15 +235,15 @@ const Community: React.FC = () => {
                         <img src={user.avatar} alt={user.name || 'User'} className="cmmt-user-avatar-img" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
                       ) : (
                         <div className="cmmt-user-avatar-placeholder">
-                           {user.name ? user.name.substring(0,2).toUpperCase() : 'US'}
+                          {user.name ? user.name.substring(0, 2).toUpperCase() : 'US'}
                         </div>
                       )}
                       <div className="cmmt-user-details">
                         <h5>{user.name || 'Usuário Sem Nome'}</h5>
                         <span>{user.headline ? user.headline.split('|')[0] : ''}</span>
                       </div>
-                      <button 
-                        className="cmmt-btn-follow" 
+                      <button
+                        className="cmmt-btn-follow"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleFollow(user.id);

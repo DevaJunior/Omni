@@ -247,6 +247,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
@@ -427,6 +428,21 @@
 }
 
 @media (max-width: 480px) {
+
+  .hero {
+    text-align: center;
+    height: auto;
+    min-height: 0;
+  }
+
+  .hero-visual {
+    display: none;
+  }
+
+  .gradient-sphere {
+    display: none;
+  }
+
   .hero-content h1 {
     font-size: 2rem;
   }
