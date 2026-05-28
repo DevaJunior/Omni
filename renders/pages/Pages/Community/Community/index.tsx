@@ -20,11 +20,15 @@ const Community: React.FC = () => {
   const { currentUser } = useAuth();
   const [randomLabs, setRandomLabs] = useState<LabPartner[]>([]);
   const [suggestedUsers, setSuggestedUsers] = useState<any[]>([]);
+  const [trendingTopics, setTrendingTopics] = useState<string[]>([
+    "Carregando..."
+  ]);
 
   useEffect(() => {
     if (currentUser) {
       communityService.getSuggestedUsers(currentUser.uid).then(setSuggestedUsers);
     }
+    communityService.getTrendingTopics(5).then(setTrendingTopics);
   }, [currentUser]);
 
   useEffect(() => {
@@ -94,14 +98,6 @@ const Community: React.FC = () => {
     setSearchValue('');
     setSearchFilter('');
   };
-
-  const trendingTopics = [
-    "Análise de Dados Complexos",
-    "Desenvolvimento de Vacinas",
-    "Inteligência Artificial na Saúde",
-    "Biorreatores Industriais",
-    "Controle de Qualidade"
-  ];
 
   return (
     <>
@@ -210,7 +206,13 @@ const Community: React.FC = () => {
               </div>
               <ul className="cmmt-trending-list">
                 {trendingTopics.map((topic, index) => (
-                  <li key={index}><a href={`#${topic}`}>{topic}</a></li>
+                  <li key={index}>
+                    <a href="#" onClick={(e) => {
+                      e.preventDefault();
+                      setSearchFilter('Todos');
+                      setSearchValue(topic);
+                    }}>#{topic}</a>
+                  </li>
                 ))}
               </ul>
             </div>

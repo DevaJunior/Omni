@@ -227,10 +227,141 @@ const Settings: React.FC = () => {
           </div>
         );
 
+      case 'notifications':
+        return (
+          <div className="section-fade-in">
+            <h2 className="section-title">Notificações</h2>
+            <p className="section-description">Controle como e quando você recebe alertas da plataforma Omni.</p>
+            
+            <div className="settings-card">
+              <div className="form-group-toggle">
+                <div>
+                  <h4>Notificações de E-mail</h4>
+                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Receber um resumo de mensagens e convites por e-mail.</p>
+                </div>
+                <label className="switch">
+                  <input type="checkbox" defaultChecked />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              <hr style={{ margin: '1rem 0', borderColor: 'var(--border-color)', opacity: 0.5 }} />
+              <div className="form-group-toggle">
+                <div>
+                  <h4>Push Notifications</h4>
+                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Receber notificações no navegador para mensagens instantâneas.</p>
+                </div>
+                <label className="switch">
+                  <input type="checkbox" defaultChecked />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              <hr style={{ margin: '1rem 0', borderColor: 'var(--border-color)', opacity: 0.5 }} />
+              <div className="form-group-toggle">
+                <div>
+                  <h4>Newsletter Semanal</h4>
+                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Resumo de novas oportunidades e tópicos em alta da comunidade.</p>
+                </div>
+                <label className="switch">
+                  <input type="checkbox" />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </div>
+            <button className="save-button mt-4">Salvar Preferências</button>
+          </div>
+        );
+
+      case 'privacy':
+        return (
+          <div className="section-fade-in">
+            <h2 className="section-title">Privacidade</h2>
+            <p className="section-description">Gerencie a visibilidade dos seus dados e atividades.</p>
+            
+            <div className="settings-card">
+              <div className="form-group-toggle">
+                <div>
+                  <h4>Perfil Público</h4>
+                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Permitir que usuários não logados encontrem seu perfil.</p>
+                </div>
+                <label className="switch">
+                  <input type="checkbox" defaultChecked />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              <hr style={{ margin: '1rem 0', borderColor: 'var(--border-color)', opacity: 0.5 }} />
+              <div className="form-group-toggle">
+                <div>
+                  <h4>Mostrar E-mail</h4>
+                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Exibir seu endereço de e-mail na página de perfil público.</p>
+                </div>
+                <label className="switch">
+                  <input type="checkbox" />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              <hr style={{ margin: '1rem 0', borderColor: 'var(--border-color)', opacity: 0.5 }} />
+              <div className="form-group-toggle">
+                <div>
+                  <h4>Mostrar Inventário do Lab</h4>
+                  <p className="section-description" style={{ fontSize: '0.85rem' }}>Permitir que membros de outros laboratórios vejam seu inventário público.</p>
+                </div>
+                <label className="switch">
+                  <input type="checkbox" />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </div>
+            <button className="save-button mt-4">Atualizar Privacidade</button>
+          </div>
+        );
+
+      case 'appearance':
+        return (
+          <div className="section-fade-in">
+            <h2 className="section-title">Aparência</h2>
+            <p className="section-description">Personalize a experiência visual da plataforma.</p>
+            
+            <div className="settings-card">
+              <div className="form-group">
+                <label>Tema da Interface</label>
+                <div className="theme-options">
+                  <label className="theme-option">
+                    <input type="radio" name="theme" value="light" defaultChecked />
+                    <div className="theme-preview light-theme-preview">
+                      <div className="theme-preview-header"></div>
+                      <div className="theme-preview-body"></div>
+                    </div>
+                    <span>Modo Claro</span>
+                  </label>
+                  
+                  <label className="theme-option">
+                    <input type="radio" name="theme" value="dark" />
+                    <div className="theme-preview dark-theme-preview">
+                      <div className="theme-preview-header"></div>
+                      <div className="theme-preview-body"></div>
+                    </div>
+                    <span>Modo Escuro (Em breve)</span>
+                  </label>
+                  
+                  <label className="theme-option">
+                    <input type="radio" name="theme" value="system" />
+                    <div className="theme-preview system-theme-preview">
+                       <div className="theme-preview-half light"></div>
+                       <div className="theme-preview-half dark"></div>
+                    </div>
+                    <span>Usar Padrão do Sistema</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <button className="save-button mt-4">Aplicar Tema</button>
+          </div>
+        );
+
       default:
         return (
           <div className="section-fade-in">
-            <h2 className="section-title">{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h2>
+            <h2 className="section-title">{(activeSection as string).charAt(0).toUpperCase() + (activeSection as string).slice(1)}</h2>
             <p className="section-description">Esta seção está em desenvolvimento.</p>
           </div>
         );

@@ -10,9 +10,10 @@ import {
   ChevronUp,
   ChevronDown,
   Trash2,
-  Heart
+  Heart,
+  CheckCircle2
 } from 'lucide-react';
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
 import { communityService } from '../../../../../src/services/communityService';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
@@ -25,6 +26,8 @@ const DiscussionDetail: React.FC = () => {
   const { currentUser, userProfile } = useAuth();
   const [replyText, setReplyText] = useState('');
   const [discussion, setDiscussion] = useState<any>(null);
+  const [authorProfile, setAuthorProfile] = useState<any>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [authorStats, setAuthorStats] = useState({ publications: 0, followers: 0 });
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,12 +48,19 @@ const DiscussionDetail: React.FC = () => {
 
         if (data.authorId) {
           const userDoc = await getDoc(doc(db, "users", data.authorId));
-          let followersCount = 0;
           if (userDoc.exists()) {
-            followersCount = (userDoc.data().followers || []).length;
+            setAuthorProfile(userDoc.data());
           }
+
+          // Busca contagem real de seguidores
+          const followersQuery = query(collection(db, "users"), where("following", "array-contains", data.authorId));
+          const followersSnap = await getDocs(followersQuery);
+          const followersCount = followersSnap.docs.length;
+
+          // Busca contagem de publicações do autor
           const pubQuery = query(collection(db, "discussions"), where("authorId", "==", data.authorId));
           const pubSnap = await getDocs(pubQuery);
+
           setAuthorStats({
             publications: pubSnap.docs.length,
             followers: followersCount
@@ -68,6 +78,32 @@ const DiscussionDetail: React.FC = () => {
     window.scrollTo(0, 0);
     fetchDiscussion();
   }, [id]);
+
+  useEffect(() => {
+    if (discussion?.authorId && userProfile?.following?.includes(discussion.authorId)) {
+      setIsFollowing(true);
+    } else {
+      setIsFollowing(false);
+    }
+  }, [userProfile, discussion]);
+
+  const handleFollowAuthor = async () => {
+    if (!currentUser || !discussion?.authorId) return;
+    const userRef = doc(db, 'users', currentUser.uid);
+    try {
+      if (isFollowing) {
+        await updateDoc(userRef, { following: arrayRemove(discussion.authorId) });
+        setIsFollowing(false);
+        setAuthorStats(prev => ({ ...prev, followers: prev.followers - 1 }));
+      } else {
+        await updateDoc(userRef, { following: arrayUnion(discussion.authorId) });
+        setIsFollowing(true);
+        setAuthorStats(prev => ({ ...prev, followers: prev.followers + 1 }));
+      }
+    } catch (e) {
+      console.error("Erro ao seguir usuário", e);
+    }
+  };
 
   const handleSendReply = async () => {
     if (!id || !replyText.trim() || !currentUser) return;
@@ -283,9 +319,12 @@ const DiscussionDetail: React.FC = () => {
 
             {/* Sobre o Autor */}
             <div className="disc-widget disc-author-widget">
-              <div className="disc-author-cover"></div>
+              <div 
+                className="disc-author-cover"
+                style={authorProfile?.cover ? { backgroundImage: `url(${authorProfile.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+              ></div>
               <img 
-                src={discussion.avatar} 
+                src={authorProfile?.avatar || discussion.avatar} 
                 alt={discussion.author} 
                 className="disc-author-profile-pic" 
                 onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
@@ -296,16 +335,22 @@ const DiscussionDetail: React.FC = () => {
                   onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
                   style={{ cursor: 'pointer' }}
                 >
-                  {discussion.author}
+                  {authorProfile?.name || discussion.author}
                 </h3>
-                <p>{discussion.role}</p>
+                <p>{authorProfile?.role || discussion.role}</p>
                 <div className="disc-author-stats">
                   <div><strong>{authorStats.publications}</strong><span>Publicações</span></div>
                   <div><strong>{authorStats.followers}</strong><span>Seguidores</span></div>
                 </div>
-                <button className="disc-btn-follow-full">
-                  <UserPlus size={18} /> Seguir Pesquisador
-                </button>
+                {currentUser?.uid !== discussion.authorId && (
+                  <button 
+                    className={`disc-btn-follow-full ${isFollowing ? 'following' : ''}`}
+                    onClick={handleFollowAuthor}
+                    style={isFollowing ? { backgroundColor: '#f1f5f9', color: '#0f172a', border: '1px solid #cbd5e1' } : {}}
+                  >
+                    {isFollowing ? <><CheckCircle2 size={18} /> Seguindo</> : <><UserPlus size={18} /> Seguir Pesquisador</>}
+                  </button>
+                )}
               </div>
             </div>
 

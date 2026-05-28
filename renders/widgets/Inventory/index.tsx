@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ArrowLeft, Database, Search, Plus, AlertTriangle, CheckCircle2, Clock, MapPin, FlaskConical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../../src/config/firebaseConfig';
 import './styles.css';
 import Footer from '../../menus/Footer';
+import { useAuth } from '../../../src/contexts/AuthContext';
 
 // Tipagem de um Reagente
 type ReagentStatus = 'ok' | 'low' | 'expired';
@@ -22,6 +23,7 @@ interface Reagent {
 
 const Inventory: React.FC = () => {
   const navigate = useNavigate();
+  const { userProfile } = useAuth();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | ReagentStatus>('all');
@@ -31,7 +33,22 @@ const Inventory: React.FC = () => {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "inventory"));
+        let querySnapshot;
+        const invRef = collection(db, "inventory");
+
+        if (userProfile?.lab?.id) {
+          const q = query(invRef, where("labId", "==", userProfile.lab.id));
+          querySnapshot = await getDocs(q);
+
+          // Fallback para itens antigos sem labId (para manter os dados mockados no protótipo visíveis)
+          if (querySnapshot.empty) {
+            querySnapshot = await getDocs(invRef);
+          }
+        } else {
+          // Se não tem lab, não carrega ou carrega global (para fins de demonstração)
+          querySnapshot = await getDocs(invRef);
+        }
+
         const data: Reagent[] = [];
         querySnapshot.forEach((doc) => {
           data.push({ id: doc.id, ...doc.data() } as Reagent);
@@ -44,13 +61,13 @@ const Inventory: React.FC = () => {
       }
     };
     fetchInventory();
-  }, []);
+  }, [userProfile]);
 
   // Lógica de Filtro e Busca
   const filteredReagents = useMemo(() => {
     return inventoryState.filter(reagent => {
-      const matchesSearch = reagent.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                            reagent.cas.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = reagent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        reagent.cas.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = filterStatus === 'all' || reagent.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
@@ -71,14 +88,14 @@ const Inventory: React.FC = () => {
     <>
       <div className="tool-page-wrapper">
         <div className="tool-container">
-          
+
           <button className="tool-btn-back" onClick={() => navigate('/lab')}>
             <ArrowLeft size={18} />
             Voltar para Bancada
           </button>
 
           <div className="tool-grid-layout">
-            
+
             {/* Coluna Principal: Lista de Inventário */}
             <div className="tool-main-panel">
               <div className="tool-header">
@@ -95,19 +112,19 @@ const Inventory: React.FC = () => {
               </div>
 
               <div className="tool-card-content inventory-content">
-                
+
                 {/* Barra de Busca e Filtros */}
                 <div className="inventory-controls">
                   <div className="inventory-search">
                     <Search size={18} className="search-icon" />
-                    <input 
-                      type="text" 
-                      placeholder="Buscar por nome ou número CAS..." 
+                    <input
+                      type="text"
+                      placeholder="Buscar por nome ou número CAS..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
-                  
+
                   <div className="inventory-filters">
                     <button className={`filter-btn ${filterStatus === 'all' ? 'active' : ''}`} onClick={() => setFilterStatus('all')}>
                       Todos
@@ -145,19 +162,19 @@ const Inventory: React.FC = () => {
                             <strong className="meta-value">{reagent.quantity} {reagent.unit}</strong>
                           </div>
                           <div className="reagent-meta-item">
-                            <span className="meta-label"><MapPin size={14}/> Localização</span>
+                            <span className="meta-label"><MapPin size={14} /> Localização</span>
                             <span className="meta-value">{reagent.location}</span>
                           </div>
                           <div className="reagent-meta-item">
-                            <span className="meta-label"><Clock size={14}/> Validade</span>
+                            <span className="meta-label"><Clock size={14} /> Validade</span>
                             <span className="meta-value">{reagent.expiration}</span>
                           </div>
                         </div>
 
                         <div className="reagent-status-badge">
-                          {reagent.status === 'ok' && <><CheckCircle2 size={16}/> OK</>}
-                          {reagent.status === 'low' && <><AlertTriangle size={16}/> Baixo</>}
-                          {reagent.status === 'expired' && <><AlertTriangle size={16}/> Vencido</>}
+                          {reagent.status === 'ok' && <><CheckCircle2 size={16} /> OK</>}
+                          {reagent.status === 'low' && <><AlertTriangle size={16} /> Baixo</>}
+                          {reagent.status === 'expired' && <><AlertTriangle size={16} /> Vencido</>}
                         </div>
                       </div>
                     ))
@@ -171,13 +188,13 @@ const Inventory: React.FC = () => {
             <aside className="tool-sidebar-panel">
               <div className="tool-info-card">
                 <h3>Resumo do Estoque</h3>
-                
+
                 <div className="inventory-stats-container">
                   <div className="inv-stat-box stat-total">
                     <Database size={20} />
                     <div className="inv-stat-texts">
                       <span>Total Registrado</span>
-                      <strong>{stats.total} itens</strong>
+                      <p>{stats.total} itens</p>
                     </div>
                   </div>
 
@@ -185,7 +202,7 @@ const Inventory: React.FC = () => {
                     <AlertTriangle size={20} />
                     <div className="inv-stat-texts">
                       <span>Estoque Baixo</span>
-                      <strong>{stats.low} itens</strong>
+                      <p>{stats.low} itens</p>
                     </div>
                   </div>
 
@@ -193,7 +210,7 @@ const Inventory: React.FC = () => {
                     <Clock size={20} />
                     <div className="inv-stat-texts">
                       <span>Vencidos / Zerados</span>
-                      <strong>{stats.expired} itens</strong>
+                      <p>{stats.expired} itens</p>
                     </div>
                   </div>
                 </div>

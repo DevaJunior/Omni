@@ -361,13 +361,14 @@
 
 .inv-stat-texts span {
   font-size: 0.8rem;
-  text-transform: uppercase;
-  font-weight: 700;
+  /* text-transform: uppercase; */
+  /* font-weight: 700; */
   margin-bottom: 2px;
 }
 
-.inv-stat-texts strong {
-  font-size: 1.2rem;
+.inv-stat-texts p {
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .stat-total {

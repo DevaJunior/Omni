@@ -87,6 +87,7 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
       <EmptyStateSearch
         searchQuery={searchQuery}
         onClear={onClear || (() => { })}
+        showTabSuggestion={true}
         suggestions={['Bolsa de Estudos', 'Iniciação Científica', 'Biotecnologia', 'Ciência de Dados']}
       />
     ) : (

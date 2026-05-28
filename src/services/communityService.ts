@@ -149,5 +149,63 @@ export const communityService = {
       console.error("Erro ao seguir usuário", e);
       return false;
     }
+  },
+
+  // Busca tags de discussões, projetos e artigos para gerar Trending Topics
+  async getTrendingTopics(limitCount: number = 5): Promise<string[]> {
+    try {
+      const [discussions, projects, articles] = await Promise.all([
+        this.getDiscussions(),
+        this.getProjects(),
+        this.getArticles()
+      ]);
+      
+      const tagCounts: Record<string, number> = {};
+      
+      const addTags = (items: any[]) => {
+        items.forEach(item => {
+          if (Array.isArray(item.tags)) {
+            item.tags.forEach((tag: string) => {
+              // Normalizar: remover # inicial se houver
+              const t = tag.trim().replace(/^#/, '');
+              if (t) {
+                tagCounts[t] = (tagCounts[t] || 0) + 1;
+              }
+            });
+          }
+        });
+      };
+      
+      addTags(discussions);
+      addTags(projects);
+      addTags(articles);
+      
+      // Ordenar por frequência (decrescente)
+      const sortedTags = Object.entries(tagCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(entry => entry[0]);
+        
+      const results = sortedTags.slice(0, limitCount);
+      
+      if (results.length === 0) {
+        return [
+          "Análise de Dados Complexos",
+          "Desenvolvimento de Vacinas",
+          "Inteligência Artificial na Saúde",
+          "Biorreatores Industriais",
+          "Controle de Qualidade"
+        ];
+      }
+      return results;
+    } catch (e) {
+      console.error("Erro ao buscar trending topics", e);
+      return [
+        "Análise de Dados Complexos",
+        "Desenvolvimento de Vacinas",
+        "Inteligência Artificial na Saúde",
+        "Biorreatores Industriais",
+        "Controle de Qualidade"
+      ];
+    }
   }
 };

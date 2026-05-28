@@ -34,6 +34,7 @@ const LabProfile: React.FC = () => {
   const { userProfile } = useAuth();
   const [labData, setLabData] = useState<any>(null);
   const [projects, setProjects] = useState<any[]>([]);
+  const [realMembersCount, setRealMembersCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   // Estados do Modal de Candidatura
@@ -65,6 +66,18 @@ const LabProfile: React.FC = () => {
           const pSnap = await getDocs(pQuery);
           const pData = pSnap.docs.map(d => ({ id: d.id, ...d.data() }));
           setProjects(pData);
+          
+          // Buscar número de membros reais
+          const mQuery = query(collection(db, 'users'), where('lab.id', '==', id));
+          const mSnap = await getDocs(mQuery);
+          let memCount = mSnap.docs.length;
+          
+          // Garantir que o admin conta
+          const mems = mSnap.docs.map(d => ({ id: d.id }));
+          if (labSnap.data().adminId && !mems.some(m => m.id === labSnap.data().adminId)) {
+            memCount += 1;
+          }
+          setRealMembersCount(memCount);
         } else {
           setLabData(null);
         }
@@ -389,15 +402,15 @@ const LabProfile: React.FC = () => {
                 </div>
                 <div className="lab-stat-row">
                   <span>Publicações</span>
-                  <p>{labData.stats?.publications || 0}</p>
+                  <p>{labData.publications?.length || 0}</p>
                 </div>
                 <div className="lab-stat-row">
                   <span>Projetos</span>
-                  <p>{labData.stats?.projects || 0}</p>
+                  <p>{projects.length}</p>
                 </div>
                 <div className="lab-stat-row">
                   <span>Membros</span>
-                  <p>{labData.stats?.members || 0}</p>
+                  <p>{realMembersCount}</p>
                 </div>
               </div>
 

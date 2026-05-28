@@ -6,9 +6,10 @@ interface EmptyStateSearchProps {
   searchQuery: string;
   onClear: () => void;
   suggestions?: string[];
+  showTabSuggestion?: boolean;
 }
 
-const EmptyStateSearch: React.FC<EmptyStateSearchProps> = ({ searchQuery, onClear, suggestions }) => {
+const EmptyStateSearch: React.FC<EmptyStateSearchProps> = ({ searchQuery, onClear, suggestions, showTabSuggestion }) => {
   return (
     <div className="empty-state-container">
       <div className="empty-state-icon">
@@ -21,6 +22,12 @@ const EmptyStateSearch: React.FC<EmptyStateSearchProps> = ({ searchQuery, onClea
         Não conseguimos encontrar publicações ou itens correspondentes a "<strong>{searchQuery}</strong>". 
         Tente utilizar termos diferentes ou verifique a ortografia.
       </p>
+
+      {showTabSuggestion && (
+        <p className="empty-state-desc" style={{ marginTop: '0.5rem', fontWeight: 500 }}>
+          💡 Dica: Verifique se o conteúdo desejado não se encontra nas demais abas (Discussões ou Projetos e Oportunidades).
+        </p>
+      )}
       
       {suggestions && suggestions.length > 0 && (
         <div className="empty-state-suggestions">

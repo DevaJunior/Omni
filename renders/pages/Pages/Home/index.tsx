@@ -3,6 +3,8 @@ import { ArrowRight, Beaker, Users, BookOpen, ChevronRight, ChevronLeft, Code2 }
 import './styles.css';
 import { useNavigate } from 'react-router-dom';
 import { articleService, type Article } from '../../../../src/services/articleService';
+import { communityService } from '../../../../src/services/communityService';
+import type { LabPartner } from '../../../../src/types/community';
 
 import Footer from './../../../menus/Footer/index';
 
@@ -11,24 +13,32 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [randomLabs, setRandomLabs] = useState<LabPartner[]>([]);
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    const fetchArticlesAndLabs = async () => {
       try {
-        const data = await articleService.getLatestArticles(10);
+        const [data, labsData] = await Promise.all([
+          articleService.getLatestArticles(10),
+          communityService.getLabs()
+        ]);
+        
         if (data.length > 0) {
           setArticles(data);
         } else {
           console.warn("Banco de dados vazio. Artigos não encontrados.");
         }
+
+        const shuffled = labsData.sort(() => 0.5 - Math.random());
+        setRandomLabs(shuffled.slice(0, 5));
       } catch (err) {
-        console.error("Erro ao carregar artigos:", err);
+        console.error("Erro ao carregar dados da Home:", err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchArticles();
+    fetchArticlesAndLabs();
   }, []);
 
 
@@ -144,11 +154,25 @@ const Home: React.FC = () => {
           <h3>A Omni acredita que a pesquisa deve ser fluida e acessível, capacitando os cientistas a atingir resultados inovadores com maior eficiência.</h3>
 
           <div className="partners-list">
-            <span>Phyton Research</span>
-            <span>Biogen</span>
-            <span>Neurolab</span>
-            <span>Genesis Labs</span>
-            <span>Acqua Solutions</span>
+            {randomLabs.length > 0 ? (
+              randomLabs.map(lab => (
+                <span 
+                  key={lab.id} 
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => navigate(`/lab/${lab.id}`)}
+                >
+                  {lab.name}
+                </span>
+              ))
+            ) : (
+              <>
+                <span>Phyton Research</span>
+                <span>Biogen</span>
+                <span>Neurolab</span>
+                <span>Genesis Labs</span>
+                <span>Acqua Solutions</span>
+              </>
+            )}
           </div>
 
           <button className="btn-outline" onClick={() => navigate('/community')}>

@@ -90,6 +90,7 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
       <EmptyStateSearch 
         searchQuery={searchQuery} 
         onClear={onClear || (() => {})} 
+        showTabSuggestion={true}
         suggestions={['Lógica P-Fuzzy', 'Rizofiltração', 'Vacinas', 'Modelagem']} 
       />
     );

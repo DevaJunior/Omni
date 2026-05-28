@@ -18,6 +18,22 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
   const navigate = useNavigate();
   const { currentUser, userProfile } = useAuth();
 
+  const formatTimeAgo = (dateStr: string) => {
+    if (!dateStr) return 'Recente';
+    const postDate = new Date(dateStr);
+    const diffInMs = new Date().getTime() - postDate.getTime();
+    const diffInSec = Math.floor(diffInMs / 1000);
+    
+    if (diffInSec < 60) return 'Agora mesmo';
+    const diffInMin = Math.floor(diffInSec / 60);
+    if (diffInMin < 60) return `Há ${diffInMin} min`;
+    const diffInHours = Math.floor(diffInMin / 60);
+    if (diffInHours < 24) return `Há ${diffInHours}h`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays === 1) return 'Ontem';
+    return `Há ${diffInDays} dias`;
+  };
+
   const [posts, setPosts] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
   const [newPostText, setNewPostText] = useState('');
@@ -52,8 +68,8 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
         author: userProfile?.name || currentUser.displayName || 'Você',
         authorId: currentUser.uid,
         avatar: userProfile?.avatar || currentUser.photoURL || `https://ui-avatars.com/api/?name=Você`,
-        role: 'Pesquisador(a)',
-        time: 'Agora mesmo',
+        role: userProfile?.role || 'Pesquisador(a)',
+        time: 'Agora mesmo', // Mantido por compatibilidade, mas o render usará a data
         content: newPostText.trim(),
         category: 'Geral',
         date: new Date().toISOString(),
@@ -157,6 +173,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
         <EmptyStateSearch
           searchQuery={searchQuery}
           onClear={onClear || (() => { })}
+          showTabSuggestion={true}
           suggestions={['Bolsa de Valores', 'Biotecnologia', 'Python', 'Dúvidas']}
         />
       ) : (
@@ -174,7 +191,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
                 <h4 onClick={(e) => { e.stopPropagation(); navigate(`/profile/${post.authorId}`); }}>
                   {post.author}
                 </h4>
-                <span>{post.role} • {post.time}</span>
+                <span>{post.role} • {formatTimeAgo(post.date)}</span>
               </div>
 
               {currentUser?.uid === post.authorId && (

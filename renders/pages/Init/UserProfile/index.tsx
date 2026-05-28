@@ -12,10 +12,11 @@ import {
   Terminal,
   Activity,
   ArrowLeft,
-  Bookmark
+  Bookmark,
+  MessageSquare
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../../../src/config/firebaseConfig';
 import Footer from '../../../menus/Footer';
@@ -32,6 +33,29 @@ const UserProfile: React.FC = () => {
   const [userData, setUserData] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+
+  const [userDiscussions, setUserDiscussions] = useState<any[]>([]);
+  const [userProjects, setUserProjects] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!userData) return;
+    const fetchUserContent = async () => {
+      try {
+        const dQuery = query(collection(db, "discussions"), where("authorId", "==", userData.id));
+        const dSnap = await getDocs(dQuery);
+        const dData = dSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+        setUserDiscussions(dData.sort((a: any, b: any) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()));
+
+        const pQuery = query(collection(db, "projects"), where("coordinator", "==", userData.name));
+        const pSnap = await getDocs(pQuery);
+        const pData = pSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+        setUserProjects(pData);
+      } catch (err) {
+        console.error("Erro ao buscar conteúdos do usuário:", err);
+      }
+    };
+    fetchUserContent();
+  }, [userData]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -283,13 +307,23 @@ const UserProfile: React.FC = () => {
                     <div className="content-card mt-4">
                       <h3 className="card-section-title">Atividade Recente</h3>
                       <div className="activity-feed">
-                        <div className="activity-item">
-                          <div className="activity-icon blue"><Terminal size={16} /></div>
-                          <div className="activity-details">
-                            <p>Realizou login na plataforma Omni.</p>
-                            <span className="activity-time">Agora</span>
+                        {userDiscussions.length > 0 ? userDiscussions.slice(0, 3).map(disc => (
+                          <div key={disc.id} className="activity-item" onClick={() => navigate(`/discussion/${disc.id}`)} style={{ cursor: 'pointer' }}>
+                            <div className="activity-icon blue"><MessageSquare size={16} /></div>
+                            <div className="activity-details">
+                              <p>Publicou uma discussão: <strong>{disc.content.substring(0, 50)}...</strong></p>
+                              <span className="activity-time">{disc.date ? new Date(disc.date).toLocaleDateString() : disc.time}</span>
+                            </div>
                           </div>
-                        </div>
+                        )) : (
+                          <div className="activity-item">
+                            <div className="activity-icon blue"><Terminal size={16} /></div>
+                            <div className="activity-details">
+                              <p>Realizou login na plataforma Omni.</p>
+                              <span className="activity-time">Recente</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -298,22 +332,56 @@ const UserProfile: React.FC = () => {
                 {/* ABA: PROJETOS */}
                 {activeTab === 'projetos' && (
                   <div className="projects-grid anim-fade-up">
-                    <div className="empty-state-card">
-                      <Code2 size={48} />
-                      <h3>Nenhum projeto público</h3>
-                      <p>Inicie um novo projeto ou torne um projeto privado em público para exibí-lo aqui.</p>
-                    </div>
+                    {userProjects.length > 0 ? (
+                      userProjects.map(proj => (
+                        <div key={proj.id} className="content-card" style={{ marginBottom: '1rem', borderLeft: '4px solid var(--primary-color)' }}>
+                          <h3>{proj.title}</h3>
+                          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{proj.institution} • {proj.type}</p>
+                          <p style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>{proj.description}</p>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            {proj.tags?.map((t: string) => <span key={t} className="skill-tag" style={{ fontSize: '0.75rem', padding: '2px 8px' }}>{t}</span>)}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="empty-state-card">
+                        <Code2 size={48} />
+                        <h3>Nenhum projeto público</h3>
+                        <p>Inicie um novo projeto ou torne um projeto privado em público para exibí-lo aqui.</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {/* ABA: PUBLICAÇÕES */}
                 {activeTab === 'publicacoes' && (
-                  <div className="empty-state-card anim-fade-up">
-                    <BookOpen size={48} />
-                    <h3>Nenhuma publicação adicionada</h3>
-                    <p>Compartilhe seus artigos científicos, resumos e produções acadêmicas com a comunidade.</p>
-                    {isOwnProfile && (
-                      <button className="btn-profile-outline mt-3">Adicionar Publicação</button>
+                  <div className="anim-fade-up">
+                    {userDiscussions.length > 0 ? (
+                      userDiscussions.map(pub => (
+                        <div key={pub.id} className="content-card" style={{ marginBottom: '1rem', cursor: 'pointer' }} onClick={() => navigate(`/discussion/${pub.id}`)}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div>
+                              <h3 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>Discussão na Comunidade</h3>
+                              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{pub.date ? new Date(pub.date).toLocaleDateString() : pub.time}</p>
+                            </div>
+                            <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>Discussão</span>
+                          </div>
+                          <p style={{ marginTop: '1rem', color: 'var(--text-color)' }}>{pub.content}</p>
+                          <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                            <span>❤️ {pub.likes} Curtidas</span>
+                            <span>💬 {pub.comments || 0} Comentários</span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="empty-state-card">
+                        <BookOpen size={48} />
+                        <h3>Nenhuma publicação adicionada</h3>
+                        <p>Compartilhe seus artigos científicos, resumos e produções acadêmicas com a comunidade.</p>
+                        {isOwnProfile && (
+                          <button className="btn-profile-outline mt-3">Adicionar Publicação</button>
+                        )}
+                      </div>
                     )}
                   </div>
                 )}
