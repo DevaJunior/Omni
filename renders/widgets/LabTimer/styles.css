@@ -94,3 +94,36 @@
   .timer-item-card { flex-direction: column; align-items: center; text-align: center; }
   .timer-controls { width: 100%; justify-content: center; border-top: 1px solid #f1f5f9; padding-top: 1rem; }
 }
+
+@media (max-width: 900px) {
+  .tool-container { padding: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  .tool-header { padding: 1.5rem; gap: 1rem; }
+  .tool-icon-large.amber-theme { width: 48px; height: 48px; border-radius: 12px; }
+  .tool-header h1 { font-size: 1.35rem; }
+  .tool-card-content { padding: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .timer-countdown { font-size: 1.8rem; }
+  .timer-progress-bar-bg { max-width: 150px; }
+}
+
+@media (max-width: 390px) {
+  .tool-header h1 { font-size: 1.2rem; }
+  .timer-info h4 { font-size: 1rem; }
+}
+
+@media (max-width: 345px) {
+  .tool-card-content { padding: 1rem; }
+  .timer-item-card { padding: 1rem; }
+  .timer-countdown { font-size: 1.6rem; }
+}
+
+@media (max-width: 320px) {
+  .tool-header h1 { font-size: 1.1rem; }
+  .timer-countdown { font-size: 1.4rem; }
+  .ctrl-btn { width: 36px; height: 36px; }
+}

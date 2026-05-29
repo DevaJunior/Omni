@@ -370,3 +370,60 @@
     text-align: left; /* Remove justificado em telas muito pequenas para evitar buracos */
   }
 }
+
+@media (max-width: 390px) {
+  .art-title {
+    font-size: 1.4rem;
+  }
+  .art-journal-badge {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.78rem;
+  }
+  .art-author-info {
+    font-size: 1rem;
+  }
+  .art-institutions {
+    font-size: 0.85rem;
+    margin-left: 0;
+  }
+  .art-meta-bar {
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    gap: 0.8rem;
+  }
+  .art-section h2 {
+    font-size: 1.3rem;
+  }
+  .art-btn-primary {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .art-title {
+    font-size: 1.25rem;
+  }
+  .art-main-content {
+    padding: 1.2rem 0.8rem;
+  }
+  .art-image-placeholder {
+    height: 200px;
+  }
+}
+
+@media (max-width: 320px) {
+  .art-title {
+    font-size: 1.15rem;
+  }
+  .art-section h2 {
+    font-size: 1.2rem;
+  }
+  .art-section p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .art-main-content {
+    padding: 1rem 0.6rem;
+  }
+}

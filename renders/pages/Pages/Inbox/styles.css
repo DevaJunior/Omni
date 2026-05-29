@@ -647,3 +647,170 @@
     padding: 16px;
   }
 }
+
+@media (max-width: 480px) {
+  .inbox-chat-history {
+    padding: 16px;
+    gap: 14px;
+  }
+  .inbox-bubble {
+    padding: 10px 14px;
+  }
+  .inbox-bubble p {
+    font-size: 0.88rem;
+  }
+  .inbox-bubble-time {
+    font-size: 0.7rem;
+  }
+  .inbox-chat-header-user h3 {
+    font-size: 0.95rem;
+  }
+  .inbox-chat-status {
+    font-size: 0.75rem;
+  }
+  .inbox-input-wrapper {
+    padding: 10px 14px;
+  }
+  .inbox-input-wrapper input {
+    font-size: 0.88rem;
+    padding: 0 12px;
+  }
+  .inbox-contact-item {
+    padding: 10px;
+    gap: 10px;
+  }
+  .inbox-contact-avatar {
+    width: 38px;
+    height: 38px;
+  }
+  .inbox-contact-top h4 {
+    font-size: 0.88rem;
+  }
+  .inbox-contact-lastmsg {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .inbox-chat-history {
+    padding: 12px;
+    gap: 12px;
+  }
+  .inbox-bubble {
+    padding: 8px 12px;
+  }
+  .inbox-bubble p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  .inbox-bubble-wrapper {
+    max-width: 90%;
+  }
+  .inbox-chat-header {
+    padding: 10px 12px;
+  }
+  .inbox-chat-header-user h3 {
+    font-size: 0.9rem;
+  }
+  .inbox-chat-input-area {
+    padding: 12px;
+  }
+  .inbox-input-wrapper {
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+  .inbox-input-wrapper input {
+    font-size: 0.85rem;
+  }
+  .inbox-contact-item {
+    padding: 8px;
+  }
+  .inbox-contact-avatar {
+    width: 34px;
+    height: 34px;
+  }
+  .inbox-contact-top h4 {
+    font-size: 0.85rem;
+  }
+  .inbox-contact-lastmsg {
+    font-size: 0.78rem;
+  }
+  .inbox-sidebar-header {
+    padding: 16px 18px;
+  }
+  .inbox-sidebar-header h2 {
+    font-size: 1.05rem;
+  }
+  .inbox-search-wrapper {
+    padding: 0 18px 12px;
+  }
+}
+
+@media (max-width: 345px) {
+  .inbox-chat-history {
+    padding: 10px;
+    gap: 10px;
+  }
+  .inbox-bubble {
+    padding: 7px 10px;
+  }
+  .inbox-bubble p {
+    font-size: 0.82rem;
+  }
+  .inbox-chat-header-user h3 {
+    font-size: 0.88rem;
+  }
+  .inbox-input-wrapper input {
+    font-size: 0.82rem;
+  }
+  .inbox-contact-avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .inbox-contact-top h4 {
+    font-size: 0.82rem;
+  }
+  .inbox-contact-lastmsg {
+    font-size: 0.75rem;
+  }
+  .inbox-contact-time {
+    font-size: 0.68rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .inbox-chat-history {
+    padding: 8px;
+  }
+  .inbox-bubble p {
+    font-size: 0.8rem;
+  }
+  .inbox-chat-header {
+    padding: 8px 10px;
+  }
+  .inbox-chat-header-user h3 {
+    font-size: 0.85rem;
+  }
+  .inbox-chat-input-area {
+    padding: 8px;
+  }
+  .inbox-input-wrapper {
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+  .inbox-contact-item {
+    padding: 6px;
+    gap: 8px;
+    border-radius: 8px;
+  }
+  .inbox-contact-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  .inbox-sidebar-header {
+    padding: 12px 14px;
+  }
+  .inbox-sidebar-header h2 {
+    font-size: 1rem;
+  }
+}

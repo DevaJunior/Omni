@@ -343,3 +343,66 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 768px) {
+  .learn-container {
+    padding: 2rem 1rem 3rem;
+  }
+  .learn-hero-section {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .learn-hero-content h1 {
+    font-size: 1.8rem;
+  }
+  .learn-hero-content p {
+    font-size: 0.95rem;
+  }
+  .learn-search-box {
+    height: 50px;
+    padding: 0 1rem;
+  }
+  .learn-search-box input {
+    font-size: 0.95rem;
+  }
+  .study-note-card {
+    padding: 1.2rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .learn-hero-content h1 {
+    font-size: 1.5rem;
+  }
+  .btn-publish-note {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.95rem;
+  }
+  .note-card-body h2 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .learn-hero-section {
+    padding: 1.5rem 1rem;
+  }
+  .filter-pill {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .learn-hero-content h1 {
+    font-size: 1.35rem;
+  }
+  .note-card-body h2 {
+    font-size: 1.05rem;
+  }
+  .note-card-body p {
+    font-size: 0.88rem;
+  }
+}

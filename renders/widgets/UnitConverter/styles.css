@@ -159,3 +159,35 @@
   .converter-input-wrapper input, .converter-result-display { width: 100%; padding: 1.2rem 1rem; border-bottom: 1px solid #cbd5e1; box-sizing: border-box; }
   .converter-input-wrapper select { width: 100%; border-left: none; padding: 1rem; }
 }
+
+@media (max-width: 900px) {
+  .tool-container { padding: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  .tool-header { padding: 1.5rem; gap: 1rem; }
+  .tool-icon-large.indigo-theme { width: 48px; height: 48px; border-radius: 12px; }
+  .tool-header h1 { font-size: 1.35rem; }
+  .tool-card-content { padding: 1.5rem; }
+  .converter-work-area { padding: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .tool-radio-group { gap: 0.5rem; }
+  .tool-radio-label { padding: 0.6rem 1rem; font-size: 0.88rem; width: 100%; justify-content: center; }
+}
+
+@media (max-width: 390px) {
+  .tool-header h1 { font-size: 1.2rem; }
+  .converter-input-wrapper input, .converter-result-display { font-size: 1.05rem; }
+}
+
+@media (max-width: 345px) {
+  .tool-card-content { padding: 1rem; }
+  .converter-work-area { padding: 1rem; }
+}
+
+@media (max-width: 320px) {
+  .tool-header h1 { font-size: 1.1rem; }
+  .tool-btn-secondary { padding: 0.8rem; font-size: 0.9rem; }
+}

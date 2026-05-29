@@ -357,3 +357,38 @@
   .trap-points { justify-content: space-between; flex-wrap: wrap; }
   .condition-item { flex-direction: column; align-items: flex-start; }
 }
+
+@media (max-width: 900px) {
+  .engine-container { padding: 1rem; }
+}
+
+@media (max-width: 600px) {
+  .engine-header-hero { padding: 1.5rem; gap: 1rem; }
+  .engine-icon-wrapper { width: 64px; height: 64px; border-radius: 16px; }
+  .engine-hero-text h1 { font-size: 1.6rem; }
+  .engine-step-container { padding: 1.5rem; min-height: auto; }
+}
+
+@media (max-width: 480px) {
+  .engine-top-bar { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .btn-save-engine { width: 100%; justify-content: center; }
+  .rule-logic-row { flex-direction: column; }
+  .var-name-input { width: 100%; }
+}
+
+@media (max-width: 390px) {
+  .engine-hero-text h1 { font-size: 1.35rem; }
+  .engine-step-content h2 { font-size: 1.35rem; }
+  .btn-wizard { padding: 0.8rem 1.2rem; font-size: 0.95rem; }
+}
+
+@media (max-width: 345px) {
+  .membership-header { padding: 1rem; }
+  .terms-list { padding: 1rem; }
+}
+
+@media (max-width: 320px) {
+  .engine-hero-text p { font-size: 0.95rem; }
+  .engine-step-content h2 { font-size: 1.2rem; }
+  .trap-input input { width: 50px; }
+}

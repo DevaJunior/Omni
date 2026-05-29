@@ -93,3 +93,87 @@
 .toast-info .toast-icon {
   color: #3b82f6;
 }
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+@media (max-width: 768px) {
+  .toast-container {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+  }
+  .toast-message {
+    min-width: unset;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .toast-container {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+  }
+  .toast-message {
+    padding: 14px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .toast-container {
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    gap: 8px;
+  }
+  .toast-message {
+    padding: 12px;
+    border-radius: 6px;
+  }
+  .toast-content {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .toast-container {
+    right: 6px;
+    bottom: 6px;
+    left: 6px;
+  }
+  .toast-message {
+    padding: 10px;
+    gap: 8px;
+  }
+  .toast-content {
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .toast-message {
+    padding: 8px 10px;
+  }
+  .toast-content {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 320px) {
+  .toast-container {
+    right: 4px;
+    bottom: 4px;
+    left: 4px;
+  }
+  .toast-message {
+    padding: 8px;
+    gap: 6px;
+  }
+  .toast-content {
+    font-size: 0.78rem;
+  }
+}

@@ -603,6 +603,60 @@
   }
 }
 
+@media (max-width: 390px) {
+  .disc-author-avatar {
+    width: 44px;
+    height: 44px;
+  }
+  .disc-author-info h4 {
+    font-size: 1rem;
+  }
+  .disc-post-body p {
+    font-size: 0.95rem;
+  }
+  .disc-reply-box {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .disc-reply-avatar-placeholder {
+    width: 36px;
+    height: 36px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .disc-original-post {
+    padding: 1.2rem;
+  }
+  .disc-comment-item {
+    gap: 0.8rem;
+  }
+  .disc-comment-avatar {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 320px) {
+  .disc-author-info h4 {
+    font-size: 0.9rem;
+  }
+  .disc-post-body p {
+    font-size: 0.9rem;
+  }
+  .disc-reply-input-wrapper textarea {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+  .disc-comment-author-info h4 {
+    font-size: 0.9rem;
+  }
+  .disc-comment-text {
+    font-size: 0.85rem;
+  }
+}
+
 .disc-delete-btn {
   color: var(--text-muted);
 }

@@ -215,3 +215,110 @@
     font-size: 0.9rem;
   }
 }
+
+@media (max-width: 390px) {
+  .npm-modal-content {
+    padding: 1.25rem 0.85rem;
+    border-radius: 12px;
+  }
+  .npm-header h2 {
+    font-size: 1.2rem;
+  }
+  .npm-header p {
+    font-size: 0.85rem;
+  }
+  .npm-header {
+    margin-bottom: 1.5rem;
+  }
+  .npm-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+  .npm-form-group textarea {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.9rem;
+  }
+  .npm-modal-actions-row {
+    margin-top: 1.5rem;
+    gap: 10px;
+  }
+  .npm-modal-btn-cancel,
+  .npm-modal-btn-submit {
+    padding: 7px 14px;
+    font-size: 0.88rem;
+  }
+  .npm-char-counter {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .npm-modal-content {
+    padding: 1rem 0.75rem;
+    max-width: 95%;
+  }
+  .npm-header h2 {
+    font-size: 1.1rem;
+  }
+  .npm-header p {
+    font-size: 0.82rem;
+  }
+  .npm-icon-box {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 0.75rem;
+  }
+  .npm-form-group label {
+    font-size: 0.65rem;
+  }
+  .npm-modal-actions-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .npm-modal-btn-cancel,
+  .npm-modal-btn-submit {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 320px) {
+  .npm-modal-content {
+    padding: 0.85rem 0.65rem;
+    border-radius: 10px;
+  }
+  .npm-header h2 {
+    font-size: 1.05rem;
+  }
+  .npm-header p {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .npm-header {
+    margin-bottom: 1.25rem;
+  }
+  .npm-form {
+    gap: 1rem;
+  }
+  .npm-form-group textarea {
+    padding: 0.6rem 0.7rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+  .npm-textarea-vertical {
+    min-height: 60px;
+  }
+  .npm-btn-close {
+    top: 1rem;
+    right: 1rem;
+    width: 28px;
+    height: 28px;
+  }
+  .npm-modal-btn-cancel,
+  .npm-modal-btn-submit {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+}

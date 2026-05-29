@@ -240,3 +240,82 @@ input[type=range] {
     transform: rotate(0deg);
   }
 }
+
+@media (max-width: 900px) {
+  .pfuzzy-wrapper {
+    padding: 1.5rem 1rem 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .pfuzzy-header {
+    gap: 1rem;
+  }
+  .pfuzzy-title-texts h1 {
+    font-size: 1.8rem;
+  }
+  .pfuzzy-title-texts p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .pf-final-card {
+    padding: 2rem 1.5rem;
+  }
+  .pf-final-value {
+    font-size: 3.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pfuzzy-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .pfuzzy-title-icon {
+    padding: 0.8rem;
+    border-radius: 12px;
+  }
+  .pfuzzy-title-texts h1 {
+    font-size: 1.5rem;
+  }
+  .pf-btn-calc {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .pfuzzy-title-texts h1 {
+    font-size: 1.35rem;
+  }
+  .pf-final-value {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .control-module {
+    padding: 1.2rem;
+  }
+  .pf-chart-card {
+    padding: 1.2rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .pfuzzy-title-texts h1 {
+    font-size: 1.2rem;
+  }
+  .pfuzzy-title-texts p {
+    font-size: 0.85rem;
+  }
+  .pf-final-card h2 {
+    font-size: 1.2rem;
+  }
+  .pf-final-value {
+    font-size: 2.5rem;
+  }
+}

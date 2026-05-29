@@ -309,6 +309,15 @@
   }
 }
 
+@media (max-width: 600px) {
+  .lab-bancada-container {
+    padding: 2rem 1rem 3rem;
+  }
+  .bancada-header {
+    gap: 1rem;
+  }
+}
+
 @media (max-width: 480px) {
   .bancada-title-area h1 {
     font-size: 1.8rem;
@@ -320,5 +329,50 @@
 
   .bancada-tools-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 390px) {
+  .bancada-title-area h1 {
+    font-size: 1.5rem;
+  }
+  .bancada-title-area p {
+    font-size: 0.9rem;
+  }
+  .bancada-category-pill {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  .bancada-tool-card {
+    padding: 1.2rem;
+  }
+  .tool-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .bancada-title-area h1 {
+    font-size: 1.35rem;
+  }
+  .bancada-search-box input {
+    padding: 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .bancada-title-area h1 {
+    font-size: 1.25rem;
+  }
+  .bancada-title-area p {
+    font-size: 0.85rem;
+  }
+  .bancada-tool-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  .tool-description {
+    font-size: 0.85rem;
   }
 }

@@ -62,3 +62,36 @@
   .tool-sidebar-panel { order: -1; }
   .tool-actions { flex-direction: column; }
 }
+
+@media (max-width: 900px) {
+  .tool-container { padding: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  .tool-header { padding: 1.5rem; gap: 1rem; }
+  .tool-icon-large.green-theme { width: 48px; height: 48px; border-radius: 12px; }
+  .tool-header h1 { font-size: 1.35rem; }
+  .tool-card-content { padding: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .tool-radio-group { gap: 0.5rem; }
+  .tool-radio-label { padding: 0.6rem 1rem; font-size: 0.88rem; width: 100%; justify-content: center; }
+}
+
+@media (max-width: 390px) {
+  .tool-header h1 { font-size: 1.2rem; }
+  .tool-result-box.result-green strong { font-size: 1.6rem; }
+}
+
+@media (max-width: 345px) {
+  .tool-card-content { padding: 1rem; }
+  .tool-input-wrapper input { padding: 0.8rem; font-size: 0.9rem; }
+  .tool-unit { padding: 0.8rem 1rem; font-size: 0.8rem; }
+}
+
+@media (max-width: 320px) {
+  .tool-header h1 { font-size: 1.1rem; }
+  .tool-result-box.result-green strong { font-size: 1.4rem; }
+  .tool-btn-primary.btn-green, .tool-btn-secondary { padding: 0.8rem; font-size: 0.9rem; }
+}

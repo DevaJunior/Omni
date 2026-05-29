@@ -108,3 +108,85 @@
 .btn-danger:hover {
   background: #dc2626;
 }
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+@media (max-width: 600px) {
+  .confirm-modal-content {
+    max-width: 360px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .confirm-modal-content {
+    max-width: 300px;
+    width: 92%;
+    padding: 18px;
+  }
+  .confirm-modal-header h3 {
+    font-size: 1.1rem;
+  }
+  .confirm-modal-body p {
+    font-size: 0.9rem;
+  }
+  .confirm-cancel-btn,
+  .confirm-action-btn {
+    padding: 7px 14px;
+    font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .confirm-modal-content {
+    max-width: 280px;
+    width: 94%;
+    padding: 16px;
+  }
+  .confirm-modal-header {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .confirm-modal-header h3 {
+    font-size: 1.05rem;
+  }
+  .confirm-modal-body {
+    margin-bottom: 18px;
+  }
+}
+
+@media (max-width: 345px) {
+  .confirm-modal-content {
+    max-width: 260px;
+    padding: 14px;
+  }
+  .confirm-modal-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .confirm-cancel-btn,
+  .confirm-action-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 320px) {
+  .confirm-modal-content {
+    max-width: 245px;
+    padding: 12px;
+  }
+  .confirm-modal-header h3 {
+    font-size: 1rem;
+  }
+  .confirm-modal-body p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  .confirm-cancel-btn,
+  .confirm-action-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+}

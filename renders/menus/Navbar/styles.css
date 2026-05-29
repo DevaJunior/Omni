@@ -330,3 +330,162 @@
   top: 50%;
   transform: translateY(-50%);
 }
+
+/* =========================================
+   RESPONSIVIDADE ADICIONAL
+========================================= */
+@media (max-width: 600px) {
+  .navbar {
+    height: 64px;
+  }
+  .logo {
+    font-size: 1.3rem;
+  }
+  .nav-links {
+    top: 64px;
+    padding: var(--spacing-sm);
+  }
+  .nav-links a {
+    font-size: 0.9rem;
+  }
+  .nav-links a.active::after {
+    bottom: -20px;
+  }
+  .nav-actions {
+    gap: 0.75rem;
+  }
+  .notifications-dropdown {
+    width: 300px;
+    right: -40px;
+  }
+  .notification-item {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .notif-title {
+    font-size: 0.82rem;
+  }
+  .notif-message {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    height: 56px;
+  }
+  .logo {
+    font-size: 1.2rem;
+  }
+  .nav-links {
+    top: 56px;
+  }
+  .nav-actions {
+    gap: 0.6rem;
+  }
+  .notifications-dropdown {
+    position: fixed;
+    top: 56px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 0;
+    max-height: calc(100vh - 56px);
+  }
+  .notifications-list {
+    max-height: 350px;
+  }
+  .notifications-header {
+    padding: 10px 14px;
+  }
+  .notifications-header h4 {
+    font-size: 0.9rem;
+  }
+  .notif-icon-wrapper {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 390px) {
+  .navbar {
+    height: 52px;
+  }
+  .logo {
+    font-size: 1.15rem;
+  }
+  .nav-links {
+    top: 52px;
+  }
+  .nav-actions {
+    gap: 0.5rem;
+  }
+  .notification-item {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .notif-title {
+    font-size: 0.8rem;
+  }
+  .notif-message {
+    font-size: 0.72rem;
+  }
+  .no-notifications {
+    padding: 2rem 0.75rem;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 345px) {
+  .navbar {
+    height: 48px;
+  }
+  .logo {
+    font-size: 1.1rem;
+  }
+  .nav-links {
+    top: 48px;
+    gap: 0.5rem;
+  }
+  .nav-links a {
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+  .nav-actions {
+    gap: 0.4rem;
+  }
+  .notification-badge {
+    min-width: 16px;
+    height: 16px;
+    font-size: 0.6rem;
+    padding: 0 3px;
+  }
+}
+
+@media (max-width: 320px) {
+  .navbar {
+    height: 46px;
+  }
+  .navbar-container {
+    padding: 0 8px;
+  }
+  .logo {
+    font-size: 1.05rem;
+  }
+  .nav-links {
+    top: 46px;
+  }
+  .nav-actions {
+    gap: 0.35rem;
+  }
+  .notification-item {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .notif-title {
+    font-size: 0.78rem;
+  }
+  .notif-message {
+    font-size: 0.7rem;
+  }
+}

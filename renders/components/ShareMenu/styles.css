@@ -111,3 +111,46 @@
     left: 0; /* Alinha à esquerda em telas menores para não vazar da tela */
   }
 }
+
+@media (max-width: 480px) {
+  .share-dropdown {
+    min-width: 200px;
+  }
+  .share-dropdown-item {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.88rem;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 390px) {
+  .share-dropdown {
+    min-width: 180px;
+    padding: 0.35rem;
+  }
+  .share-dropdown-item {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.85rem;
+    gap: 8px;
+    border-radius: 6px;
+  }
+  .share-trigger-btn {
+    font-size: 0.88rem;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 320px) {
+  .share-dropdown {
+    min-width: 160px;
+    padding: 0.3rem;
+  }
+  .share-dropdown-item {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.82rem;
+    gap: 6px;
+  }
+  .share-trigger-btn {
+    font-size: 0.85rem;
+  }
+}

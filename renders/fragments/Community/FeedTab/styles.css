@@ -204,6 +204,30 @@
   }
 }
 
+@media (max-width: 390px) {
+  .cmmt-create-post {
+    padding: 1rem;
+  }
+  .cmmt-create-post-input {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+  .cmmt-author-avatar {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 345px) {
+  .cmmt-post-card {
+    padding: 1rem;
+  }
+  .cmmt-btn-send {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
 @media (max-width: 320px) {
   .cmmt-post-tag-item {
     font-size: 0.75rem;

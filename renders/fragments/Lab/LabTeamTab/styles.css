@@ -499,3 +499,321 @@
 .text-red:hover {
   background: rgba(239, 68, 68, 0.1);
 }
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+@media (max-width: 900px) {
+  .hierarchy-table th, .hierarchy-table td {
+    padding: 1rem 1rem;
+    font-size: 0.9rem;
+  }
+  .invite-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .invite-input-group {
+    min-width: unset;
+  }
+}
+
+@media (max-width: 768px) {
+  .lab-team-header h3 {
+    font-size: 1.1rem;
+  }
+  .lab-team-header p {
+    font-size: 0.85rem;
+  }
+  .lab-team-nav-tabs {
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .lab-team-nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .lab-team-nav-tabs button {
+    font-size: 0.88rem;
+    padding: 0.6rem 0.75rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .lab-team-card {
+    padding: 0.85rem;
+    gap: 0.75rem;
+  }
+  .member-avatar {
+    width: 42px;
+    height: 42px;
+  }
+  .member-role {
+    margin-right: 0.5rem;
+  }
+  /* Hierarquia: scroll horizontal */
+  .lab-hierarchy-list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hierarchy-table {
+    min-width: 550px;
+  }
+  .hierarchy-table th, .hierarchy-table td {
+    padding: 0.85rem 0.75rem;
+    font-size: 0.85rem;
+  }
+  .invite-link-section {
+    padding: 1rem;
+  }
+  .invite-link-box {
+    flex-direction: column;
+  }
+  .invite-link-box input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .lab-team-tab {
+    gap: 1rem;
+  }
+  .lab-team-header h3 {
+    font-size: 1.05rem;
+  }
+  .lab-team-card {
+    flex-wrap: wrap;
+  }
+  .member-role {
+    margin-right: 0;
+    margin-left: auto;
+  }
+  .lab-invite-form {
+    padding: 1rem;
+  }
+  .lab-invite-form h4 {
+    font-size: 0.95rem;
+  }
+  .lab-request-card {
+    padding: 1rem;
+  }
+  .req-header h4 {
+    font-size: 0.95rem;
+  }
+  .req-letter {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  .req-actions {
+    flex-wrap: wrap;
+  }
+  .create-role-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .create-role-form input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .lab-team-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .lab-team-header h3 {
+    font-size: 1rem;
+  }
+  .lab-team-header p {
+    font-size: 0.82rem;
+  }
+  .lab-team-nav-tabs button {
+    font-size: 0.82rem;
+    padding: 0.5rem 0.65rem;
+    gap: 0.35rem;
+  }
+  .lab-team-card {
+    padding: 0.75rem;
+  }
+  .member-avatar {
+    width: 38px;
+    height: 38px;
+  }
+  .member-info h4 {
+    font-size: 0.9rem;
+  }
+  .member-info span {
+    font-size: 0.78rem;
+  }
+  .lab-role-badge {
+    font-size: 0.72rem;
+    padding: 3px 8px;
+  }
+  .req-header span {
+    font-size: 0.8rem;
+  }
+  .req-letter {
+    font-size: 0.85rem;
+  }
+  .btn-accept, .btn-reject {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.85rem;
+  }
+  .invite-link-section p {
+    font-size: 0.88rem;
+  }
+  .role-select {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.4rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .lab-team-tab {
+    gap: 0.85rem;
+  }
+  .lab-team-header h3 {
+    font-size: 0.95rem;
+  }
+  .lab-team-card {
+    padding: 0.65rem;
+    gap: 0.6rem;
+  }
+  .member-avatar {
+    width: 34px;
+    height: 34px;
+  }
+  .member-info h4 {
+    font-size: 0.85rem;
+  }
+  .member-info span {
+    font-size: 0.75rem;
+  }
+  .lab-role-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    gap: 3px;
+  }
+  .lab-request-card {
+    padding: 0.85rem;
+  }
+  .req-header h4 {
+    font-size: 0.9rem;
+  }
+  .btn-accept, .btn-reject {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.82rem;
+    gap: 0.35rem;
+  }
+  .btn-create-role {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+  .hierarchy-note {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .lab-team-header h3 {
+    font-size: 0.9rem;
+  }
+  .lab-team-header p {
+    font-size: 0.78rem;
+  }
+  .lab-team-nav-tabs button {
+    font-size: 0.78rem;
+    padding: 0.45rem 0.55rem;
+  }
+  .lab-team-nav-tabs .badge {
+    font-size: 0.6rem;
+    padding: 0.05rem 0.3rem;
+  }
+  .member-avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .member-info h4 {
+    font-size: 0.82rem;
+  }
+  .lab-role-badge {
+    font-size: 0.65rem;
+  }
+  .req-letter {
+    font-size: 0.82rem;
+    padding: 0.6rem;
+  }
+  .req-reject-box textarea {
+    min-height: 60px;
+    font-size: 0.85rem;
+  }
+  .invite-link-section p {
+    font-size: 0.82rem;
+  }
+  .invite-link-box input {
+    font-size: 0.82rem;
+    padding: 0.4rem 0.75rem;
+  }
+  .invite-link-box button {
+    font-size: 0.82rem;
+    padding: 0.4rem 0.75rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .lab-team-tab {
+    gap: 0.75rem;
+  }
+  .lab-team-header h3 {
+    font-size: 0.88rem;
+  }
+  .lab-team-header p {
+    font-size: 0.75rem;
+  }
+  .lab-team-card {
+    padding: 0.55rem;
+    gap: 0.5rem;
+    border-radius: 6px;
+  }
+  .member-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  .member-info h4 {
+    font-size: 0.8rem;
+  }
+  .member-info span {
+    font-size: 0.72rem;
+  }
+  .lab-role-badge {
+    font-size: 0.62rem;
+    padding: 2px 5px;
+  }
+  .pending-badge {
+    font-size: 0.55rem;
+    padding: 1px 4px;
+  }
+  .lab-request-card {
+    padding: 0.7rem;
+    border-radius: 8px;
+  }
+  .req-header h4 {
+    font-size: 0.85rem;
+  }
+  .req-header span {
+    font-size: 0.75rem;
+  }
+  .btn-accept, .btn-reject {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.78rem;
+  }
+  .req-reject-box textarea {
+    min-height: 50px;
+    padding: 0.5rem;
+    font-size: 0.82rem;
+  }
+  .btn-create-role {
+    padding: 5px 10px;
+    font-size: 0.82rem;
+  }
+}

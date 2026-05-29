@@ -215,3 +215,137 @@
     font-size: 1.15rem;
   }
 }
+
+@media (max-width: 390px) {
+  .footer-promo-section {
+    padding: 2.5rem 0.85rem;
+  }
+  .footer-promo-text {
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+  }
+  .footer-partners-list {
+    gap: 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+  }
+  .footer-btn-outline {
+    padding: 0.65rem 2rem;
+    font-size: 0.88rem;
+  }
+  .footer-main {
+    padding: 3rem 0.85rem;
+  }
+  .footer-brand h2 {
+    font-size: 1.5rem;
+  }
+  .footer-brand p {
+    font-size: 0.88rem;
+  }
+  .footer-links-group h4 {
+    font-size: 0.92rem;
+  }
+  .footer-links-group button {
+    font-size: 0.85rem;
+  }
+  .footer-socials a {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 345px) {
+  .footer-promo-section {
+    padding: 2rem 0.7rem;
+  }
+  .footer-promo-text {
+    font-size: 1rem;
+    margin-bottom: 1.75rem;
+    line-height: 1.45;
+  }
+  .footer-partners-list {
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+  }
+  .footer-btn-outline {
+    padding: 0.6rem 1.75rem;
+    font-size: 0.85rem;
+  }
+  .footer-main {
+    padding: 2.5rem 0.7rem;
+  }
+  .footer-content {
+    gap: 2rem;
+  }
+  .footer-brand h2 {
+    font-size: 1.4rem;
+  }
+  .footer-brand p {
+    font-size: 0.85rem;
+  }
+  .footer-links-group h4 {
+    font-size: 0.88rem;
+    margin-bottom: 0.5rem;
+  }
+  .footer-links-group button {
+    font-size: 0.82rem;
+  }
+  .footer-links-group {
+    gap: 0.75rem;
+  }
+  .footer-bottom {
+    padding: 1.25rem 0.7rem;
+  }
+  .footer-bottom p {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .footer-promo-section {
+    padding: 1.75rem 0.6rem;
+  }
+  .footer-promo-text {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+  .footer-partners-list {
+    gap: 0.6rem;
+    font-size: 0.82rem;
+  }
+  .footer-btn-outline {
+    padding: 0.55rem 1.5rem;
+    font-size: 0.82rem;
+    border-radius: 20px;
+  }
+  .footer-main {
+    padding: 2rem 0.6rem;
+  }
+  .footer-content {
+    gap: 1.75rem;
+  }
+  .footer-brand h2 {
+    font-size: 1.3rem;
+  }
+  .footer-brand p {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+  .footer-socials {
+    gap: 0.75rem;
+  }
+  .footer-socials a {
+    width: 34px;
+    height: 34px;
+  }
+  .footer-links-group h4 {
+    font-size: 0.85rem;
+  }
+  .footer-links-group button {
+    font-size: 0.8rem;
+  }
+  .footer-bottom p {
+    font-size: 0.75rem;
+  }
+}

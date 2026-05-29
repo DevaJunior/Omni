@@ -407,6 +407,25 @@
   }
 }
 
+@media (max-width: 390px) {
+  .jl-header h2 {
+    font-size: 1.25rem;
+  }
+  .jl-file-upload {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .jl-header p {
+    font-size: 0.85rem;
+  }
+  .jl-btn-submit {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
 @media (max-width: 320px) {
   .jl-icon-box {
     width: 48px;

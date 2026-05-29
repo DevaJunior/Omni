@@ -160,3 +160,98 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .caderno-tab-container {
+    gap: 1.25rem;
+  }
+  .notebook-card {
+    padding: 1.15rem;
+    min-height: 180px;
+  }
+  .notebook-title {
+    font-size: 1rem;
+  }
+  .notebook-desc {
+    font-size: 0.88rem;
+  }
+  .date-badge {
+    font-size: 0.8rem;
+  }
+  .tag-badge-gray {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+  }
+  .btn-nova-entrada {
+    padding: 8px 16px;
+    font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .notebook-card {
+    padding: 1rem;
+    min-height: 160px;
+  }
+  .notebook-title {
+    font-size: 0.95rem;
+  }
+  .notebook-desc {
+    font-size: 0.85rem;
+  }
+  .date-badge {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .caderno-tab-container {
+    gap: 1rem;
+  }
+  .notebook-card {
+    padding: 0.85rem;
+    min-height: 140px;
+    border-radius: 10px;
+  }
+  .notebook-title {
+    font-size: 0.9rem;
+  }
+  .notebook-desc {
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+  .tag-badge-gray {
+    padding: 4px 7px;
+    font-size: 0.65rem;
+  }
+  .btn-nova-entrada {
+    padding: 7px 14px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .notebook-card {
+    padding: 0.75rem;
+    min-height: 120px;
+    gap: 0.75rem;
+    border-radius: 8px;
+  }
+  .notebook-title {
+    font-size: 0.88rem;
+  }
+  .notebook-desc {
+    font-size: 0.78rem;
+  }
+  .date-badge {
+    font-size: 0.72rem;
+    gap: 4px;
+  }
+  .notebook-card-footer {
+    gap: 5px;
+  }
+  .tag-badge-gray {
+    padding: 3px 6px;
+    font-size: 0.62rem;
+  }
+}

@@ -504,6 +504,28 @@
   }
 }
 
+@media (max-width: 390px) {
+  .cmmt-brand h1 {
+    font-size: 2rem;
+  }
+  .cmmt-promo-text {
+    font-size: 1.05rem;
+  }
+  .cmmt-partners-list {
+    gap: 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .cmmt-brand h1 {
+    font-size: 1.9rem;
+  }
+  .cmmt-tab {
+    font-size: 1rem;
+  }
+}
+
 @media (max-width: 320px) {
   .cmmt-brand h1 {
     font-size: 1.8rem;

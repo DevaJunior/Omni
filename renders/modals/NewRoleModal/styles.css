@@ -260,3 +260,136 @@
     font-size: 0.9rem;
   }
 }
+
+@media (max-width: 390px) {
+  .nrm-modal-content {
+    padding: 1.25rem 0.85rem;
+    border-radius: 12px;
+  }
+  .nrm-header h2 {
+    font-size: 1.2rem;
+  }
+  .nrm-header p {
+    font-size: 0.85rem;
+  }
+  .nrm-header {
+    margin-bottom: 1.5rem;
+  }
+  .nrm-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+  .nrm-form-group input {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.9rem;
+  }
+  .nrm-permission-item {
+    padding: 10px;
+    gap: 10px;
+  }
+  .nrm-perm-info p {
+    font-size: 0.9rem;
+  }
+  .nrm-perm-info span {
+    font-size: 0.8rem;
+  }
+  .nrm-modal-actions-row {
+    margin-top: 1.5rem;
+    gap: 10px;
+  }
+  .nrm-modal-btn-cancel,
+  .nrm-modal-btn-submit {
+    padding: 7px 14px;
+    font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .nrm-modal-content {
+    padding: 1rem 0.75rem;
+    max-width: 95%;
+  }
+  .nrm-header h2 {
+    font-size: 1.1rem;
+  }
+  .nrm-header p {
+    font-size: 0.82rem;
+  }
+  .nrm-icon-box {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 0.75rem;
+  }
+  .nrm-permission-item {
+    padding: 8px;
+    gap: 8px;
+  }
+  .nrm-perm-info p {
+    font-size: 0.85rem;
+  }
+  .nrm-perm-info span {
+    font-size: 0.78rem;
+  }
+  .nrm-modal-actions-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .nrm-modal-btn-cancel,
+  .nrm-modal-btn-submit {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 320px) {
+  .nrm-modal-content {
+    padding: 0.85rem 0.65rem;
+    border-radius: 10px;
+  }
+  .nrm-header h2 {
+    font-size: 1.05rem;
+  }
+  .nrm-header p {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .nrm-header {
+    margin-bottom: 1.25rem;
+  }
+  .nrm-form {
+    gap: 1rem;
+  }
+  .nrm-form-group input {
+    padding: 0.6rem 0.7rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+  .nrm-permission-item {
+    padding: 6px;
+    gap: 6px;
+    border-radius: 6px;
+  }
+  .nrm-permission-item input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+  .nrm-perm-info p {
+    font-size: 0.82rem;
+  }
+  .nrm-perm-info span {
+    font-size: 0.75rem;
+  }
+  .nrm-btn-close {
+    top: 1rem;
+    right: 1rem;
+    width: 28px;
+    height: 28px;
+  }
+  .nrm-modal-btn-cancel,
+  .nrm-modal-btn-submit {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+}

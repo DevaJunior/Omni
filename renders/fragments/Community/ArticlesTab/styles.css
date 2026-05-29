@@ -454,6 +454,18 @@
   }
 }
 
+@media (max-width: 900px) {
+  .cmmt-section-header h3, .cmmt-list-controls h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .cmmt-article-card {
+    padding: 1.5rem;
+  }
+}
+
 @media (max-width: 480px) {
   .cmmt-article-card {
     padding: 1rem;
@@ -470,6 +482,26 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .cmmt-article-title {
+    font-size: 1.15rem;
+  }
+  .cmmt-section-header h3, .cmmt-list-controls h3 {
+    font-size: 1.1rem;
+  }
+  .cmmt-visual-info {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .cmmt-article-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
   }
 }
 

@@ -177,6 +177,28 @@
   }
 }
 
+@media (max-width: 390px) {
+  .cmmt-project-card {
+    padding: 1.2rem;
+  }
+  .cmmt-project-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .cmmt-project-meta {
+    font-size: 0.85rem;
+  }
+  .cmmt-project-desc {
+    font-size: 0.85rem;
+  }
+  .cmmt-btn-apply {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
 @media (max-width: 320px) {
   .cmmt-project-type, .cmmt-project-status {
     font-size: 0.7rem;

@@ -374,3 +374,47 @@
     padding: 1.5rem;
   }
 }
+
+@media (max-width: 390px) {
+  .prj-title {
+    font-size: 1.3rem;
+  }
+  .prj-type-badge, .prj-status-badge {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.78rem;
+  }
+  .prj-institution h2 {
+    font-size: 1.05rem;
+  }
+  .prj-section h3 {
+    font-size: 1.2rem;
+  }
+  .prj-btn-apply-giant {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 345px) {
+  .prj-main-content {
+    padding: 1.2rem 0.8rem;
+  }
+  .prj-summary-card {
+    padding: 1.2rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .prj-title {
+    font-size: 1.15rem;
+  }
+  .prj-section h3 {
+    font-size: 1.1rem;
+  }
+  .prj-section p, .prj-check-list li, .prj-bullet-list li {
+    font-size: 0.9rem;
+  }
+  .prj-main-content {
+    padding: 1rem 0.6rem;
+  }
+}

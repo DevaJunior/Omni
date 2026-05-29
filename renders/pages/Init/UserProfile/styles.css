@@ -684,3 +684,108 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .user-profile-container {
+    padding: 0.75rem 0.75rem 2rem;
+  }
+  .profile-cover-card {
+    height: 130px;
+    margin-bottom: -45px;
+  }
+  .profile-avatar-wrapper {
+    width: 96px;
+    height: 96px;
+    border-width: 4px;
+  }
+  .profile-basic-info h1 {
+    font-size: 1.2rem;
+  }
+  .profile-basic-info h2 {
+    font-size: 0.85rem;
+  }
+  .content-card {
+    padding: 1rem;
+  }
+  .tab-btn {
+    font-size: 0.8rem;
+    padding: 0.6rem 0;
+  }
+  .card-section-title {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .profile-cover-card {
+    height: 110px;
+    margin-bottom: -35px;
+  }
+  .profile-avatar-wrapper {
+    width: 84px;
+    height: 84px;
+    border-width: 3px;
+  }
+  .profile-basic-info h1 {
+    font-size: 1.1rem;
+  }
+  .profile-basic-info h2 {
+    font-size: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+  .btn-profile-primary, .btn-profile-outline {
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
+  }
+  .tab-btn {
+    font-size: 0.78rem;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 345px) {
+  .profile-cover-card {
+    height: 95px;
+    margin-bottom: -30px;
+  }
+  .profile-avatar-wrapper {
+    width: 76px;
+    height: 76px;
+  }
+  .profile-basic-info h1 {
+    font-size: 1rem;
+  }
+  .detail-item {
+    font-size: 0.8rem;
+  }
+  .skills-tags {
+    gap: 6px;
+  }
+  .skill-tag {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .profile-cover-card {
+    height: 85px;
+    margin-bottom: -25px;
+  }
+  .profile-avatar-wrapper {
+    width: 68px;
+    height: 68px;
+  }
+  .profile-basic-info h1 {
+    font-size: 0.95rem;
+  }
+  .profile-basic-info h2 {
+    font-size: 0.75rem;
+  }
+  .content-card {
+    padding: 0.8rem;
+  }
+  .project-card {
+    padding: 1rem;
+  }
+}

@@ -562,8 +562,6 @@
 
 @media (max-width: 480px) {
 
-
-
   .hero-content h1 {
     font-size: 2rem;
   }
@@ -571,5 +569,55 @@
   .article-card {
     min-width: 280px;
     max-width: 280px;
+  }
+}
+
+@media (max-width: 390px) {
+  .hero-content h1 {
+    font-size: 1.75rem;
+  }
+  .hero-content p {
+    font-size: 0.9rem;
+  }
+  .cta-button {
+    padding: 0.7rem 1.25rem;
+    font-size: 0.88rem;
+  }
+  .articles-title h2 {
+    font-size: 1.5rem;
+  }
+  .article-card {
+    min-width: 250px;
+    max-width: 250px;
+  }
+  .article-info {
+    padding: 1.15rem;
+  }
+  .article-info h3 {
+    font-size: 1rem;
+  }
+  .article-info p {
+    font-size: 0.82rem;
+  }
+  .service-card {
+    padding: 2rem 1.25rem;
+  }
+  .service-card h4 {
+    font-size: 1rem;
+  }
+  .service-card p {
+    font-size: 0.82rem;
+  }
+  .services-header h2 {
+    font-size: 1.8rem;
+  }
+  .services-header p {
+    font-size: 0.9rem;
+  }
+  .footer-promo h3 {
+    font-size: 1rem;
+  }
+  .home-container {
+    padding: var(--spacing-md) 12px;
   }
 }
