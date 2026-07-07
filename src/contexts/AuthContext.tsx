@@ -60,6 +60,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // --- LOGIN COM GOOGLE (Padrão Spotted: apenas signInWithPopup) ---
   const loginWithGoogle = async () => {
+    const { setPersistence, browserLocalPersistence } = await import('firebase/auth');
+    await setPersistence(auth, browserLocalPersistence);
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     await ensureUserDocument(result.user);

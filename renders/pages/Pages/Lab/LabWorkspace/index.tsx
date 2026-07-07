@@ -13,13 +13,14 @@ import LabTeamTab from '../../../../fragments/Lab/LabTeamTab';
 import BancadaTab from '../../../../fragments/Lab/BancadaTab';
 import AreaComumTab from '../../../../fragments/Lab/AreaComumTab';
 import CadernoTab from '../../../../fragments/Lab/CadernoTab';
+import GestaoEquipamentosTab from '../../../../fragments/Lab/GestaoEquipamentosTab';
 import './styles.css';
 
 const LabWorkspace: React.FC = () => {
   const { addToast } = useToastStore();
   const navigate = useNavigate();
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState<'bancada' | 'forum' | 'caderno' | 'gestao'>('bancada');
+  const [activeTab, setActiveTab] = useState<'bancada' | 'forum' | 'caderno' | 'gestao' | 'equipamentos'>('bancada');
 
   return (
     <div className="lab-workspace-page">
@@ -70,6 +71,14 @@ const LabWorkspace: React.FC = () => {
             <Users size={18} />
             Gestão da Equipe
           </button>
+
+          <button 
+            className={`workspace-nav-btn ${activeTab === 'equipamentos' ? 'active' : ''}`}
+            onClick={() => setActiveTab('equipamentos')}
+          >
+            <Settings size={18} />
+            Equipamentos
+          </button>
           
           <button 
             className="workspace-nav-btn"
@@ -98,6 +107,10 @@ const LabWorkspace: React.FC = () => {
             <div className="workspace-content-card">
               <LabTeamTab mode="manage" labId={id || '1'} />
             </div>
+          )}
+
+          {activeTab === 'equipamentos' && (
+            <GestaoEquipamentosTab labId={id || '1'} />
           )}
         </main>
       </div>

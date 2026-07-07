@@ -1,0 +1,205 @@
+.configmod_equipam-equipment-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.configmod_equipam-equipment-modal-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  padding: 2rem;
+  position: relative;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: none;
+  animation: slideUpModal 0.3s ease-out;
+}
+
+.configmod_equipam-equipment-modal-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.configmod_equipam-equipment-modal-close:hover {
+  color: #0f172a;
+  background-color: #f1f5f9;
+}
+
+.configmod_equipam-equipment-modal-header {
+  margin-bottom: 2rem;
+}
+
+.configmod_equipam-equipment-modal-header h2 {
+  margin: 0 0 0.5rem 0;
+  color: #0f172a;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.configmod_equipam-equipment-modal-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.configmod_equipam-equipment-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.configmod_equipam-equipment-modal-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.configmod_equipam-equipment-modal-form-group label {
+  color: #1e293b;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.configmod_equipam-equipment-modal-form-group input[type="text"],
+.configmod_equipam-equipment-modal-form-group input[type="number"],
+.configmod_equipam-equipment-modal-form-group input[type="date"],
+.configmod_equipam-equipment-modal-form-group input[type="time"] {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.configmod_equipam-equipment-modal-form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.configmod_equipam-equipment-modal-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.configmod_equipam-checkbox-group {
+  margin-top: 0.5rem;
+  background: #eff6ff;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #3b82f6;
+}
+
+.configmod_equipam-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.configmod_equipam-checkbox-label input[type="checkbox"] {
+  margin-top: 0.25rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.configmod_equipam-checkbox-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.configmod_equipam-checkbox-text strong {
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.configmod_equipam-checkbox-text p {
+  color: #3b82f6;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.configmod_equipam-equipment-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.configmod_equipam-equipment-btn-cancel {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.configmod_equipam-equipment-btn-cancel:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.configmod_equipam-equipment-btn-confirm {
+  background-color: #3b82f6;
+  border: none;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.configmod_equipam-equipment-btn-confirm:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.configmod_equipam-equipment-btn-confirm:disabled,
+.configmod_equipam-equipment-btn-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes slideUpModal {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
