@@ -334,7 +334,7 @@ const UserProfile: React.FC = () => {
                           return (
                             <>
                               {allActivities.map(act => (
-                                <div key={`${act.type}-${act.id}`} className="activity-item" onClick={() => navigate(act.type === 'discussion' ? `/discussion/${act.id}` : `/learn/note/${act.id}`)} style={{ cursor: 'pointer' }}>
+                                <div key={`${act.type}-${act.id}`} className="activity-item" onClick={() => navigate(act.type === 'discussion' ? `/discussion/${act.id}` : `/learn/${act.id}`)} style={{ cursor: 'pointer' }}>
                                   <div className={`activity-icon ${act.type === 'note' ? 'green' : 'blue'}`}><MessageSquare size={16} /></div>
                                   <div className="activity-details">
                                     <p>Publicou um{act.type === 'note' ? 'a nota de estudo' : 'a discussão'}: <strong>{act.title ? act.title.substring(0, 50) : (act.content ? act.content.substring(0, 50) : '')}...</strong></p>
@@ -391,7 +391,7 @@ const UserProfile: React.FC = () => {
                       ]
                       .sort((a, b) => b.sortDate - a.sortDate)
                       .map(pub => (
-                        <div key={`${pub.type}-${pub.id}`} className="content-card" style={{ marginBottom: '1rem', cursor: 'pointer' }} onClick={() => navigate(pub.type === 'note' ? `/learn/note/${pub.id}` : `/discussion/${pub.id}`)}>
+                        <div key={`${pub.type}-${pub.id}`} className="content-card" style={{ marginBottom: '1rem', cursor: 'pointer' }} onClick={() => navigate(pub.type === 'note' ? `/learn/${pub.id}` : `/discussion/${pub.id}`)}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div>
                               <h3 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{pub.type === 'note' ? pub.title : 'Discussão na Comunidade'}</h3>

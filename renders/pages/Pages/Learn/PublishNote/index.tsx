@@ -6,7 +6,7 @@ import {
   Eye, Edit2, User, Clock, Save, Sigma, SquareSigma,
   SeparatorHorizontal, Subscript, Superscript, Code, Strikethrough, Table, SquareTerminal
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
 import { learnService } from '../../../../../src/services/learnService';
 import type { StudyNote } from '../../../../../src/types/learn';
@@ -22,6 +22,7 @@ const PublishNote: React.FC = () => {
   const { addToast } = useToastStore();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -34,6 +35,32 @@ const PublishNote: React.FC = () => {
 
   // Estado de Visualização
   const [isPreview, setIsPreview] = useState<boolean>(false);
+
+  // Carregar dados caso seja edição
+  useEffect(() => {
+    if (id && currentUser) {
+      const loadNote = async () => {
+        try {
+          const note = await learnService.getNoteById(id);
+          if (note) {
+            if (note.authorId !== currentUser.uid) {
+              addToast("Você não tem permissão para editar esta publicação.", 'error');
+              navigate('/learn');
+              return;
+            }
+            setTitle(note.title);
+            setSubtitle(note.subtitle || '');
+            setContent(note.content);
+            setSelectedAreas(note.subjects || (note.subject ? [note.subject] : []));
+            setSelectedDisciplines(note.disciplines || []);
+          }
+        } catch (err) {
+          addToast("Erro ao carregar os dados da publicação.", 'error');
+        }
+      };
+      loadNote();
+    }
+  }, [id, currentUser, navigate, addToast]);
 
   // Lógica de Seleção com Limite de 3 e Pesos (Ordem)
   const handleAddArea = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -110,8 +137,13 @@ const PublishNote: React.FC = () => {
         readTime: `${Math.max(1, Math.ceil(content.length / 800))} min`
       };
 
-      await learnService.createNote(newNote);
-      addToast("Resumo publicado com sucesso na Comunidade Omni!", 'success');
+      if (id) {
+        await learnService.updateNote(id, newNote);
+        addToast("Resumo atualizado com sucesso!", 'success');
+      } else {
+        await learnService.createNote(newNote);
+        addToast("Resumo publicado com sucesso na Comunidade Omni!", 'success');
+      }
       navigate('/learn');
     } catch (err) {
       console.error("Erro ao publicar nota", err);
@@ -143,7 +175,7 @@ const PublishNote: React.FC = () => {
 
           <form className="publish-form" onSubmit={handlePublish}>
             <div className="publish-header">
-              <h1>{isPreview ? 'Visualização do Resumo' : 'Novo Resumo de Estudo'}</h1>
+              <h1>{isPreview ? 'Visualização do Resumo' : (id ? 'Editar Resumo de Estudo' : 'Novo Resumo de Estudo')}</h1>
 
               <div className="publish-actions-group">
                 <button

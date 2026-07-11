@@ -44,7 +44,8 @@ import NoteDetail from './../renders/pages/Pages/Learn/NoteDetail/index';
 import Settings from '../renders/pages/Pages/Settings';
 import SearchPage from '../renders/pages/Pages/Search';
 import Inbox from '../renders/pages/Pages/Inbox';
-
+import AdminRoute from '../renders/components/AdminRoute';
+import AdminReports from '../renders/pages/Pages/Admin/Reports';
 
 const App: React.FC = () => {
   return (
@@ -91,6 +92,7 @@ const App: React.FC = () => {
                   {/* Learn e Artigos */}
                   <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
                   <Route path="/learn/new" element={<ProtectedRoute><PublishNote /></ProtectedRoute>} />
+                  <Route path="/learn/edit/:id" element={<ProtectedRoute><PublishNote /></ProtectedRoute>} />
                   <Route path="/learn/:id" element={<ProtectedRoute><NoteDetail /></ProtectedRoute>} />
 
                   {/* P-Fuzzy */}
@@ -100,6 +102,9 @@ const App: React.FC = () => {
                   {/* Perfis Dinâmicos */}
                   <Route path="/lab/:id" element={<ProtectedRoute><LabProfile /></ProtectedRoute>} />
                   <Route path="/lab/:id/workspace" element={<ProtectedRoute><LabWorkspace /></ProtectedRoute>} />
+
+                  {/* Rotas Administrativas */}
+                  <Route path="/admin/reports" element={<ProtectedRoute><AdminRoute><AdminReports /></AdminRoute></ProtectedRoute>} />
 
                   {/* Rota de Migração */}
                   <Route path="/run-seed" element={
