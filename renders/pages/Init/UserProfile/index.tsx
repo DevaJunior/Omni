@@ -38,6 +38,17 @@ const UserProfile: React.FC = () => {
 
   const [userDiscussions, setUserDiscussions] = useState<any[]>([]);
   const [userProjects, setUserProjects] = useState<any[]>([]);
+  const [userNotes, setUserNotes] = useState<any[]>([]);
+
+  const parseDateStr = (d: any) => {
+    if (!d) return 0;
+    const str = String(d);
+    if (str.includes('/')) {
+      const [day, month, year] = str.split('/');
+      return new Date(`${year}-${month}-${day}`).getTime();
+    }
+    return new Date(str).getTime();
+  };
 
   useEffect(() => {
     if (!userData) return;
@@ -46,12 +57,17 @@ const UserProfile: React.FC = () => {
         const dQuery = query(collection(db, "discussions"), where("authorId", "==", userData.id));
         const dSnap = await getDocs(dQuery);
         const dData = dSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
-        setUserDiscussions(dData.sort((a: { date: string }, b: { date: string }) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()));
+        setUserDiscussions(dData.sort((a: { date: string }, b: { date: string }) => parseDateStr(b.date) - parseDateStr(a.date)));
 
         const pQuery = query(collection(db, "projects"), where("coordinator", "==", userData.name));
         const pSnap = await getDocs(pQuery);
         const pData = pSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
         setUserProjects(pData);
+
+        const nQuery = query(collection(db, "studyNotes"), where("authorId", "==", userData.id));
+        const nSnap = await getDocs(nQuery);
+        const nData = nSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+        setUserNotes(nData.sort((a: { date: string }, b: { date: string }) => parseDateStr(b.date) - parseDateStr(a.date)));
       } catch (err) {
         console.error("Erro ao buscar conteúdos do usuário:", err);
       }
@@ -72,7 +88,7 @@ const UserProfile: React.FC = () => {
       try {
         const userDoc = await getDoc(doc(db, "users", targetId));
         if (userDoc.exists()) {
-          setUserData(userDoc.data() as IUser);
+          setUserData({ id: userDoc.id, ...userDoc.data() } as IUser);
         } else if (currentUser && targetId === currentUser.uid) {
            // Fallback de segurança temporário se o doc do usuário logado acabou de ser criado e o Firestore ainda não indexou o read
            setUserData({ 
@@ -309,23 +325,33 @@ const UserProfile: React.FC = () => {
                     <div className="content-card mt-4">
                       <h3 className="card-section-title">Atividade Recente</h3>
                       <div className="activity-feed">
-                        {userDiscussions.length > 0 ? userDiscussions.slice(0, 3).map(disc => (
-                          <div key={disc.id} className="activity-item" onClick={() => navigate(`/discussion/${disc.id}`)} style={{ cursor: 'pointer' }}>
-                            <div className="activity-icon blue"><MessageSquare size={16} /></div>
-                            <div className="activity-details">
-                              <p>Publicou uma discussão: <strong>{disc.content.substring(0, 50)}...</strong></p>
-                              <span className="activity-time">{disc.date ? new Date(disc.date).toLocaleDateString() : disc.time}</span>
+                        {(() => {
+                          const allActivities = [
+                            ...userDiscussions.map(d => ({ ...d, type: 'discussion', sortDate: parseDateStr(d.date) })),
+                            ...userNotes.map(n => ({ ...n, type: 'note', sortDate: parseDateStr(n.date) }))
+                          ].sort((a, b) => b.sortDate - a.sortDate);
+
+                          if (allActivities.length > 0) {
+                            return allActivities.slice(0, 3).map(act => (
+                              <div key={`${act.type}-${act.id}`} className="activity-item" onClick={() => navigate(act.type === 'discussion' ? `/discussion/${act.id}` : `/learn/note/${act.id}`)} style={{ cursor: 'pointer' }}>
+                                <div className="activity-icon blue"><MessageSquare size={16} /></div>
+                                <div className="activity-details">
+                                  <p>Publicou um{act.type === 'note' ? 'a nota de estudo' : 'a discussão'}: <strong>{act.title ? act.title.substring(0, 50) : (act.content ? act.content.substring(0, 50) : '')}...</strong></p>
+                                  <span className="activity-time">{act.date || act.time}</span>
+                                </div>
+                              </div>
+                            ));
+                          }
+                          return (
+                            <div className="activity-item">
+                              <div className="activity-icon blue"><Terminal size={16} /></div>
+                              <div className="activity-details">
+                                <p>Realizou login na plataforma Omni.</p>
+                                <span className="activity-time">Recente</span>
+                              </div>
                             </div>
-                          </div>
-                        )) : (
-                          <div className="activity-item">
-                            <div className="activity-icon blue"><Terminal size={16} /></div>
-                            <div className="activity-details">
-                              <p>Realizou login na plataforma Omni.</p>
-                              <span className="activity-time">Recente</span>
-                            </div>
-                          </div>
-                        )}
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>
@@ -358,20 +384,26 @@ const UserProfile: React.FC = () => {
                 {/* ABA: PUBLICAÇÕES */}
                 {activeTab === 'publicacoes' && (
                   <div className="anim-fade-up">
-                    {userDiscussions.length > 0 ? (
-                      userDiscussions.map(pub => (
-                        <div key={pub.id} className="content-card" style={{ marginBottom: '1rem', cursor: 'pointer' }} onClick={() => navigate(`/discussion/${pub.id}`)}>
+                    {userNotes.length > 0 || userDiscussions.length > 0 ? (
+                      [
+                        ...userNotes.map(n => ({ ...n, type: 'note', sortDate: parseDateStr(n.date) })),
+                        ...userDiscussions.map(d => ({ ...d, type: 'discussion', sortDate: parseDateStr(d.date) }))
+                      ]
+                      .sort((a, b) => b.sortDate - a.sortDate)
+                      .map(pub => (
+                        <div key={`${pub.type}-${pub.id}`} className="content-card" style={{ marginBottom: '1rem', cursor: 'pointer' }} onClick={() => navigate(pub.type === 'note' ? `/learn/note/${pub.id}` : `/discussion/${pub.id}`)}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div>
-                              <h3 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>Discussão na Comunidade</h3>
-                              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{pub.date ? new Date(pub.date).toLocaleDateString() : pub.time}</p>
+                              <h3 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{pub.type === 'note' ? pub.title : 'Discussão na Comunidade'}</h3>
+                              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{pub.date || pub.time}</p>
                             </div>
-                            <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>Discussão</span>
+                            <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>{pub.type === 'note' ? pub.subject || 'Artigo' : 'Discussão'}</span>
                           </div>
-                          <p style={{ marginTop: '1rem', color: 'var(--text-color)' }}>{pub.content}</p>
+                          <p style={{ marginTop: '1rem', color: 'var(--text-color)' }}>{pub.type === 'note' ? pub.excerpt : pub.content}</p>
                           <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                            <span>❤️ {pub.likes} Curtidas</span>
-                            <span>💬 {pub.comments || 0} Comentários</span>
+                            <span>❤️ {pub.likes || 0} Curtidas</span>
+                            {pub.type === 'discussion' && <span>💬 {pub.comments || 0} Comentários</span>}
+                            {pub.type === 'note' && <span>⏱️ {pub.readTime}</span>}
                           </div>
                         </div>
                       ))

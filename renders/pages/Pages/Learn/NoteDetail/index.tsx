@@ -72,7 +72,12 @@ const NoteDetail: React.FC = () => {
               <h1>{noteData.title}</h1>
 
               <div className="note-author-bar">
-                <div className="author-info-left">
+                <div 
+                  className="author-info-left" 
+                  onClick={() => navigate(`/profile/${noteData.authorId}`)}
+                  style={{ cursor: 'pointer' }}
+                  title={`Ver perfil de ${noteData.author}`}
+                >
                   <div className="author-avatar"><User size={20} /></div>
                   <div>
                     <strong>{noteData.author}</strong>

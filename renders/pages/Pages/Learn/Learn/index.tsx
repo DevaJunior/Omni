@@ -142,7 +142,15 @@ const Learn: React.FC = () => {
                   </div>
 
                   <div className="note-card-footer">
-                    <div className="note-author-info">
+                    <div 
+                      className="note-author-info"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (note.authorId) navigate(`/profile/${note.authorId}`);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                      title={`Ver perfil de ${note.author}`}
+                    >
                       <User size={16} />
                       <span>{note.author}</span>
                     </div>
