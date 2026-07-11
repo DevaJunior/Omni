@@ -3,7 +3,8 @@ import React, { useState, useRef } from 'react';
 import {
   ArrowLeft, Bold, Italic, List, Link as LinkIcon, Image, Send,
   Heading1, Heading2, Heading3, Quote, Highlighter, ListOrdered, FileText,
-  Eye, Edit2, User, Clock, Save
+  Eye, Edit2, User, Clock, Save, Sigma, SquareSigma,
+  SeparatorHorizontal, Subscript, Superscript, Code, Strikethrough, Table, SquareTerminal
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
@@ -244,6 +245,9 @@ const PublishNote: React.FC = () => {
                       <button type="button" className="toolbar-btn" onClick={() => applyFormatting('**', '**')} title="Negrito"><Bold size={18} /></button>
                       <button type="button" className="toolbar-btn" onClick={() => applyFormatting('*', '*')} title="Itálico"><Italic size={18} /></button>
                       <button type="button" className="toolbar-btn" onClick={() => applyFormatting('==', '==')} title="Destacar"><Highlighter size={18} /></button>
+                      <button type="button" className="toolbar-btn" onClick={() => applyFormatting('~~', '~~')} title="Tachado"><Strikethrough size={18} /></button>
+                      <button type="button" className="toolbar-btn" onClick={() => applyFormatting('~', '~')} title="Subscrito"><Subscript size={18} /></button>
+                      <button type="button" className="toolbar-btn" onClick={() => applyFormatting('^', '^')} title="Sobrescrito"><Superscript size={18} /></button>
                     </div>
 
                     <div className="toolbar-divider"></div>
@@ -252,12 +256,28 @@ const PublishNote: React.FC = () => {
                       <button type="button" className="toolbar-btn" onClick={() => applyFormatting('\n- ', '')} title="Lista Não Ordenada"><List size={18} /></button>
                       <button type="button" className="toolbar-btn" onClick={() => applyFormatting('\n1. ', '')} title="Lista Ordenada"><ListOrdered size={18} /></button>
                       <button type="button" className="toolbar-btn" onClick={() => applyFormatting('\n> ', '')} title="Observação / Citação"><Quote size={18} /></button>
+                      <button type="button" className="toolbar-btn" onClick={() => applyFormatting('\n---\n', '')} title="Linha Divisória"><SeparatorHorizontal size={18} /></button>
+                    </div>
+
+                    <div className="toolbar-divider"></div>
+
+                    <div className="toolbar-group">
+                      <button type="button" className="toolbar-btn" onClick={() => applyFormatting('$', '$')} title="Fórmula Matemática em Linha"><Sigma size={18} /></button>
+                      <button type="button" className="toolbar-btn" onClick={() => applyFormatting('\n$$\n', '\n$$\n')} title="Bloco de Fórmula Matemática"><SquareSigma size={18} /></button>
+                    </div>
+
+                    <div className="toolbar-divider"></div>
+
+                    <div className="toolbar-group">
+                      <button type="button" className="toolbar-btn" onClick={() => applyFormatting('`', '`')} title="Código em Linha"><Code size={18} /></button>
+                      <button type="button" className="toolbar-btn" onClick={() => applyFormatting('\n```\n', '\n```\n')} title="Bloco de Código"><SquareTerminal size={18} /></button>
                     </div>
 
                     <div className="toolbar-divider"></div>
 
                     <div className="toolbar-group">
                       <button type="button" className="toolbar-btn" onClick={insertSummary} title="Gerar Sumário"><FileText size={18} /></button>
+                      <button type="button" className="toolbar-btn" onClick={() => applyFormatting('\n| Coluna 1 | Coluna 2 |\n|---|---|\n| Dado 1 | Dado 2 |\n', '')} title="Inserir Tabela"><Table size={18} /></button>
                       <button type="button" className="toolbar-btn" onClick={() => applyFormatting('[Texto do Link](', ')')} title="Inserir Link"><LinkIcon size={18} /></button>
                       <button type="button" className="toolbar-btn" onClick={() => applyFormatting('![Texto Alternativo](', ')')} title="Inserir Imagem"><Image size={18} /></button>
                     </div>

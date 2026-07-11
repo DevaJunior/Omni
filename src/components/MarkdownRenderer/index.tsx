@@ -1,4 +1,6 @@
 import React from 'react';
+import katex from 'katex';
+import 'katex/dist/katex.min.css'; // IMPORTANTE: O CSS que faz a mágica visual acontecer
 import './styles.css';
 
 interface MarkdownRendererProps {
@@ -10,24 +12,62 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
 
   const slugify = (text: string) => {
     return text.toString().toLowerCase().trim()
-      .replace(/\s+/g, '-')     // Substitui espaços por -
-      .replace(/[^\w-]+/g, '')  // Remove caracteres não alfanuméricos
-      .replace(/--+/g, '-');    // Remove múltiplos -
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-');
+  };
+
+  const mathTokens: string[] = [];
+
+  const extractMath = (text: string) => {
+    const mathRegex = /(\$\$[\s\S]*?\$\$)|(\\begin\{[a-zA-Z*]+\}[\s\S]*?\\end\{[a-zA-Z*]+\})|(\$[^$\n]+\$)/g;
+
+    return text.replace(mathRegex, (match, block1, block2, inline) => {
+      try {
+        if (block1) {
+          // Remove os $$ para o KaTeX processar apenas a fórmula
+          const math = block1.replace(/^\$\$|\$\$/g, '').trim();
+          const rendered = katex.renderToString(math, { displayMode: true, throwOnError: false });
+          mathTokens.push(`<div class="md-math-block">${rendered}</div>`);
+        } else if (block2) {
+          // Mantém o \begin...\end completo
+          const rendered = katex.renderToString(block2, { displayMode: true, throwOnError: false });
+          mathTokens.push(`<div class="md-math-block">${rendered}</div>`);
+        } else if (inline) {
+          // Remove os $
+          const math = inline.replace(/^\$|\$/g, '').trim();
+          const rendered = katex.renderToString(math, { displayMode: false, throwOnError: false });
+          mathTokens.push(`<span class="md-inline-math">${rendered}</span>`);
+        }
+      } catch (error) {
+        // Fallback: se houver erro de sintaxe no LaTeX escrito pelo usuário, exibe o texto puro
+        mathTokens.push(`<span class="md-math-error">${match}</span>`);
+      }
+
+      return `__MATH_TOKEN_${mathTokens.length - 1}__`;
+    });
+  };
+
+  const restoreMath = (text: string) => {
+    return text.replace(/__MATH_TOKEN_(\d+)__/g, (_, index) => {
+      return mathTokens[parseInt(index, 10)];
+    });
   };
 
   const applyInlineStyles = (text: string) => {
-    return text
+    let styledText = text
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/==(.*?)==/g, '<mark>$1</mark>')
-      .replace(/~+(.*?)~+/g, '<sub>$1</sub>') // Subscrito (H2O -> H~2~O)
-      // Sistema de Figuras Acadêmicas robusto: Suporta URLs com espaços e formatos complexos
-      .replace(/!\[([^\]|]+)(?:\|([^\]]+))?\]\(([^)]+)\)/g, (_match, alt, source, content) => {
-        let url = content.trim();
+      .replace(/~~(.*?)~~/g, '<del>$1</del>')
+      .replace(/~+(.*?)~+/g, '<sub>$1</sub>')
+      .replace(/\^(.*?)\^/g, '<sup>$1</sup>')
+      .replace(/`(.*?)`/g, '<code class="md-inline-code">$1</code>')
+      .replace(/!\[([^\]|]+)(?:\|([^\]]+))?\]\(([^)]+)\)/g, (_match, alt, source, contentUrl) => {
+        let url = contentUrl.trim();
         let title = '';
 
-        // Tenta extrair o título se houver algo como: URL "Título"
-        const titleMatch = content.match(/(.+)\s+"([^"]+)"$/);
+        const titleMatch = contentUrl.match(/(.+)\s+"([^"]+)"$/);
         if (titleMatch) {
           url = titleMatch[1].trim();
           title = titleMatch[2].trim();
@@ -45,7 +85,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
         `;
       })
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="md-link">$1</a>')
-      // Símbolos Matemáticos e Científicos (LaTeX-like)
       .replace(/\$\\rightarrow\$/g, '→')
       .replace(/\$\\leftarrow\$/g, '←')
       .replace(/\\sqrt\{(.*?)\}/g, '√$1')
@@ -56,12 +95,14 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
       .replace(/\\delta/g, 'δ')
       .replace(/\\Delta/g, 'Δ')
       .replace(/\^2/g, '²')
-      .replace(/\^3/g, '³')
-      .replace(/\$+(.*?)\$+/g, '<code class="md-inline-math">$1</code>');
+      .replace(/\^3/g, '³');
+
+    return restoreMath(styledText);
   };
 
   const renderMarkdown = (text: string) => {
-    const lines = text.split('\n');
+    const textWithMathExtracted = extractMath(text);
+    const lines = textWithMathExtracted.split('\n');
     const elements: React.ReactNode[] = [];
     let currentBlock: { type: string; lines: string[]; start?: number } | null = null;
 
@@ -69,12 +110,12 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
       if (!currentBlock) return;
 
       if (currentBlock.type === 'blockquote') {
-        const content = currentBlock.lines
+        const blockContent = currentBlock.lines
           .map(l => applyInlineStyles(l.replace(/^\s*>\s?/, '')))
           .map(l => `<div class="md-code-line">${l || '&nbsp;'}</div>`)
           .join('');
         elements.push(
-          <blockquote key={`bq-${index}`} className="md-quote" dangerouslySetInnerHTML={{ __html: content }}></blockquote>
+          <blockquote key={`bq-${index}`} className="md-quote" dangerouslySetInnerHTML={{ __html: blockContent }}></blockquote>
         );
       } else if (currentBlock.type === 'list') {
         elements.push(
@@ -92,12 +133,66 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
             ))}
           </ol>
         );
+      } else if (currentBlock.type === 'code') {
+        elements.push(
+          <pre key={`code-${index}`} className="md-code-block">
+            <code>{currentBlock.lines.join('\n')}</code>
+          </pre>
+        );
+      } else if (currentBlock.type === 'table') {
+        const thead = currentBlock.lines[0];
+        let tbody = currentBlock.lines.slice(1);
+        if (tbody.length > 0 && tbody[0].replace(/[\s|-]/g, '') === '') {
+          tbody = tbody.slice(1);
+        }
+        
+        const renderRow = (row: string, cellTag: 'th' | 'td') => {
+          const cells = row.split('|').map(c => c.trim()).filter((_, i, arr) => i !== 0 && i !== arr.length - 1);
+          return cells.map((c, i) => `<${cellTag} key="${i}">${applyInlineStyles(c)}</${cellTag}>`).join('');
+        };
+
+        elements.push(
+          <div key={`table-wrapper-${index}`} className="md-table-wrapper">
+            <table className="md-table">
+              <thead>
+                <tr dangerouslySetInnerHTML={{ __html: renderRow(thead, 'th') }}></tr>
+              </thead>
+              <tbody>
+                {tbody.map((row, i) => (
+                  <tr key={`tr-${i}`} dangerouslySetInnerHTML={{ __html: renderRow(row, 'td') }}></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
       }
       currentBlock = null;
     };
 
     lines.forEach((line, idx) => {
       const trimmed = line.trim();
+
+      if (currentBlock && currentBlock.type === 'code') {
+        if (trimmed.startsWith('```')) {
+          flushBlock(idx);
+        } else {
+          currentBlock.lines.push(line);
+        }
+        return;
+      }
+
+      if (trimmed.startsWith('```')) {
+        flushBlock(idx);
+        currentBlock = { type: 'code', lines: [] };
+        return;
+      }
+
+      if (trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.length > 1) {
+        if (currentBlock && currentBlock.type !== 'table') flushBlock(idx);
+        if (!currentBlock) currentBlock = { type: 'table', lines: [] };
+        currentBlock.lines.push(trimmed);
+        return;
+      }
 
       if (trimmed.startsWith('> ')) {
         if (currentBlock && currentBlock.type !== 'blockquote') flushBlock(idx);

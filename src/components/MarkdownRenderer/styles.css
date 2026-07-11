@@ -114,3 +114,95 @@
     font-size: 0.8em;
     vertical-align: sub;
 }
+
+/* Adicione junto às suas classes de markdown existentes em styles.css */
+
+.md-math-block {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    /* Garante que matrizes muito grandes deem scroll no mobile */
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    /* Fundo suave para destacar o bloco matemático */
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* Classes de proteção estrutural para as Equações */
+.md-math-block {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    padding: 0.5rem 0;
+    text-align: center;
+}
+
+.md-inline-math {
+    display: inline;
+    white-space: nowrap;
+}
+
+/* Strikethrough and Superscript */
+.markdown-body del {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.markdown-body sup {
+    font-size: 0.8em;
+    vertical-align: super;
+}
+
+/* Code */
+.markdown-body .md-inline-code {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    color: #d63384;
+}
+
+.markdown-body .md-code-block {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    margin: 1.5rem 0;
+    white-space: pre-wrap;
+}
+
+/* Tables */
+.markdown-body .md-table-wrapper {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+.markdown-body .md-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.markdown-body .md-table th,
+.markdown-body .md-table td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+.markdown-body .md-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.markdown-body .md-table tr:nth-child(even) {
+    background-color: #fdfdfd;
+}
