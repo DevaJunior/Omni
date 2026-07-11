@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info } from 'lucide-react';
+import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info, Settings, LogOut, Layout } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { notificationService, type NotificationData } from '../../../src/services/notificationService';
 import './styles.css';
@@ -18,9 +18,13 @@ const Navbar: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationData[]>([]);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
+  // Profile menu state
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentUser } = useAuth();
+  const { currentUser, userProfile, logout } = useAuth();
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -31,10 +35,13 @@ const Navbar: React.FC = () => {
       if (isSearchOpen && searchInputRef.current && !searchInputRef.current.contains(event.target as Node) && !(event.target as Element).closest('.search-toggle')) {
         setIsSearchOpen(false);
       }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isSearchOpen]);
+  }, [isSearchOpen, isProfileMenuOpen]);
 
   // Fetch real-time notifications
   useEffect(() => {
@@ -193,13 +200,41 @@ const Navbar: React.FC = () => {
           )} */}
 
           {/* Profile Menu */}
-          <button
-            className={`icon-btn profile-btn ${isActive('/profile')}`}
-            onClick={() => navigate('/profile')}
-            title="Meu Perfil"
-          >
-            <User size={20} />
-          </button>
+          {currentUser && (
+            <div className="profile-menu-container" ref={profileMenuRef}>
+              <button
+                className={`icon-btn profile-btn ${isActive('/profile') || isProfileMenuOpen ? 'active' : ''}`}
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                title="Menu do Usuário"
+              >
+                <User size={20} />
+              </button>
+
+              {isProfileMenuOpen && (
+                <div className="profile-dropdown">
+                  <div className="profile-dropdown-header">
+                    <strong>{userProfile?.name || currentUser.displayName || 'Usuário'}</strong>
+                    <span>{userProfile?.role || 'Pesquisador'}</span>
+                  </div>
+                  <div className="profile-dropdown-list">
+                    <button onClick={() => { setIsProfileMenuOpen(false); navigate('/profile'); }} className="profile-dropdown-item">
+                      <User size={16} /> Meu Perfil
+                    </button>
+                    <button onClick={() => { setIsProfileMenuOpen(false); navigate(`/lab/${currentUser.uid}/workspace`); }} className="profile-dropdown-item">
+                      <Layout size={16} /> Meu Workspace
+                    </button>
+                    <button onClick={() => { setIsProfileMenuOpen(false); navigate('/settings'); }} className="profile-dropdown-item">
+                      <Settings size={16} /> Configurações
+                    </button>
+                    <div className="profile-dropdown-divider"></div>
+                    <button onClick={async () => { setIsProfileMenuOpen(false); await logout(); navigate('/login'); }} className="profile-dropdown-item logout">
+                      <LogOut size={16} /> Sair
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Mobile Toggle */}
           <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
