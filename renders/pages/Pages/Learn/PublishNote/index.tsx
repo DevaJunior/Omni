@@ -1,5 +1,5 @@
 import { useToastStore } from '../../../../../src/stores/toastStore';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   ArrowLeft, Bold, Italic, List, Link as LinkIcon, Image, Send,
   Heading1, Heading2, Heading3, Quote, Highlighter, ListOrdered, FileText,

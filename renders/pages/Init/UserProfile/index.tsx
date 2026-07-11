@@ -90,14 +90,14 @@ const UserProfile: React.FC = () => {
         if (userDoc.exists()) {
           setUserData({ id: userDoc.id, ...userDoc.data() } as IUser);
         } else if (currentUser && targetId === currentUser.uid) {
-           // Fallback de segurança temporário se o doc do usuário logado acabou de ser criado e o Firestore ainda não indexou o read
-           setUserData({ 
-             id: currentUser.uid,
-             name: currentUser.displayName || "Usuário Recente", 
-             email: currentUser.email || "",
-             role: "Pesquisador",
-             avatar: currentUser.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200"
-           } as any);
+          // Fallback de segurança temporário se o doc do usuário logado acabou de ser criado e o Firestore ainda não indexou o read
+          setUserData({
+            id: currentUser.uid,
+            name: currentUser.displayName || "Usuário Recente",
+            email: currentUser.email || "",
+            role: "Pesquisador",
+            avatar: currentUser.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200"
+          } as any);
         }
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
@@ -180,10 +180,10 @@ const UserProfile: React.FC = () => {
             {isOwnProfile && (
               <label className="btn-edit-cover" style={{ cursor: 'pointer' }}>
                 <Edit3 size={16} /> {isUploading ? 'Atualizando...' : 'Editar Capa'}
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  style={{ display: 'none' }} 
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
                   onChange={(e) => {
                     if (e.target.files && e.target.files[0]) handleFileUpload(e.target.files[0], 'cover');
                   }}
@@ -200,16 +200,16 @@ const UserProfile: React.FC = () => {
               <div className="profile-avatar-wrapper" style={{ position: 'relative' }}>
                 <img src={userData.avatar || "https://ui-avatars.com/api/?name=" + (userData.name || "User")} alt={userData.name} className="profile-avatar" />
                 {isOwnProfile && (
-                  <label 
-                    className="btn-edit-avatar" 
+                  <label
+                    className="btn-edit-avatar"
                     style={{ position: 'absolute', bottom: '0', right: '0', background: '#5d5fef', color: '#fff', padding: '6px', borderRadius: '50%', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
                     title="Editar foto de perfil"
                   >
                     <Edit3 size={16} />
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      style={{ display: 'none' }} 
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
                       onChange={(e) => {
                         if (e.target.files && e.target.files[0]) handleFileUpload(e.target.files[0], 'avatar');
                       }}
@@ -281,16 +281,16 @@ const UserProfile: React.FC = () => {
                   <Activity size={18} /> Visão Geral
                 </button>
                 <button
-                  className={`tab-btn ${activeTab === 'projetos' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('projetos')}
-                >
-                  <Code2 size={18} /> Projetos
-                </button>
-                <button
                   className={`tab-btn ${activeTab === 'publicacoes' ? 'active' : ''}`}
                   onClick={() => setActiveTab('publicacoes')}
                 >
                   <BookOpen size={18} /> Publicações
+                </button>
+                <button
+                  className={`tab-btn ${activeTab === 'projetos' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('projetos')}
+                >
+                  <Code2 size={18} /> Projetos
                 </button>
                 <button
                   className={`tab-btn ${activeTab === 'colecoes' ? 'active' : ''}`}
@@ -389,24 +389,24 @@ const UserProfile: React.FC = () => {
                         ...userNotes.map(n => ({ ...n, type: 'note', sortDate: parseDateStr(n.date) })),
                         ...userDiscussions.map(d => ({ ...d, type: 'discussion', sortDate: parseDateStr(d.date) }))
                       ]
-                      .sort((a, b) => b.sortDate - a.sortDate)
-                      .map(pub => (
-                        <div key={`${pub.type}-${pub.id}`} className="content-card" style={{ marginBottom: '1rem', cursor: 'pointer' }} onClick={() => navigate(pub.type === 'note' ? `/learn/${pub.id}` : `/discussion/${pub.id}`)}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div>
-                              <h3 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{pub.type === 'note' ? pub.title : 'Discussão na Comunidade'}</h3>
-                              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{pub.date || pub.time}</p>
+                        .sort((a, b) => b.sortDate - a.sortDate)
+                        .map(pub => (
+                          <div key={`${pub.type}-${pub.id}`} className="content-card" style={{ marginBottom: '1rem', cursor: 'pointer' }} onClick={() => navigate(pub.type === 'note' ? `/learn/${pub.id}` : `/discussion/${pub.id}`)}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                              <div>
+                                <h3 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{pub.type === 'note' ? pub.title : 'Discussão na Comunidade'}</h3>
+                                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{pub.date || pub.time}</p>
+                              </div>
+                              <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>{pub.type === 'note' ? pub.subject || 'Artigo' : 'Discussão'}</span>
                             </div>
-                            <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>{pub.type === 'note' ? pub.subject || 'Artigo' : 'Discussão'}</span>
+                            <p style={{ marginTop: '1rem', color: 'var(--text-color)' }}>{pub.type === 'note' ? pub.excerpt : pub.content}</p>
+                            <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                              <span>❤️ {pub.likes || 0} Curtidas</span>
+                              {pub.type === 'discussion' && <span>💬 {pub.comments || 0} Comentários</span>}
+                              {pub.type === 'note' && <span>⏱️ {pub.readTime}</span>}
+                            </div>
                           </div>
-                          <p style={{ marginTop: '1rem', color: 'var(--text-color)' }}>{pub.type === 'note' ? pub.excerpt : pub.content}</p>
-                          <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                            <span>❤️ {pub.likes || 0} Curtidas</span>
-                            {pub.type === 'discussion' && <span>💬 {pub.comments || 0} Comentários</span>}
-                            {pub.type === 'note' && <span>⏱️ {pub.readTime}</span>}
-                          </div>
-                        </div>
-                      ))
+                        ))
                     ) : (
                       <div className="empty-state-card">
                         <BookOpen size={48} />
