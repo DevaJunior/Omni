@@ -269,6 +269,12 @@
   color: #8284fa;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  transition: var(--transition);
+}
+
+.cmmt-article-type:hover {
+  text-decoration: underline;
+  color: var(--primary);
 }
 
 .cmmt-article-status-open {
@@ -299,6 +305,11 @@
   margin-bottom: 1rem;
   line-height: 1.4;
   word-break: break-word;
+  transition: var(--transition);
+}
+
+.cmmt-article-title:hover {
+  color: var(--primary);
 }
 
 .cmmt-article-meta {

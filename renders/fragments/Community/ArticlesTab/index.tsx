@@ -182,7 +182,14 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
           {sortedArticles.map(article => (
             <article key={article.id} className="cmmt-article-card">
               <div className="cmmt-article-header-top">
-                <span className="cmmt-article-type"><BookOpen size={16} /> Publicação Científica</span>
+                <span 
+                  className="cmmt-article-type"
+                  onClick={() => navigate('/learn')}
+                  style={{ cursor: 'pointer' }}
+                  title="Ir para trilhas de aprendizado"
+                >
+                  <BookOpen size={16} /> Publicação Científica
+                </span>
                 {article.isFree ? (
                   <span className="cmmt-article-status-open">Open Access</span>
                 ) : (
@@ -190,7 +197,14 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
                 )}
               </div>
 
-              <h3 className="cmmt-article-title">{article.title}</h3>
+              <h3 
+                className="cmmt-article-title"
+                onClick={() => handleViewArticle(article.id)}
+                style={{ cursor: 'pointer' }}
+                title="Ler artigo"
+              >
+                {article.title}
+              </h3>
 
               <div className="cmmt-article-meta">
                 <span><Users size={16} /> {article.authors}</span>
