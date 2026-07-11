@@ -64,7 +64,7 @@ const UserProfile: React.FC = () => {
         const pData = pSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
         setUserProjects(pData);
 
-        const nQuery = query(collection(db, "studyNotes"), where("authorId", "==", userData.id));
+        const nQuery = query(collection(db, "notes"), where("authorId", "==", userData.id));
         const nSnap = await getDocs(nQuery);
         const nData = nSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
         setUserNotes(nData.sort((a: { date: string }, b: { date: string }) => parseDateStr(b.date) - parseDateStr(a.date)));
@@ -331,25 +331,25 @@ const UserProfile: React.FC = () => {
                             ...userNotes.map(n => ({ ...n, type: 'note', sortDate: parseDateStr(n.date) }))
                           ].sort((a, b) => b.sortDate - a.sortDate);
 
-                          if (allActivities.length > 0) {
-                            return allActivities.slice(0, 3).map(act => (
-                              <div key={`${act.type}-${act.id}`} className="activity-item" onClick={() => navigate(act.type === 'discussion' ? `/discussion/${act.id}` : `/learn/note/${act.id}`)} style={{ cursor: 'pointer' }}>
-                                <div className="activity-icon blue"><MessageSquare size={16} /></div>
+                          return (
+                            <>
+                              {allActivities.map(act => (
+                                <div key={`${act.type}-${act.id}`} className="activity-item" onClick={() => navigate(act.type === 'discussion' ? `/discussion/${act.id}` : `/learn/note/${act.id}`)} style={{ cursor: 'pointer' }}>
+                                  <div className={`activity-icon ${act.type === 'note' ? 'green' : 'blue'}`}><MessageSquare size={16} /></div>
+                                  <div className="activity-details">
+                                    <p>Publicou um{act.type === 'note' ? 'a nota de estudo' : 'a discussão'}: <strong>{act.title ? act.title.substring(0, 50) : (act.content ? act.content.substring(0, 50) : '')}...</strong></p>
+                                    <span className="activity-time">{act.date || act.time}</span>
+                                  </div>
+                                </div>
+                              ))}
+                              <div className="activity-item">
+                                <div className="activity-icon blue"><Terminal size={16} /></div>
                                 <div className="activity-details">
-                                  <p>Publicou um{act.type === 'note' ? 'a nota de estudo' : 'a discussão'}: <strong>{act.title ? act.title.substring(0, 50) : (act.content ? act.content.substring(0, 50) : '')}...</strong></p>
-                                  <span className="activity-time">{act.date || act.time}</span>
+                                  <p>{userData.name} entrou na plataforma Omni.</p>
+                                  <span className="activity-time">{(userData as any).createdAt || 'Recente'}</span>
                                 </div>
                               </div>
-                            ));
-                          }
-                          return (
-                            <div className="activity-item">
-                              <div className="activity-icon blue"><Terminal size={16} /></div>
-                              <div className="activity-details">
-                                <p>Realizou login na plataforma Omni.</p>
-                                <span className="activity-time">Recente</span>
-                              </div>
-                            </div>
+                            </>
                           );
                         })()}
                       </div>
