@@ -21,6 +21,7 @@ import Community from './../renders/pages/Pages/Community/Community';
 import ArticleDetail from './../renders/pages/Pages/Community/ArticleDetail';
 import ProjectDetail from './../renders/pages/Pages/Community/ProjectDetail';
 import DiscussionDetail from './../renders/pages/Pages/Community/DiscussionDetail';
+import PublishArticle from './../renders/pages/Pages/Community/PublishArticle';
 
 // Ecossistema do Laboratório
 import Lab from './../renders/pages/Pages/Lab/Lab';
@@ -78,6 +79,7 @@ const App: React.FC = () => {
 
                   {/* Detalhes da Comunidade */}
                   <Route path="/article/:id" element={<ProtectedRoute><ArticleDetail /></ProtectedRoute>} />
+                  <Route path="/publish-article" element={<ProtectedRoute><PublishArticle /></ProtectedRoute>} />
                   <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
                   <Route path="/discussion/:id" element={<ProtectedRoute><DiscussionDetail /></ProtectedRoute>} />
 

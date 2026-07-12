@@ -57,7 +57,7 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
       } else {
         setArticlesList(response.data as any);
       }
-      
+
       setLastVisible(response.lastDoc);
       setHasMore(response.data.length === 6 && response.lastDoc !== null);
     } catch (error) {
@@ -88,7 +88,7 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
     .sort((a, b) => {
       // Se há busca ativa, prioriza pelo match (Title > Desc > Tag)
       if (searchQuery) return b._searchScore - a._searchScore;
-      
+
       // Senão usa a aba selecionada
       if (sortBy === 'impact') return b.impactFactor - a.impactFactor;
       if (sortBy === 'likes') return b.likes - a.likes;
@@ -105,17 +105,18 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
 
   if (sortedArticles.length === 0 && searchQuery !== '') {
     return (
-      <EmptyStateSearch 
-        searchQuery={searchQuery} 
-        onClear={onClear || (() => {})} 
+      <EmptyStateSearch
+        searchQuery={searchQuery}
+        onClear={onClear || (() => { })}
         showTabSuggestion={true}
-        suggestions={['Lógica P-Fuzzy', 'Rizofiltração', 'Vacinas', 'Modelagem']} 
+        suggestions={['Lógica P-Fuzzy', 'Rizofiltração', 'Vacinas', 'Modelagem']}
       />
     );
   }
 
   return (
     <div className="cmmt-articles-wrapper">
+
 
       <section className="cmmt-featured-section">
         <div className="cmmt-section-header">
@@ -152,7 +153,7 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
 
       <section className="cmmt-technical-list-section">
         <div className="cmmt-list-controls">
-          <h3>Acervo de Pesquisas</h3>
+          <h3>Artigos</h3>
 
           <div className="cmmt-filter-tabs-container">
             <div className="cmmt-filter-tabs">
@@ -182,7 +183,7 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
           {sortedArticles.map(article => (
             <article key={article.id} className="cmmt-article-card">
               <div className="cmmt-article-header-top">
-                <span 
+                <span
                   className="cmmt-article-type"
                   onClick={() => navigate('/learn')}
                   style={{ cursor: 'pointer' }}
@@ -197,7 +198,7 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
                 )}
               </div>
 
-              <h3 
+              <h3
                 className="cmmt-article-title"
                 onClick={() => handleViewArticle(article.id)}
                 style={{ cursor: 'pointer' }}
@@ -246,10 +247,10 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
             </article>
           ))}
         </div>
-        
+
         {hasMore && !searchQuery && (
-          <button 
-            className="btn-primary" 
+          <button
+            className="btn-primary"
             onClick={() => fetchArticles(true)}
             disabled={loadingMore}
             style={{ width: '100%', padding: '12px', marginTop: '16px', display: 'flex', justifyContent: 'center' }}

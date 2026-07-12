@@ -36,6 +36,12 @@ export const communityService = {
     return null;
   },
 
+  async createArticle(articleData: Omit<Article, 'id'>): Promise<string> {
+    const docRef = doc(collection(db, FIREBASE_ROUTES.ARTICLES));
+    await setDoc(docRef, articleData);
+    return docRef.id;
+  },
+
   // Projetos
   async getProjects(): Promise<Project[]> {
     const querySnapshot = await getDocs(collection(db, FIREBASE_ROUTES.PROJECTS));

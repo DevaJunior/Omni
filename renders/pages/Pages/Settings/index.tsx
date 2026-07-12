@@ -8,7 +8,6 @@ import {
   Palette,
   LogOut,
   ChevronRight,
-  ArrowLeft,
   Camera
 } from 'lucide-react';
 
@@ -189,44 +188,38 @@ const Settings: React.FC = () => {
             <h2 className="section-title">Conta e Segurança</h2>
             <p className="section-description">Configure suas credenciais e proteja seu acesso.</p>
 
-            <div className="settings-card-sub" style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
-              <div className="form-group" style={{ marginBottom: '8px' }}>
-                <label style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold' }}>Endereço de E-mail</label>
-                <div className="input-with-badge" style={{ position: 'relative', marginTop: '12px' }}>
+            <div className="settings-card-sub">
+              <div className="form-group mb-0">
+                <label className="settings-label">Endereço de E-mail</label>
+                <div className="input-with-badge mt-12">
                   <input
                     type="email"
-                    className="form-control"
+                    className="form-control form-control-disabled"
                     disabled
                     value={currentUser?.email || 'contatodevairjunior@gmail.com'}
-                    style={{ background: '#ffffff', width: '100%', paddingRight: '100px', cursor: 'not-allowed', color: '#334155' }}
                   />
-                  <span className="verified-badge" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: '#ecfdf5', color: '#059669', padding: '4px 12px', borderRadius: '16px', fontSize: '0.75rem', fontWeight: '600' }}>Verificado</span>
+                  <span className="verified-badge">Verificado</span>
                 </div>
-                <p className="section-description" style={{ fontSize: '0.8rem', marginTop: '12px', marginBottom: 0 }}>
+                <p className="section-description mt-12 mb-0">
                   O e-mail não pode ser alterado pois está vinculado ao Google Auth.
                 </p>
               </div>
             </div>
 
-            <div className="settings-card-sub" style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="settings-card-sub flex-between">
               <div className="security-info">
-                <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Autenticação em Duas Etapas</h4>
-                <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Adicione uma camada extra de segurança à sua conta.</p>
+                <h4>Autenticação em Duas Etapas</h4>
+                <p>Adicione uma camada extra de segurança à sua conta.</p>
               </div>
-              <button 
-                className="btn-secondary" 
-                style={{ background: '#ffffff', border: '1px solid #e2e8f0', color: '#0f172a', padding: '8px 20px', borderRadius: '8px', fontWeight: '500' }}
-              >
-                Configurar
-              </button>
+              <button className="btn-secondary">Configurar</button>
             </div>
 
-            <div className="settings-card-sub danger-zone" style={{ background: '#fef2f2', padding: '20px', borderRadius: '12px', border: '1px solid #fecaca', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="settings-card-sub danger-zone flex-between">
               <div className="security-info">
-                <h4 style={{ fontSize: '1rem', color: '#b91c1c', fontWeight: 'bold', marginBottom: '4px' }}>Desativar Conta</h4>
-                <p style={{ color: '#ef4444', fontSize: '0.9rem', margin: 0 }}>Isso tornará seu perfil privado e ocultará sua atividade.</p>
+                <h4 className="danger-text">Desativar Conta</h4>
+                <p className="danger-text-muted">Isso tornará seu perfil privado e ocultará sua atividade.</p>
               </div>
-              <button className="btn-danger" style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '8px', fontWeight: '500' }}>Desativar</button>
+              <button className="btn-danger">Desativar</button>
             </div>
           </div>
         );
@@ -237,37 +230,46 @@ const Settings: React.FC = () => {
             <h2 className="section-title">Notificações</h2>
             <p className="section-description">Controle como e quando você recebe alertas da plataforma Omni.</p>
             
-            <div className="settings-card-sub" style={{ background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
+            <div className="settings-card-sub overflow-hidden no-padding">
+              <div className="form-group-toggle">
                 <div>
-                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Notificações de E-mail</h4>
-                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Receber um resumo de mensagens e convites por e-mail.</p>
+                  <h4>Notificações de E-mail</h4>
+                  <p className="section-description mb-0">Receber um resumo de mensagens e convites por e-mail.</p>
                 </div>
-                <input type="checkbox" defaultChecked style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
+                <label className="custom-toggle">
+                  <input type="checkbox" defaultChecked />
+                  <span className="toggle-mark"></span>
+                </label>
               </div>
               
-              <hr style={{ margin: '0', borderColor: '#e2e8f0', borderTop: 'none' }} />
+              <hr className="settings-divider" />
               
-              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
+              <div className="form-group-toggle">
                 <div>
-                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Push Notifications</h4>
-                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Receber notificações no navegador para mensagens instantâneas.</p>
+                  <h4>Push Notifications</h4>
+                  <p className="section-description mb-0">Receber notificações no navegador para mensagens instantâneas.</p>
                 </div>
-                <input type="checkbox" defaultChecked style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
+                <label className="custom-toggle">
+                  <input type="checkbox" defaultChecked />
+                  <span className="toggle-mark"></span>
+                </label>
               </div>
 
-              <hr style={{ margin: '0', borderColor: '#e2e8f0', borderTop: 'none' }} />
+              <hr className="settings-divider" />
               
-              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
+              <div className="form-group-toggle">
                 <div>
-                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Newsletter Semanal</h4>
-                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Resumo de novas oportunidades e tópicos em alta da comunidade.</p>
+                  <h4>Newsletter Semanal</h4>
+                  <p className="section-description mb-0">Resumo de novas oportunidades e tópicos em alta da comunidade.</p>
                 </div>
-                <input type="checkbox" style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
+                <label className="custom-toggle">
+                  <input type="checkbox" />
+                  <span className="toggle-mark"></span>
+                </label>
               </div>
             </div>
             
-            <button className="save-button" style={{ marginTop: '24px', background: '#6366f1', width: 'auto', padding: '12px 24px', borderRadius: '8px' }}>Salvar Preferências</button>
+            <button className="save-button mt-24">Salvar Preferências</button>
           </div>
         );
 
@@ -277,37 +279,46 @@ const Settings: React.FC = () => {
             <h2 className="section-title">Privacidade</h2>
             <p className="section-description">Gerencie a visibilidade dos seus dados e atividades.</p>
             
-            <div className="settings-card-sub" style={{ background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
+            <div className="settings-card-sub overflow-hidden no-padding">
+              <div className="form-group-toggle">
                 <div>
-                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Perfil Público</h4>
-                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Permitir que usuários não logados encontrem seu perfil.</p>
+                  <h4>Perfil Público</h4>
+                  <p className="section-description mb-0">Permitir que usuários não logados encontrem seu perfil.</p>
                 </div>
-                <input type="checkbox" defaultChecked style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
+                <label className="custom-toggle">
+                  <input type="checkbox" defaultChecked />
+                  <span className="toggle-mark"></span>
+                </label>
               </div>
               
-              <hr style={{ margin: '0', borderColor: '#e2e8f0', borderTop: 'none' }} />
+              <hr className="settings-divider" />
               
-              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
+              <div className="form-group-toggle">
                 <div>
-                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Mostrar E-mail</h4>
-                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Exibir seu endereço de e-mail na página de perfil público.</p>
+                  <h4>Mostrar E-mail</h4>
+                  <p className="section-description mb-0">Exibir seu endereço de e-mail na página de perfil público.</p>
                 </div>
-                <input type="checkbox" defaultChecked style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
+                <label className="custom-toggle">
+                  <input type="checkbox" defaultChecked />
+                  <span className="toggle-mark"></span>
+                </label>
               </div>
 
-              <hr style={{ margin: '0', borderColor: '#e2e8f0', borderTop: 'none' }} />
+              <hr className="settings-divider" />
               
-              <div className="form-group-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
+              <div className="form-group-toggle">
                 <div>
-                  <h4 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '4px' }}>Mostrar Inventário do Lab</h4>
-                  <p className="section-description" style={{ fontSize: '0.9rem', margin: 0 }}>Permitir que membros de outros laboratórios vejam seu inventário público.</p>
+                  <h4>Mostrar Inventário do Lab</h4>
+                  <p className="section-description mb-0">Permitir que membros de outros laboratórios vejam seu inventário público.</p>
                 </div>
-                <input type="checkbox" style={{ width: '20px', height: '20px', cursor: 'pointer' }} />
+                <label className="custom-toggle">
+                  <input type="checkbox" />
+                  <span className="toggle-mark"></span>
+                </label>
               </div>
             </div>
             
-            <button className="save-button" style={{ marginTop: '24px', background: '#6366f1', width: 'auto', padding: '12px 24px', borderRadius: '8px' }}>Atualizar Privacidade</button>
+            <button className="save-button mt-24">Atualizar Privacidade</button>
           </div>
         );
 
@@ -317,30 +328,33 @@ const Settings: React.FC = () => {
             <h2 className="section-title">Aparência</h2>
             <p className="section-description">Personalize a experiência visual da plataforma.</p>
             
-            <div className="settings-card-sub" style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-              <div className="form-group" style={{ marginBottom: 0 }}>
-                <label style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 'bold', marginBottom: '16px', display: 'block' }}>Tema da Interface</label>
+            <div className="settings-card-sub">
+              <div className="form-group mb-0">
+                <label className="settings-label theme-label">Tema da Interface</label>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                    <input type="radio" name="theme" value="light" defaultChecked style={{ width: '18px', height: '18px' }} />
-                    <span style={{ fontSize: '0.95rem', color: '#334155' }}>Modo Claro</span>
+                <div className="radio-group">
+                  <label className="custom-radio-container">
+                    <input type="radio" name="theme" value="light" defaultChecked />
+                    <span className="radio-mark"></span>
+                    <span className="radio-label">Modo Claro</span>
                   </label>
                   
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                    <input type="radio" name="theme" value="dark" disabled style={{ width: '18px', height: '18px' }} />
-                    <span style={{ fontSize: '0.95rem', color: '#94a3b8' }}>Modo Escuro (Em breve)</span>
+                  <label className="custom-radio-container">
+                    <input type="radio" name="theme" value="dark" disabled />
+                    <span className="radio-mark"></span>
+                    <span className="radio-label disabled">Modo Escuro (Em breve)</span>
                   </label>
                   
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                    <input type="radio" name="theme" value="system" style={{ width: '18px', height: '18px' }} />
-                    <span style={{ fontSize: '0.95rem', color: '#334155' }}>Usar Padrão do Sistema</span>
+                  <label className="custom-radio-container">
+                    <input type="radio" name="theme" value="system" />
+                    <span className="radio-mark"></span>
+                    <span className="radio-label">Usar Padrão do Sistema</span>
                   </label>
                 </div>
               </div>
             </div>
             
-            <button className="save-button" style={{ marginTop: '24px', background: '#6366f1', width: 'auto', padding: '12px 24px', borderRadius: '8px' }}>Aplicar Tema</button>
+            <button className="save-button mt-24">Aplicar Tema</button>
           </div>
         );
 
@@ -357,10 +371,6 @@ const Settings: React.FC = () => {
   return (
     <div className="settings-container">
       <div className="settings-header">
-        <div className="back-link" onClick={() => navigate(-1)}>
-          <ArrowLeft size={18} />
-          Voltar
-        </div>
         <h1>Configurações</h1>
       </div>
 
@@ -372,7 +382,7 @@ const Settings: React.FC = () => {
           >
             <span className="sidebar-icon"><User size={20} /></span>
             Perfil Público
-            {activeSection === 'profile' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
+            {activeSection === 'profile' && <ChevronRight size={16} className="chevron-indicator" />}
           </button>
 
           <button
@@ -381,7 +391,7 @@ const Settings: React.FC = () => {
           >
             <span className="sidebar-icon"><Lock size={20} /></span>
             Conta e Segurança
-            {activeSection === 'security' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
+            {activeSection === 'security' && <ChevronRight size={16} className="chevron-indicator" />}
           </button>
 
           <button
@@ -390,7 +400,7 @@ const Settings: React.FC = () => {
           >
             <span className="sidebar-icon"><Bell size={20} /></span>
             Notificações
-            {activeSection === 'notifications' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
+            {activeSection === 'notifications' && <ChevronRight size={16} className="chevron-indicator" />}
           </button>
 
           <button
@@ -399,7 +409,7 @@ const Settings: React.FC = () => {
           >
             <span className="sidebar-icon"><Shield size={20} /></span>
             Privacidade
-            {activeSection === 'privacy' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
+            {activeSection === 'privacy' && <ChevronRight size={16} className="chevron-indicator" />}
           </button>
 
           <button
@@ -408,7 +418,7 @@ const Settings: React.FC = () => {
           >
             <span className="sidebar-icon"><Palette size={20} /></span>
             Aparência
-            {activeSection === 'appearance' && <ChevronRight size={16} className="chevron-indicator" style={{ marginLeft: 'auto' }} />}
+            {activeSection === 'appearance' && <ChevronRight size={16} className="chevron-indicator" />}
           </button>
 
           <div className="sidebar-divider"></div>
