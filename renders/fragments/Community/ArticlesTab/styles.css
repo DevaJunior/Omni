@@ -165,9 +165,9 @@
    SEÇÃO 2: LISTA TÉCNICA (ARTIGOS & FILTROS)
 ========================================= */
 
-.cmmt-technical-list-section {
-  border: solid 1px red;
-}
+.cmmt-featured-section {}
+
+.cmmt-technical-list-section {}
 
 
 .cmmt-list-controls {
