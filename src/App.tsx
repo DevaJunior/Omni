@@ -22,6 +22,7 @@ import ArticleDetail from './../renders/pages/Pages/Community/ArticleDetail';
 import ProjectDetail from './../renders/pages/Pages/Community/ProjectDetail';
 import DiscussionDetail from './../renders/pages/Pages/Community/DiscussionDetail';
 import PublishArticle from './../renders/pages/Pages/Community/PublishArticle';
+import Articles from './../renders/pages/Pages/Articles';
 
 // Ecossistema do Laboratório
 import Lab from './../renders/pages/Pages/Lab/Lab';
@@ -82,6 +83,7 @@ const App: React.FC = () => {
                   <Route path="/publish-article" element={<ProtectedRoute><PublishArticle /></ProtectedRoute>} />
                   <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
                   <Route path="/discussion/:id" element={<ProtectedRoute><DiscussionDetail /></ProtectedRoute>} />
+                  <Route path="/articles" element={<ProtectedRoute><Articles /></ProtectedRoute>} />
 
                   {/* Ecossistema Lab e Ferramentas */}
                   <Route path="/lab" element={<ProtectedRoute><Lab /></ProtectedRoute>} />

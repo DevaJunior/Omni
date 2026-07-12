@@ -153,7 +153,15 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
 
       <section className="cmmt-technical-list-section">
         <div className="cmmt-list-controls">
-          <h3>Artigos</h3>
+          <h3 
+            onClick={() => navigate('/articles')} 
+            style={{ cursor: 'pointer', transition: 'color 0.2s ease' }}
+            title="Acessar Acervo de Artigos"
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-color)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-main)'}
+          >
+            Artigos
+          </h3>
 
           <div className="cmmt-filter-tabs-container">
             <div className="cmmt-filter-tabs">
