@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info, Settings, LogOut, Layout, FileText } from 'lucide-react';
+import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info, Settings, LogOut, FileText } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { notificationService, type NotificationData } from '../../../src/services/notificationService';
 import './styles.css';
@@ -206,7 +206,7 @@ const Navbar: React.FC = () => {
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                 title="Menu do Usuário"
               >
-                <User size={20} />
+                <Menu size={20} />
               </button>
 
               {isProfileMenuOpen && (
@@ -221,9 +221,6 @@ const Navbar: React.FC = () => {
                     </button>
                     <button onClick={() => { setIsProfileMenuOpen(false); navigate('/lab'); }} className="profile-dropdown-item">
                       <Beaker size={16} /> Workbench
-                    </button>
-                    <button onClick={() => { setIsProfileMenuOpen(false); navigate(`/lab/${currentUser.uid}/workspace`); }} className="profile-dropdown-item">
-                      <Layout size={16} /> Meu Workspace
                     </button>
                     <button onClick={() => { setIsProfileMenuOpen(false); navigate('/settings'); }} className="profile-dropdown-item">
                       <Settings size={16} /> Configurações

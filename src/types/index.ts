@@ -19,4 +19,9 @@ export interface IUser {
     role: string;
     name?: string;
   };
+  labs?: {
+    id: string;
+    name: string;
+    role: string;
+  }[];
 }

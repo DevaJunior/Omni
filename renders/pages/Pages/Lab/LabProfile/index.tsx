@@ -31,7 +31,7 @@ const LabProfile: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'publicacoes' | 'oportunidades' | 'equipe_publica'>('publicacoes');
-  
+
   const { userProfile } = useAuth();
   const [labData, setLabData] = useState<any>(null);
   const [projects, setProjects] = useState<any[]>([]);
@@ -51,14 +51,14 @@ const LabProfile: React.FC = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    
+
     const fetchLabAndRequests = async () => {
       setLoading(true);
       try {
         if (!id) return;
         const labRef = doc(db, 'labs', id);
         const labSnap = await getDoc(labRef);
-        
+
         if (labSnap.exists()) {
           setLabData({ id: labSnap.id, ...labSnap.data() });
 
@@ -67,12 +67,12 @@ const LabProfile: React.FC = () => {
           const pSnap = await getDocs(pQuery);
           const pData = pSnap.docs.map(d => ({ id: d.id, ...d.data() }));
           setProjects(pData);
-          
+
           // Buscar número de membros reais
           const mQuery = query(collection(db, 'users'), where('lab.id', '==', id));
           const mSnap = await getDocs(mQuery);
           let memCount = mSnap.docs.length;
-          
+
           // Garantir que o admin conta
           const mems = mSnap.docs.map(d => ({ id: d.id }));
           if (labSnap.data().adminId && !mems.some(m => m.id === labSnap.data().adminId)) {
@@ -162,7 +162,7 @@ const LabProfile: React.FC = () => {
     return (
       <div className="lab-profile-page" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', gap: '1rem' }}>
         <h2>Laboratório não encontrado</h2>
-        <button className="cmmt-btn-primary" onClick={() => navigate('/lab')}>Voltar para Comunidade</button>
+        <button className="cmmt-btn-primary" onClick={() => navigate(-1)}>Voltar para Comunidade</button>
       </div>
     );
   }
@@ -172,7 +172,7 @@ const LabProfile: React.FC = () => {
       <div className="lab-profile-page">
         <div className="lab-profile-container">
 
-          <button className="tool-btn-back" onClick={() => navigate('/lab')}>
+          <button className="tool-btn-back" onClick={() => navigate(-1)}>
             <ArrowLeft size={18} />
             Voltar para Comunidade
           </button>
@@ -202,8 +202,8 @@ const LabProfile: React.FC = () => {
                   </div>
 
                   <div className="lab-action-buttons">
-                    <button 
-                      className={`lab-btn-outline ${isFollowing ? 'following' : ''}`} 
+                    <button
+                      className={`lab-btn-outline ${isFollowing ? 'following' : ''}`}
                       onClick={handleFollowToggle}
                       disabled={isFollowLoading}
                       style={isFollowing ? { backgroundColor: '#f1f5f9', color: '#0f172a', borderColor: '#cbd5e1' } : {}}
@@ -256,7 +256,7 @@ const LabProfile: React.FC = () => {
                     <Briefcase size={16} /> Oportunidades
                   </button>
                 </div>
-                
+
                 <div className="lab-tabs-right">
                   <button
                     className={activeTab === 'equipe_publica' ? 'active' : ''}
@@ -323,7 +323,7 @@ const LabProfile: React.FC = () => {
 
                       <h3 className="lab-pub-title">{proj.title}</h3>
                       <p className="lab-pub-authors">Coordenador: {proj.coordinator}</p>
-                      
+
                       {proj.grant && (
                         <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>
                           <strong>Bolsa:</strong> {proj.grant}
@@ -331,7 +331,7 @@ const LabProfile: React.FC = () => {
                       )}
 
                       <div className="lab-pub-meta-clean">
-                        <strong><MapPin size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }}/> {proj.location}</strong>
+                        <strong><MapPin size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} /> {proj.location}</strong>
                         <span><Calendar size={14} /> Fechamento: {proj.deadline}</span>
                       </div>
 
@@ -352,7 +352,7 @@ const LabProfile: React.FC = () => {
                   )}
                 </div>
               )}
-              
+
               {activeTab === 'equipe_publica' && <LabTeamTab mode="public" labId={labData.id} />}
             </div>
 
@@ -370,7 +370,7 @@ const LabProfile: React.FC = () => {
                   <p>
                     Acesse as ferramentas internas do laboratório, cadernos, gestão e LIMS.
                   </p>
-                  <button 
+                  <button
                     className="researcher-space-btn"
                     onClick={() => navigate(`/lab/${labData.id}/workspace`)}
                   >

@@ -113,7 +113,7 @@ const Home: React.FC = () => {
 
             <p>
               A Omni é sua suíte completa de ferramentas para análise de dados,
-              colaboração e gerenciamento de experimentos, construída para especialistas e pesquisadores.
+              colaboração e gerenciamento de experimentos, construída para estudiosos e pesquisadores.
             </p>
             <button className="cta-button" onClick={() => navigate('/lab/pfuzzy-rizofiltracao')}>
               COMEÇAR ANÁLISE <ArrowRight size={18} />

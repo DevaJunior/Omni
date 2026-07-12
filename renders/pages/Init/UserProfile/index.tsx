@@ -14,7 +14,16 @@ import {
   Activity,
   ArrowLeft,
   Bookmark,
-  MessageSquare
+  MessageSquare,
+  Beaker,
+  Building2,
+  Lock,
+  Plus,
+  Users,
+  ArrowRight,
+  MoreVertical,
+  X,
+  Link as LinkIcon
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -41,6 +50,10 @@ const UserProfile: React.FC = () => {
   const [userProjects, setUserProjects] = useState<any[]>([]);
   const [userNotes, setUserNotes] = useState<any[]>([]);
   const [userBookmarks, setUserBookmarks] = useState<IBookmark[]>([]);
+  
+  const [isSpaceModalOpen, setIsSpaceModalOpen] = useState(false);
+  const [spaceFilter, setSpaceFilter] = useState<'all' | 'colab'>('all');
+  const [selectedSpaceType, setSelectedSpaceType] = useState<'lab' | 'personal'>('lab');
 
   const parseDateStr = (d: any) => {
     if (!d) return 0;
@@ -327,6 +340,104 @@ const UserProfile: React.FC = () => {
                       <p className="profile-bio-text">{userData.bio || "Este usuário ainda não escreveu uma bio."}</p>
                     </div>
 
+                    <div className="spaces-section-header mt-4">
+                      <div className="spaces-title-area">
+                        <h3>Meus Espaços</h3>
+                        <p>Laboratórios, projetos colaborativos e áreas privadas.</p>
+                      </div>
+                      <div className="spaces-filter">
+                        <button className={spaceFilter === 'all' ? 'active' : ''} onClick={() => setSpaceFilter('all')}>Todos (3)</button>
+                        <button className={spaceFilter === 'colab' ? 'active' : ''} onClick={() => setSpaceFilter('colab')}>Colaborativos</button>
+                      </div>
+                    </div>
+
+                    <div className="spaces-grid mb-4" style={{ marginBottom: '2rem' }}>
+                      {/* Card 1: Phyton Research */}
+                      <div className="space-card highlight">
+                        <div className="space-card-header">
+                          <div className="space-icon-group">
+                            <div className="space-icon-wrapper">
+                              <Beaker size={24} />
+                            </div>
+                            <div className="space-info">
+                              <h4>Phyton Research</h4>
+                              <p>Laboratório Titular</p>
+                            </div>
+                          </div>
+                          <button className="space-options-btn"><MoreVertical size={20} /></button>
+                        </div>
+                        <div className="space-card-footer">
+                          <div>
+                            <span className="space-role-label">PAPEL</span>
+                            <span className="space-role-value">Administrador</span>
+                          </div>
+                          <div className="space-actions">
+                            <div className="space-members-group">
+                              <img src="https://i.pravatar.cc/150?img=32" alt="Membro" className="space-member-avatar" />
+                              <img src="https://i.pravatar.cc/150?img=12" alt="Membro" className="space-member-avatar" />
+                              <div className="space-member-count">+3</div>
+                            </div>
+                            <button className="btn-open-space primary" onClick={() => navigate('/lab/phyton')}><ArrowRight size={18} /></button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card 2: Workspace Pessoal */}
+                      <div className="space-card">
+                        <div className="space-card-header">
+                          <div className="space-icon-group">
+                            <div className="space-icon-wrapper">
+                              <Lock size={24} />
+                            </div>
+                            <div className="space-info">
+                              <h4>Workspace Pessoal</h4>
+                              <p>Rascunhos & Dados Privados</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-card-footer">
+                          <div>
+                            <span className="space-role-label">ACESSO</span>
+                            <div className="space-access-value"><div className="space-access-dot"></div>Privado</div>
+                          </div>
+                          <button className="btn-open-space" onClick={() => navigate(`/lab/${currentUser?.uid}/workspace`)}>Abrir</button>
+                        </div>
+                      </div>
+
+                      {/* Card 3: Biotecnologia UFAL */}
+                      <div className="space-card">
+                        <div className="space-card-header">
+                          <div className="space-icon-group">
+                            <div className="space-icon-wrapper">
+                              <Building2 size={24} />
+                            </div>
+                            <div className="space-info">
+                              <h4>Biotecnologia UFAL</h4>
+                              <p>Universidade Federal</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-card-footer">
+                          <div>
+                            <span className="space-role-label">PAPEL</span>
+                            <span className="space-role-value">Pesquisador Associado</span>
+                          </div>
+                          <div className="space-actions">
+                            <div className="space-members-text">
+                              <Users size={14} /> 14
+                            </div>
+                            <button className="btn-open-space" onClick={() => navigate('/lab/ufal')}>Abrir</button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card 4: Novo Espaço */}
+                      <div className="space-card new-space" onClick={() => setIsSpaceModalOpen(true)}>
+                        <Plus size={32} className="new-space-icon" />
+                        <span className="new-space-text">Novo Espaço</span>
+                      </div>
+                    </div>
+
                     <div className="content-card mt-4">
                       <h3 className="card-section-title">Atividade Recente</h3>
                       <div className="activity-feed">
@@ -473,6 +584,68 @@ const UserProfile: React.FC = () => {
         </div>
       </div>
       <Footer />
+
+      {/* MODAL DE NOVO ESPAÇO */}
+      {isSpaceModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsSpaceModalOpen(false)}>
+          <div className="modal-container" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <Building2 className="modal-header-bg" size={160} color="#e2e8f0" style={{ right: '-20px', top: '-20px' }} />
+              <h2>Adicionar Novo Espaço</h2>
+              <p>Escolha que tipo de ambiente você deseja configurar.</p>
+              <button className="btn-close-modal" onClick={() => setIsSpaceModalOpen(false)}><X size={18} /></button>
+            </div>
+            
+            <div className="modal-body">
+              <div 
+                className={`space-option ${selectedSpaceType === 'lab' ? 'selected' : ''}`}
+                onClick={() => setSelectedSpaceType('lab')}
+              >
+                <div className={`space-option-icon ${selectedSpaceType === 'lab' ? 'purple' : 'gray'}`}>
+                  <Users size={24} />
+                </div>
+                <div className="space-option-content">
+                  <h4>Laboratório ou Grupo de Pesquisa</h4>
+                  <p>Crie um espaço colaborativo para gerenciar membros, permissões, inventário (LIMS) e projetos conjuntos.</p>
+                </div>
+                <div className="space-option-radio"></div>
+              </div>
+
+              <div 
+                className={`space-option ${selectedSpaceType === 'personal' ? 'selected' : ''}`}
+                onClick={() => setSelectedSpaceType('personal')}
+              >
+                <div className={`space-option-icon ${selectedSpaceType === 'personal' ? 'purple' : 'gray'}`}>
+                  <Lock size={24} />
+                </div>
+                <div className="space-option-content">
+                  <h4>Workspace Pessoal (Privado)</h4>
+                  <p>Área restrita exclusiva para suas notas, drafts de artigos, análises em andamento e dados sensíveis.</p>
+                </div>
+                <div className="space-option-radio"></div>
+              </div>
+
+              <div className="modal-divider">OU JUNTE-SE A UM EXISTENTE</div>
+
+              <div className="join-space-form">
+                <div className="join-input-wrapper">
+                  <LinkIcon size={18} className="join-input-icon" />
+                  <input type="text" className="join-input" placeholder="Cole o Link de Convite ou Código do Lab..." />
+                </div>
+                <button className="btn-join">Solicitar Entrada</button>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <p className="modal-footer-text">Você poderá alterar as configurações do espaço posteriormente.</p>
+              <div className="modal-actions">
+                <button className="btn-cancel" onClick={() => setIsSpaceModalOpen(false)}>Cancelar</button>
+                <button className="btn-continue">Continuar <ArrowRight size={16} /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
