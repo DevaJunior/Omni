@@ -22,6 +22,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../../../src/config/firebaseConfig';
 import Footer from '../../../menus/Footer';
 import { useAuth } from '../../../../src/contexts/AuthContext';
+import { bookmarkService, type IBookmark } from '../../../../src/services/bookmarkService';
 import type { IUser } from '../../../../src/types';
 
 
@@ -39,6 +40,7 @@ const UserProfile: React.FC = () => {
   const [userDiscussions, setUserDiscussions] = useState<any[]>([]);
   const [userProjects, setUserProjects] = useState<any[]>([]);
   const [userNotes, setUserNotes] = useState<any[]>([]);
+  const [userBookmarks, setUserBookmarks] = useState<IBookmark[]>([]);
 
   const parseDateStr = (d: any) => {
     if (!d) return 0;
@@ -68,6 +70,9 @@ const UserProfile: React.FC = () => {
         const nSnap = await getDocs(nQuery);
         const nData = nSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
         setUserNotes(nData.sort((a: { date: string }, b: { date: string }) => parseDateStr(b.date) - parseDateStr(a.date)));
+
+        const bks = await bookmarkService.getUserBookmarks(userData.id);
+        setUserBookmarks(bks);
       } catch (err) {
         console.error("Erro ao buscar conteúdos do usuário:", err);
       }
@@ -422,10 +427,42 @@ const UserProfile: React.FC = () => {
 
                 {/* ABA: COLEÇÕES */}
                 {activeTab === 'colecoes' && (
-                  <div className="empty-state-card anim-fade-up">
-                    <Bookmark size={48} />
-                    <h3>Nenhum item salvo</h3>
-                    <p>Os artigos, projetos e discussões que você salvar aparecerão aqui para fácil acesso.</p>
+                  <div className="anim-fade-up">
+                    {userBookmarks.length > 0 ? (
+                      userBookmarks.map(bk => (
+                        <div key={bk.id} className="content-card" style={{ marginBottom: '1rem', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} 
+                             onClick={() => navigate(bk.type === 'note' ? `/learn/${bk.targetId}` : bk.type === 'discussion' ? `/discussion/${bk.targetId}` : `/article/${bk.targetId}`)}>
+                          <div>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{bk.title}</h3>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Salvo em {bk.savedAt ? new Date(bk.savedAt as any).toLocaleDateString('pt-BR') : 'Data Desconhecida'}</p>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', textTransform: 'capitalize' }}>
+                              {bk.type === 'note' ? 'Nota' : bk.type === 'discussion' ? 'Discussão' : 'Artigo'}
+                            </span>
+                            <button 
+                              className="btn-interact-icon" 
+                              style={{ color: 'var(--primary)' }}
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                await bookmarkService.toggleBookmark(userData!.id, bk.targetId, bk.type, bk.title);
+                                setUserBookmarks(prev => prev.filter(b => b.id !== bk.id));
+                                addToast('Item removido das Coleções.', 'info');
+                              }}
+                              title="Remover das Coleções"
+                            >
+                              <Bookmark size={20} fill="currentColor" />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="empty-state-card">
+                        <Bookmark size={48} />
+                        <h3>Nenhum item salvo</h3>
+                        <p>Os artigos, projetos e discussões que você salvar aparecerão aqui para fácil acesso.</p>
+                      </div>
+                    )}
                   </div>
                 )}
 

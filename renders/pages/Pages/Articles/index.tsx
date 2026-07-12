@@ -6,11 +6,18 @@ import {
   MessageSquare, Eye, Download, ChevronLeft, ChevronRight, SlidersHorizontal, ExternalLink
 } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
+import { bookmarkService } from '../../../../src/services/bookmarkService';
+import { useAuth } from '../../../../src/contexts/AuthContext';
+import { useToastStore } from '../../../../src/stores/toastStore';
 import type { Article } from '../../../../src/types/community';
 import './styles.css';
 
 const Articles: React.FC = () => {
+  const { currentUser } = useAuth();
+  const { addToast } = useToastStore();
+  
   const [articlesList, setArticlesList] = useState<Article[]>([]);
+  const [savedArticles, setSavedArticles] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -44,6 +51,51 @@ const Articles: React.FC = () => {
     };
     fetchArticles();
   }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      bookmarkService.getUserBookmarks(currentUser.uid).then(bookmarks => {
+        const savedIds = new Set(bookmarks.map(b => b.targetId));
+        setSavedArticles(savedIds);
+      }).catch(err => console.error("Erro ao carregar bookmarks:", err));
+    } else {
+      setSavedArticles(new Set());
+    }
+  }, [currentUser]);
+
+  const handleToggleBookmark = async (e: React.MouseEvent, article: any) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      addToast('Você precisa estar logado para salvar itens.', 'warning');
+      return;
+    }
+    try {
+      const isNowSaved = await bookmarkService.toggleBookmark(
+        currentUser.uid,
+        article.id,
+        'article',
+        article.title
+      );
+      
+      setSavedArticles(prev => {
+        const newSet = new Set(prev);
+        if (isNowSaved) {
+          newSet.add(article.id);
+        } else {
+          newSet.delete(article.id);
+        }
+        return newSet;
+      });
+
+      if (isNowSaved) {
+        addToast('Artigo salvo nas suas Coleções!', 'success');
+      } else {
+        addToast('Artigo removido das Coleções.', 'info');
+      }
+    } catch (error) {
+      addToast('Erro ao salvar artigo.', 'error');
+    }
+  };
 
   const handleViewArticle = (id: string | number) => {
     sessionStorage.setItem('omni_scroll_pos', window.scrollY.toString());
@@ -243,8 +295,8 @@ const Articles: React.FC = () => {
                         <span className="badge-pubtype">{article.pubType}</span>
                       )}
                     </div>
-                    <button className="btn-bookmark" onClick={(e) => e.stopPropagation()}>
-                      <Bookmark size={18} />
+                    <button className="btn-bookmark" onClick={(e) => handleToggleBookmark(e, article)}>
+                      <Bookmark size={18} fill={savedArticles.has(article.id) ? 'currentColor' : 'none'} />
                     </button>
                   </div>
 

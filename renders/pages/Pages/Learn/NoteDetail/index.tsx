@@ -5,6 +5,7 @@ import { useAuth } from '../../../../../src/contexts/AuthContext';
 import { useToastStore } from '../../../../../src/stores/toastStore';
 import { useConfirmStore } from '../../../../../src/stores/confirmStore';
 import { learnService } from '../../../../../src/services/learnService';
+import { bookmarkService } from '../../../../../src/services/bookmarkService';
 import type { StudyNote } from '../../../../../src/types/learn';
 import './styles.css';
 import MarkdownRenderer from '../../../../../src/components/MarkdownRenderer';
@@ -24,6 +25,7 @@ const NoteDetail: React.FC = () => {
   const { requestConfirm } = useConfirmStore();
   const [showOptions, setShowOptions] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const isAuthor = currentUser?.uid === noteData?.authorId;
 
   useEffect(() => {
@@ -44,6 +46,33 @@ const NoteDetail: React.FC = () => {
     };
     fetchNote();
   }, [id]);
+
+  useEffect(() => {
+    if (currentUser?.uid && id) {
+      bookmarkService.checkIsBookmarked(currentUser.uid, id).then(setIsSaved);
+    }
+  }, [currentUser, id]);
+
+  const handleToggleBookmark = async () => {
+    if (!currentUser) {
+      addToast("Faça login para salvar esta nota.", 'warning');
+      return;
+    }
+    if (!noteData) return;
+
+    try {
+      const saved = await bookmarkService.toggleBookmark(currentUser.uid, id!, 'note', noteData.title);
+      setIsSaved(saved);
+      if (saved) {
+        addToast("Nota salva nas suas Coleções!", 'success');
+      } else {
+        addToast("Nota removida das Coleções.", 'info');
+      }
+    } catch (err) {
+      console.error("Erro ao salvar bookmark:", err);
+      addToast("Erro ao salvar a nota.", 'error');
+    }
+  };
 
   const handleLike = async () => {
     if (!id) return;
@@ -183,7 +212,9 @@ const NoteDetail: React.FC = () => {
                   </button>
                 </div>
                 <div className="interaction-right">
-                  <button className="btn-interact-icon" title="Salvar"><Bookmark size={20} /></button>
+                  <button className="btn-interact-icon" title={isSaved ? "Remover de Coleções" : "Salvar em Coleções"} onClick={handleToggleBookmark}>
+                    <Bookmark size={20} fill={isSaved ? 'currentColor' : 'none'} style={isSaved ? { color: 'var(--primary)' } : {}} />
+                  </button>
                   <button className="btn-interact-icon" title="Compartilhar"><Share2 size={20} /></button>
                 </div>
               </div>

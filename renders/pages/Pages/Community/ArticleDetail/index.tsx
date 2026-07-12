@@ -83,7 +83,7 @@ const ArticleDetail: React.FC = () => {
 
   const handleToggleBookmark = async () => {
     if (!userProfile) {
-      addToast("Faça login para salvar artigos.", 'info');
+      addToast("Faça login para salvar artigos.", 'warning');
       return;
     }
     if (!article) return;
@@ -91,8 +91,14 @@ const ArticleDetail: React.FC = () => {
     try {
       const saved = await bookmarkService.toggleBookmark(userProfile.id, id!, 'article', article.title);
       setIsSaved(saved);
+      if (saved) {
+        addToast("Artigo salvo nas suas Coleções!", 'success');
+      } else {
+        addToast("Artigo removido das Coleções.", 'info');
+      }
     } catch (err) {
       console.error("Erro ao salvar bookmark:", err);
+      addToast("Erro ao salvar o artigo.", 'error');
     }
   };
 

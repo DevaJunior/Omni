@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info, Settings, LogOut, Layout } from 'lucide-react';
+import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info, Settings, LogOut, Layout, FileText } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { notificationService, type NotificationData } from '../../../src/services/notificationService';
 import './styles.css';
@@ -107,10 +107,9 @@ const Navbar: React.FC = () => {
 
         <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
           <Link to="/community" className={`nav-link ${isActive('/community')}`} onClick={() => setIsMenuOpen(false)} > <Users size={18} /> Community </Link>
-          <Link to="/lab" className={`nav-link ${isActive('/lab')}`} onClick={() => setIsMenuOpen(false)} > <Beaker size={18} /> Workbench  </Link>
           {/* <Link to="/lab/pfuzzy-rizofiltracao" className={`nav-link ${isActive('/lab/pfuzzy-rizofiltracao')}`} onClick={() => setIsMenuOpen(false)} > <LayoutDashboard size={18} /> Análise P-Fuzzy </Link> */}
           <Link to="/learn" className={`nav-link ${isActive('/learn')}`} onClick={() => setIsMenuOpen(false)} > <BookOpen size={18} /> Learn </Link>
-
+          <Link to="/articles" className={`nav-link ${isActive('/articles')}`} onClick={() => setIsMenuOpen(false)} > <FileText size={18} /> Articles </Link>
         </div>
 
         <div className="nav-actions">
@@ -219,6 +218,9 @@ const Navbar: React.FC = () => {
                   <div className="profile-dropdown-list">
                     <button onClick={() => { setIsProfileMenuOpen(false); navigate('/profile'); }} className="profile-dropdown-item">
                       <User size={16} /> Meu Perfil
+                    </button>
+                    <button onClick={() => { setIsProfileMenuOpen(false); navigate('/lab'); }} className="profile-dropdown-item">
+                      <Beaker size={16} /> Workbench
                     </button>
                     <button onClick={() => { setIsProfileMenuOpen(false); navigate(`/lab/${currentUser.uid}/workspace`); }} className="profile-dropdown-item">
                       <Layout size={16} /> Meu Workspace

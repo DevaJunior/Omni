@@ -3,6 +3,7 @@ import { db } from '../config/firebaseConfig';
 import { FIREBASE_ROUTES } from '../config/routes';
 
 export interface IBookmark {
+  id?: string;
   targetId: string;
   type: 'article' | 'project' | 'discussion' | 'note';
   title: string;
