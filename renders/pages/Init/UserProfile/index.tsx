@@ -50,6 +50,7 @@ const UserProfile: React.FC = () => {
   const [userProjects, setUserProjects] = useState<any[]>([]);
   const [userNotes, setUserNotes] = useState<any[]>([]);
   const [userBookmarks, setUserBookmarks] = useState<IBookmark[]>([]);
+  const [affiliatedLabs, setAffiliatedLabs] = useState<any[]>([]);
   
   const [isSpaceModalOpen, setIsSpaceModalOpen] = useState(false);
   const [spaceFilter, setSpaceFilter] = useState<'all' | 'colab'>('all');
@@ -86,6 +87,54 @@ const UserProfile: React.FC = () => {
 
         const bks = await bookmarkService.getUserBookmarks(userData.id);
         setUserBookmarks(bks);
+
+        // Buscar Laboratórios Afiliados Dinamicamente
+        const userLabsList = userData.labs && userData.labs.length > 0 
+          ? userData.labs 
+          : (userData.lab ? [userData.lab] : []);
+
+        const labsData = [];
+        for (const uLab of userLabsList) {
+          if (!uLab.id) continue;
+          const labDoc = await getDoc(doc(db, 'labs', uLab.id));
+          
+          let memCount = 0;
+          try {
+            const mQuery = query(collection(db, 'users'), where('lab.id', '==', uLab.id));
+            const mSnap = await getDocs(mQuery);
+            memCount = mSnap.docs.length;
+            
+            if (labDoc.exists()) {
+              const mems = mSnap.docs.map(d => ({ id: d.id }));
+              if (labDoc.data().adminId && !mems.some(m => m.id === labDoc.data().adminId)) {
+                memCount += 1;
+              }
+            }
+          } catch (e) {
+            console.error("Erro ao buscar membros:", e);
+          }
+
+          if (labDoc.exists()) {
+             const labInfo = labDoc.data();
+             labsData.push({
+               id: labDoc.id,
+               role: uLab.role,
+               name: labInfo.name,
+               institution: labInfo.institution || (uLab.id === '1' ? 'Laboratório Titular' : 'Universidade Federal'),
+               membersCount: memCount
+             });
+          } else {
+             labsData.push({
+               id: uLab.id,
+               role: uLab.role,
+               name: uLab.name || 'Laboratório Desconhecido',
+               institution: 'Instituição não informada',
+               membersCount: memCount || 1
+             });
+          }
+        }
+        setAffiliatedLabs(labsData);
+
       } catch (err) {
         console.error("Erro ao buscar conteúdos do usuário:", err);
       }
@@ -352,90 +401,77 @@ const UserProfile: React.FC = () => {
                     </div>
 
                     <div className="spaces-grid mb-4" style={{ marginBottom: '2rem' }}>
-                      {/* Card 1: Phyton Research */}
-                      <div className="space-card highlight">
-                        <div className="space-card-header">
-                          <div className="space-icon-group">
-                            <div className="space-icon-wrapper">
-                              <Beaker size={24} />
+                      {/* Laboratórios Dinâmicos do Firebase */}
+                      {affiliatedLabs.map((labItem, idx) => (
+                        <div key={idx} className={`space-card ${idx === 0 ? 'highlight' : ''}`}>
+                          <div className="space-card-header">
+                            <div className="space-icon-group">
+                              <div className="space-icon-wrapper">
+                                {idx === 0 ? <Beaker size={24} /> : <Building2 size={24} />}
+                              </div>
+                              <div className="space-info">
+                                <h4>{labItem.name}</h4>
+                                <p>{labItem.institution}</p>
+                              </div>
                             </div>
-                            <div className="space-info">
-                              <h4>Phyton Research</h4>
-                              <p>Laboratório Titular</p>
+                            <button className="space-options-btn"><MoreVertical size={20} /></button>
+                          </div>
+                          <div className="space-card-footer">
+                            <div>
+                              <span className="space-role-label">PAPEL</span>
+                              <span className="space-role-value">{labItem.role || 'Membro'}</span>
+                            </div>
+                            <div className="space-actions">
+                              {idx === 0 ? (
+                                <div className="space-members-group">
+                                  <img src="https://i.pravatar.cc/150?img=32" alt="Membro" className="space-member-avatar" />
+                                  <img src="https://i.pravatar.cc/150?img=12" alt="Membro" className="space-member-avatar" />
+                                  <div className="space-member-count">+{Math.max(0, labItem.membersCount - 2)}</div>
+                                </div>
+                              ) : (
+                                <div className="space-members-text">
+                                  <Users size={14} /> {labItem.membersCount}
+                                </div>
+                              )}
+                              <button className={`btn-open-space ${idx === 0 ? 'primary' : ''}`} onClick={() => navigate(`/lab/${labItem.id}`)}>
+                                {idx === 0 ? <ArrowRight size={18} /> : 'Abrir'}
+                              </button>
                             </div>
                           </div>
-                          <button className="space-options-btn"><MoreVertical size={20} /></button>
                         </div>
-                        <div className="space-card-footer">
-                          <div>
-                            <span className="space-role-label">PAPEL</span>
-                            <span className="space-role-value">Administrador</span>
-                          </div>
-                          <div className="space-actions">
-                            <div className="space-members-group">
-                              <img src="https://i.pravatar.cc/150?img=32" alt="Membro" className="space-member-avatar" />
-                              <img src="https://i.pravatar.cc/150?img=12" alt="Membro" className="space-member-avatar" />
-                              <div className="space-member-count">+3</div>
-                            </div>
-                            <button className="btn-open-space primary" onClick={() => navigate('/lab/phyton')}><ArrowRight size={18} /></button>
-                          </div>
-                        </div>
-                      </div>
+                      ))}
 
-                      {/* Card 2: Workspace Pessoal */}
-                      <div className="space-card">
-                        <div className="space-card-header">
-                          <div className="space-icon-group">
-                            <div className="space-icon-wrapper">
-                              <Lock size={24} />
-                            </div>
-                            <div className="space-info">
-                              <h4>Workspace Pessoal</h4>
-                              <p>Rascunhos & Dados Privados</p>
+                      {/* Workspace Pessoal (se for o próprio perfil) */}
+                      {isOwnProfile && (
+                        <div className="space-card">
+                          <div className="space-card-header">
+                            <div className="space-icon-group">
+                              <div className="space-icon-wrapper">
+                                <Lock size={24} />
+                              </div>
+                              <div className="space-info">
+                                <h4>Workspace Pessoal</h4>
+                                <p>Rascunhos & Dados Privados</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="space-card-footer">
-                          <div>
-                            <span className="space-role-label">ACESSO</span>
-                            <div className="space-access-value"><div className="space-access-dot"></div>Privado</div>
+                          <div className="space-card-footer">
+                            <div>
+                              <span className="space-role-label">ACESSO</span>
+                              <div className="space-access-value"><div className="space-access-dot"></div>Privado</div>
+                            </div>
+                            <button className="btn-open-space" onClick={() => navigate(`/lab/${currentUser?.uid}/workspace`)}>Abrir</button>
                           </div>
-                          <button className="btn-open-space" onClick={() => navigate(`/lab/${currentUser?.uid}/workspace`)}>Abrir</button>
                         </div>
-                      </div>
+                      )}
 
-                      {/* Card 3: Biotecnologia UFAL */}
-                      <div className="space-card">
-                        <div className="space-card-header">
-                          <div className="space-icon-group">
-                            <div className="space-icon-wrapper">
-                              <Building2 size={24} />
-                            </div>
-                            <div className="space-info">
-                              <h4>Biotecnologia UFAL</h4>
-                              <p>Universidade Federal</p>
-                            </div>
-                          </div>
+                      {/* Novo Espaço (se for o próprio perfil) */}
+                      {isOwnProfile && (
+                        <div className="space-card new-space" onClick={() => setIsSpaceModalOpen(true)}>
+                          <Plus size={32} className="new-space-icon" />
+                          <span className="new-space-text">Novo Espaço</span>
                         </div>
-                        <div className="space-card-footer">
-                          <div>
-                            <span className="space-role-label">PAPEL</span>
-                            <span className="space-role-value">Pesquisador Associado</span>
-                          </div>
-                          <div className="space-actions">
-                            <div className="space-members-text">
-                              <Users size={14} /> 14
-                            </div>
-                            <button className="btn-open-space" onClick={() => navigate('/lab/ufal')}>Abrir</button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Card 4: Novo Espaço */}
-                      <div className="space-card new-space" onClick={() => setIsSpaceModalOpen(true)}>
-                        <Plus size={32} className="new-space-icon" />
-                        <span className="new-space-text">Novo Espaço</span>
-                      </div>
+                      )}
                     </div>
 
                     <div className="content-card mt-4">
