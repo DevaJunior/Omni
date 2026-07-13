@@ -140,9 +140,7 @@ const NoteDetail: React.FC = () => {
       <div className="note-detail-wrapper">
         <div className="note-detail-container">
 
-          <button className="btn-back-learn" onClick={() => navigate('/learn')}>
-            <ArrowLeft size={18} /> Voltar para Central de Estudos
-          </button>
+          <button className="btn-back-learn" onClick={() => navigate(-1)}> <ArrowLeft size={18} /> Voltar </button>
 
           <article className="note-article">
             <header className="note-article-header">
@@ -150,8 +148,8 @@ const NoteDetail: React.FC = () => {
               <h1>{noteData.title}</h1>
 
               <div className="note-author-bar">
-                <div 
-                  className="author-info-left" 
+                <div
+                  className="author-info-left"
                   onClick={() => navigate(`/profile/${noteData.authorId}`)}
                   style={{ cursor: 'pointer' }}
                   title={`Ver perfil de ${noteData.author}`}
@@ -168,10 +166,10 @@ const NoteDetail: React.FC = () => {
                 </div>
                 <div className="author-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {!isAuthor && <button className="btn-follow">Seguir</button>}
-                  
+
                   <div style={{ position: 'relative' }}>
-                    <button 
-                      className="btn-interact-icon" 
+                    <button
+                      className="btn-interact-icon"
                       onClick={() => setShowOptions(!showOptions)}
                       title="Opções da Publicação"
                       style={{ padding: '4px' }}
@@ -224,10 +222,10 @@ const NoteDetail: React.FC = () => {
         </div>
       </div>
       <Footer />
-      <ReportModal 
-        isOpen={isReportModalOpen} 
-        onClose={() => setIsReportModalOpen(false)} 
-        onSubmit={handleReportSubmit} 
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onSubmit={handleReportSubmit}
       />
     </>
   );

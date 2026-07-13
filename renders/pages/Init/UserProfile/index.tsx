@@ -53,6 +53,7 @@ const UserProfile: React.FC = () => {
   const [affiliatedLabs, setAffiliatedLabs] = useState<any[]>([]);
   
   const [isSpaceModalOpen, setIsSpaceModalOpen] = useState(false);
+  const [bookmarkToRemove, setBookmarkToRemove] = useState<IBookmark | null>(null);
   const [spaceFilter, setSpaceFilter] = useState<'all' | 'colab'>('all');
   const [selectedSpaceType, setSelectedSpaceType] = useState<'lab' | 'personal'>('lab');
 
@@ -590,11 +591,9 @@ const UserProfile: React.FC = () => {
                             <button 
                               className="btn-interact-icon" 
                               style={{ color: 'var(--primary)' }}
-                              onClick={async (e) => {
+                              onClick={(e) => {
                                 e.stopPropagation();
-                                await bookmarkService.toggleBookmark(userData!.id, bk.targetId, bk.type, bk.title);
-                                setUserBookmarks(prev => prev.filter(b => b.id !== bk.id));
-                                addToast('Item removido das Coleções.', 'info');
+                                setBookmarkToRemove(bk);
                               }}
                               title="Remover das Coleções"
                             >
@@ -678,6 +677,42 @@ const UserProfile: React.FC = () => {
                 <button className="btn-cancel" onClick={() => setIsSpaceModalOpen(false)}>Cancelar</button>
                 <button className="btn-continue">Continuar <ArrowRight size={16} /></button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE CONFIRMAÇÃO DE REMOÇÃO DE COLEÇÃO */}
+      {bookmarkToRemove && (
+        <div className="modal-overlay" onClick={() => setBookmarkToRemove(null)}>
+          <div className="modal-container" style={{ maxWidth: '400px' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header" style={{ borderBottom: 'none', paddingBottom: '0' }}>
+              <h2 style={{ fontSize: '1.25rem' }}>Remover da Coleção</h2>
+              <button className="btn-close-modal" onClick={() => setBookmarkToRemove(null)}><X size={18} /></button>
+            </div>
+            <div className="modal-body" style={{ paddingTop: '1rem', paddingBottom: '1.5rem' }}>
+              <p>Tem certeza que deseja remover <strong>{bookmarkToRemove.title}</strong> das suas coleções?</p>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', padding: '0 1.5rem 1.5rem' }}>
+              <button 
+                className="btn-modal-cancel" 
+                style={{ flex: 1, padding: '0.8rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#475569' }} 
+                onClick={() => setBookmarkToRemove(null)}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="btn-modal-confirm" 
+                style={{ flex: 1, padding: '0.8rem', background: '#ef4444', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: 'white' }} 
+                onClick={async () => {
+                  await bookmarkService.toggleBookmark(userData!.id, bookmarkToRemove.targetId, bookmarkToRemove.type, bookmarkToRemove.title);
+                  setUserBookmarks(prev => prev.filter(b => b.id !== bookmarkToRemove.id));
+                  addToast('Item removido das Coleções.', 'info');
+                  setBookmarkToRemove(null);
+                }}
+              >
+                Remover
+              </button>
             </div>
           </div>
         </div>
