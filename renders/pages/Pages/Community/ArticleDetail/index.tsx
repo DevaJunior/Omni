@@ -16,6 +16,7 @@ import { db } from '../../../../../src/config/firebaseConfig';
 import { articleService } from '../../../../../src/services/articleService';
 import { bookmarkService } from '../../../../../src/services/bookmarkService';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
+import MarkdownRenderer from '../../../../../src/components/MarkdownRenderer';
 import './styles.css';
 
 const ArticleDetail: React.FC = () => {
@@ -159,7 +160,9 @@ const ArticleDetail: React.FC = () => {
           <article className="art-body">
             <section className="art-section">
               <h2>Resumo</h2>
-              <p>{article.abstract}</p>
+              <div style={{ marginTop: '10px' }}>
+                <MarkdownRenderer content={article.abstract} />
+              </div>
             </section>
 
             <section className="art-section">
@@ -172,7 +175,9 @@ const ArticleDetail: React.FC = () => {
             </section>
 
             {article.content ? (
-              <div className="art-dynamic-content" dangerouslySetInnerHTML={{ __html: article.content }} />
+              <div className="art-dynamic-content">
+                <MarkdownRenderer content={article.content} />
+              </div>
             ) : (
               <div style={{ padding: '20px 0', color: 'var(--text-muted)' }}>Conteúdo completo não disponível para este artigo.</div>
             )}
