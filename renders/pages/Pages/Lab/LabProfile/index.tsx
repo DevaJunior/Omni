@@ -109,7 +109,7 @@ const LabProfile: React.FC = () => {
     };
 
     fetchLabAndRequests();
-  }, [id, userProfile]);
+  }, [id, userProfile?.id]);
 
   // O estado real de filiação lido do perfil no Firebase ou via requisição aceita (fallback para testes)
   const isFiliado = userProfile?.lab?.name === labData?.name || userProfile?.lab?.id === labData?.id || requestStatus === 'accepted';

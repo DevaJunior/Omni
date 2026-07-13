@@ -2,7 +2,7 @@ import Navbar from '../../../../menus/Navbar';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Search, BookOpen, Plus, Clock, User, ThumbsUp, GraduationCap, Filter
+  Search, BookOpen, Plus, Clock, User, ThumbsUp, GraduationCap, Filter, LayoutGrid, List
 } from 'lucide-react';
 import { learnService } from '../../../../../src/services/learnService';
 import type { StudyNote } from '../../../../../src/types/learn';
@@ -18,6 +18,7 @@ const Learn: React.FC = () => {
   const [activeSubject, setActiveSubject] = useState('Todos');
   const [notesState, setNotesState] = useState<StudyNote[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -98,24 +99,33 @@ const Learn: React.FC = () => {
               />
             </div>
 
-            <div className="learn-filters-scroll">
-              <div className="learn-filter-pills">
-                <span className="filter-label"><Filter size={16} /> Filtrar:</span>
-                {SUBJECTS.map(subject => (
-                  <button
-                    key={subject}
-                    className={`filter-pill ${activeSubject === subject ? 'active' : ''}`}
-                    onClick={() => setActiveSubject(subject)}
-                  >
-                    {subject}
-                  </button>
-                ))}
+            <div className="learn-filters-row">
+              <div className="learn-filters-scroll">
+                <div className="learn-filter-pills">
+                  <span className="filter-label"><Filter size={16} /> Filtrar:</span>
+                  {SUBJECTS.map(subject => (
+                    <button
+                      key={subject}
+                      className={`filter-pill ${activeSubject === subject ? 'active' : ''}`}
+                      onClick={() => setActiveSubject(subject)}
+                    >
+                      {subject}
+                    </button>
+                  ))}
+                </div>
               </div>
+              <button 
+                className="view-toggle-btn"
+                onClick={() => setViewMode(prev => prev === 'grid' ? 'list' : 'grid')}
+                title={viewMode === 'grid' ? "Alternar para visualização em lista" : "Alternar para visualização em grade"}
+              >
+                {viewMode === 'grid' ? <List size={20} /> : <LayoutGrid size={20} />}
+              </button>
             </div>
           </div>
 
           {/* GRID DE RESUMOS */}
-          <div className="learn-notes-grid">
+          <div className={`learn-notes-grid ${viewMode === 'list' ? 'list-view' : ''}`}>
             {filteredNotes.length === 0 ? (
               <div className="learn-empty-state">
                 <BookOpen size={48} />
