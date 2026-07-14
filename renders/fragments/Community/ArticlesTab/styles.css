@@ -360,6 +360,35 @@
   overflow-wrap: break-word;
 }
 
+.cmmt-article-status-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cmmt-article-stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.cmmt-article-stats-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.cmmt-article-stats-left span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .cmmt-article-footer {
   display: flex;
   justify-content: space-between;

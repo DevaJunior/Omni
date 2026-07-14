@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, BookOpen, Users, Briefcase, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, Users, Briefcase, Clock, Calendar, Download, ExternalLink, Bookmark, MessageSquare, Eye } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
@@ -111,23 +111,76 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
       return (
         <article key={`art-${item.id}`} className="cmmt-article-card" {...refProps}>
           <div className="cmmt-article-header-top">
-            <span className="cmmt-article-type">
+            <span
+              className="cmmt-article-type"
+              onClick={() => navigate('/learn')}
+              style={{ cursor: 'pointer' }}
+              title="Ir para trilhas de aprendizado"
+            >
               <BookOpen size={16} /> Publicação Científica
             </span>
-            {item.isFree ? (
-              <span className="cmmt-article-status-open">Open Access</span>
-            ) : (
-              <span className="cmmt-article-status-closed">Paywall</span>
-            )}
+            <div className="cmmt-article-status-container">
+              {item.isFree ? (
+                <span className="cmmt-article-status-open">Open Access</span>
+              ) : (
+                <span className="cmmt-article-status-closed">Paywall</span>
+              )}
+              <Bookmark size={20} color="var(--text-muted)" style={{ cursor: 'pointer' }} />
+            </div>
           </div>
-          <h3 className="cmmt-article-title" onClick={() => handleViewArticle(item.id)} style={{ cursor: 'pointer' }}>
+
+          <h3
+            className="cmmt-article-title"
+            onClick={() => handleViewArticle(item.id)}
+            style={{ cursor: 'pointer' }}
+            title="Ler artigo"
+          >
             {item.title}
           </h3>
+
           <div className="cmmt-article-meta">
             <span><Users size={16} /> {item.authors}</span>
           </div>
+
+          <div className="cmmt-article-meta cmmt-article-source">
+            <span><strong>{item.journal}</strong></span>
+            <span><Calendar size={16} /> {item.date}</span>
+            <span className="cmmt-meta-impact">FI: {item.impactFactor}</span>
+          </div>
+
           <div className="cmmt-article-abstract">
             <strong>Resumo: </strong>{item.abstract}
+          </div>
+
+          <div className="cmmt-article-stats-row">
+            <div className="cmmt-article-stats-left">
+              <span><MessageSquare size={16} /> 35 Citações</span>
+              <span><Eye size={16} /> 1.0k Leituras</span>
+            </div>
+            <span className="cmmt-doi">DOI: {item.doi}</span>
+          </div>
+
+          <div className="cmmt-article-footer">
+            <div className="cmmt-article-tags">
+              {item.tags?.map((tag: any) => (
+                <span key={tag} className="cmmt-article-tag-item">{tag}</span>
+              ))}
+            </div>
+            <div className="cmmt-article-actions">
+              <div className="cmmt-article-btn-group">
+                {item.isFree && (
+                  <button className="cmmt-btn-secondary">
+                    <Download size={16} /> PDF
+                  </button>
+                )}
+                <button
+                  className="cmmt-btn-primary-read"
+                  onClick={() => handleViewArticle(item.id)}
+                >
+                  Ler Artigo <ExternalLink size={16} />
+                </button>
+              </div>
+            </div>
           </div>
         </article>
       );

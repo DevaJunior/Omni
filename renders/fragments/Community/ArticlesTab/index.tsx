@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Calendar, Users, Download, ExternalLink } from 'lucide-react';
+import { BookOpen, Calendar, Users, Download, ExternalLink, Bookmark, MessageSquare, Eye } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
@@ -132,11 +132,14 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
                 >
                   <BookOpen size={16} /> Publicação Científica
                 </span>
-                {article.isFree ? (
-                  <span className="cmmt-article-status-open">Open Access</span>
-                ) : (
-                  <span className="cmmt-article-status-closed">Paywall</span>
-                )}
+                <div className="cmmt-article-status-container">
+                  {article.isFree ? (
+                    <span className="cmmt-article-status-open">Open Access</span>
+                  ) : (
+                    <span className="cmmt-article-status-closed">Paywall</span>
+                  )}
+                  <Bookmark size={20} color="var(--text-muted)" style={{ cursor: 'pointer' }} />
+                </div>
               </div>
 
               <h3
@@ -162,6 +165,14 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
                 <strong>Resumo: </strong>{article.abstract}
               </div>
 
+              <div className="cmmt-article-stats-row">
+                <div className="cmmt-article-stats-left">
+                  <span><MessageSquare size={16} /> 35 Citações</span>
+                  <span><Eye size={16} /> 1.0k Leituras</span>
+                </div>
+                <span className="cmmt-doi">DOI: {article.doi}</span>
+              </div>
+
               <div className="cmmt-article-footer">
                 <div className="cmmt-article-tags">
                   {article.tags.map((tag: any) => (
@@ -169,7 +180,6 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
                   ))}
                 </div>
                 <div className="cmmt-article-actions">
-                  <span className="cmmt-doi">DOI: {article.doi}</span>
                   <div className="cmmt-article-btn-group">
                     {article.isFree && (
                       <button className="cmmt-btn-secondary">
