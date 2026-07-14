@@ -102,7 +102,9 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
   }
 
   const renderCard = (item: any, index: number) => {
-    const isTriggerElement = index === filteredData.length - 3;
+    // Para disparar no 12º item de uma lista de 15, usamos length - 4
+    // Se a lista tem 15 (indices 0 a 14), 15 - 4 = 11. O índice 11 é o 12º elemento real.
+    const isTriggerElement = index === filteredData.length - 4;
     const refProps = isTriggerElement ? { ref: lastElementRef } : {};
 
     if (item._type === 'article') {
