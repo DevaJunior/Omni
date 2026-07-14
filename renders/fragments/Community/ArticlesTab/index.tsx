@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Calendar, Users, Download, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BookOpen, Calendar, Users, Download, ExternalLink } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
-import type { Article } from '../../../../src/types/community';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
+import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import './styles.css';
-
-import img1 from '../../../../src/assets/wallapapers/wpp_cience_000.png';
-import img2 from '../../../../src/assets/wallapapers/wpp_cience_001.png';
 
 type SortOption = 'recent' | 'impact' | 'likes';
 
@@ -20,60 +17,34 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
   const [sortBy, setSortBy] = useState<SortOption>('recent');
   const navigate = useNavigate();
 
-  const featuredArticles = [
-    {
-      id: "901",
-      title: "Inovações em biotecnologia: da bancada ao mercado",
-      desc: "Explorando as tendências mais promissoras em biotecnologia e como elas estão sendo traduzidas em práticas de pesquisas de laboratório para aplicações práticas.",
-      image: img1,
-      category: "Biotecnologia"
-    },
-    {
-      id: "902",
-      title: "Medicina personalizada: Otimizando tratamentos",
-      desc: "Saiba como a medicina personalizada está utilizando dados genéticos e moleculares para criar tratamentos sob medida para pacientes.",
-      image: img2,
-      category: "Medicina"
-    }
-  ];
-
-  const [articlesList, setArticlesList] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { articles, setArticles, appendArticles } = useCommunityStore();
   const [loadingMore, setLoadingMore] = useState(false);
-  const [lastVisible, setLastVisible] = useState<any>(null);
-  const [hasMore, setHasMore] = useState(true);
 
   const fetchArticles = async (isLoadMore = false) => {
     if (isLoadMore) setLoadingMore(true);
-    else setLoading(true);
 
     try {
-      const response = await communityService.getArticlesPaginated(6, isLoadMore ? lastVisible : null);
+      const response = await communityService.getArticlesPaginated(6, isLoadMore ? articles.lastDoc : null);
       if (isLoadMore) {
-        setArticlesList(prev => {
-          const newItems = response.data.filter(p => !prev.find((ext: any) => ext.id === p.id));
-          return [...prev, ...newItems] as any;
-        });
+        appendArticles(response.data, response.lastDoc, response.data.length === 6 && response.lastDoc !== null);
       } else {
-        setArticlesList(response.data as any);
+        setArticles(response.data, response.lastDoc, response.data.length === 6 && response.lastDoc !== null);
       }
-
-      setLastVisible(response.lastDoc);
-      setHasMore(response.data.length === 6 && response.lastDoc !== null);
     } catch (error) {
       console.error("Erro ao carregar artigos:", error);
     } finally {
       if (isLoadMore) setLoadingMore(false);
-      else setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchArticles();
-  }, []);
+    if (!articles.isLoaded) {
+      fetchArticles();
+    }
+  }, [articles.isLoaded]);
 
   const getSearchScore = (article: any) => {
-    if (!searchQuery) return 1; // Se não tem busca, todos tem score 1
+    if (!searchQuery) return 1;
     const q = searchQuery.toLowerCase();
     let score = 0;
     if (article.title.toLowerCase().includes(q)) score += 10;
@@ -82,26 +53,22 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
     return score;
   };
 
-  const sortedArticles = [...articlesList]
+  const sortedArticles = [...articles.data]
     .map(a => ({ ...a, _searchScore: getSearchScore(a) }))
     .filter(a => a._searchScore > 0)
     .sort((a, b) => {
-      // Se há busca ativa, prioriza pelo match (Title > Desc > Tag)
       if (searchQuery) return b._searchScore - a._searchScore;
-
-      // Senão usa a aba selecionada
       if (sortBy === 'impact') return b.impactFactor - a.impactFactor;
       if (sortBy === 'likes') return b.likes - a.likes;
       return b.id.localeCompare(a.id);
     });
 
   const handleViewArticle = (id: string | number) => {
-    // 3. Salva a posição exata da tela antes de navegar
     sessionStorage.setItem('omni_scroll_pos', window.scrollY.toString());
     navigate(`/article/${id}`);
   };
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Artigos...</div>;
+  if (!articles.isLoaded && articles.data.length === 0) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Artigos...</div>;
 
   if (sortedArticles.length === 0 && searchQuery !== '') {
     return (
@@ -117,44 +84,10 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
   return (
     <div className="cmmt-articles-wrapper">
 
-
-      <section className="cmmt-featured-section">
-        <div className="cmmt-section-header">
-          <h3>Publicações em Destaque</h3>
-          <div className="cmmt-pagination-controls">
-            <button className="cmmt-pag-btn"><ChevronLeft size={18} /></button>
-            <button className="cmmt-pag-btn cmmt-pag-active"><ChevronRight size={18} /></button>
-          </div>
-        </div>
-
-        <div className="cmmt-featured-grid">
-          {featuredArticles.map((article) => (
-            <article key={article.id} className="cmmt-visual-card">
-              <div className="cmmt-visual-image">
-                <img src={article.image} alt={article.title} />
-                <span className="cmmt-visual-badge">{article.category}</span>
-              </div>
-              <div className="cmmt-visual-info">
-                <h4>{article.title}</h4>
-                <p>{article.desc}</p>
-                <button
-                  className="cmmt-btn-read-more"
-                  onClick={() => handleViewArticle(article.id)}
-                >
-                  Leia mais &rarr;
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <hr className="cmmt-divider" />
-
       <section className="cmmt-technical-list-section">
         <div className="cmmt-list-controls">
-          <h3 
-            onClick={() => navigate('/articles')} 
+          <h3
+            onClick={() => navigate('/articles')}
             style={{ cursor: 'pointer', transition: 'color 0.2s ease' }}
             title="Acessar Acervo de Artigos"
             onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-color)'}
@@ -256,7 +189,7 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
           ))}
         </div>
 
-        {hasMore && !searchQuery && (
+        {articles.hasMore && !searchQuery && (
           <button
             className="btn-primary"
             onClick={() => fetchArticles(true)}

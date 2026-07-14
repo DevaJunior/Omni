@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, TrendingUp, Users, AlertCircle, X } from 'lucide-react';
+import { Search, Filter, TrendingUp, Users, AlertCircle, X, Microscope } from 'lucide-react';
 import './styles.css';
 import ProjectsTab from '../../../../fragments/Community/ProjectsTab';
 import ArticlesTab from '../../../../fragments/Community/ArticlesTab';
 import FeedTab from '../../../../fragments/Community/FeedTab';
+import GlobalFeedTab from '../../../../fragments/Community/GlobalFeedTab';
 import Footer from '../../../../menus/Footer';
 import { useNavigate } from 'react-router-dom';
 import { communityService } from '../../../../../src/services/communityService';
@@ -13,8 +14,8 @@ import { useAuth } from '../../../../../src/contexts/AuthContext';
 const Community: React.FC = () => {
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'articles'>(
-    (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'articles') || 'articles'
+  const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'articles' | 'global_feed'>(
+    (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'articles' | 'global_feed') || 'global_feed'
   );
 
   const { currentUser } = useAuth();
@@ -54,7 +55,7 @@ const Community: React.FC = () => {
     }
   }, [activeTab]);
 
-  const handleTabChange = (tab: 'projects' | 'feed' | 'articles') => {
+  const handleTabChange = (tab: 'projects' | 'feed' | 'articles' | 'global_feed') => {
     setActiveTab(tab);
     sessionStorage.setItem('omni_current_tab', tab);
   };
@@ -173,8 +174,15 @@ const Community: React.FC = () => {
           <main className="cmmt-feed-section">
             <div className="cmmt-tabs">
               <button
+                className={`cmmt-tab ${activeTab === 'global_feed' ? 'cmmt-active' : ''}`}
+                onClick={() => handleTabChange('global_feed')}
+              >
+                Feed
+              </button>
+              <button
                 className={`cmmt-tab ${activeTab === 'articles' ? 'cmmt-active' : ''}`}
                 onClick={() => handleTabChange('articles')}
+                style={{ marginLeft: 'auto' }}
               >
                 Pesquisas
               </button>
@@ -192,6 +200,7 @@ const Community: React.FC = () => {
               </button>
             </div>
 
+            {activeTab === 'global_feed' && <GlobalFeedTab searchQuery={searchValue} onClear={handleClearSearch} />}
             {activeTab === 'projects' && <ProjectsTab searchQuery={searchValue} onClear={handleClearSearch} />}
             {activeTab === 'articles' && <ArticlesTab searchQuery={searchValue} onClear={handleClearSearch} />}
             {activeTab === 'feed' && <FeedTab searchQuery={searchValue} onClear={handleClearSearch} />}
@@ -255,6 +264,43 @@ const Community: React.FC = () => {
                   ))
                 ) : (
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Você já segue todos ou a rede está pequena.</span>
+                )}
+              </div>
+            </div>
+
+            <div className="cmmt-sidebar-widget">
+              <div className="cmmt-widget-header">
+                <Microscope size={20} className="cmmt-widget-icon" />
+                <h2>Laboratórios</h2>
+              </div>
+              <div className="cmmt-suggested-users">
+                {randomLabs.length > 0 ? (
+                  randomLabs.map(lab => (
+                    <div
+                      key={lab.id}
+                      className="cmmt-user-item"
+                      onClick={() => navigate(`/lab/${lab.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <div className="cmmt-user-avatar-placeholder">
+                        {lab.name ? lab.name.substring(0, 2).toUpperCase() : 'LB'}
+                      </div>
+                      <div className="cmmt-user-details">
+                        <h5>{lab.name || 'Laboratório Sem Nome'}</h5>
+                      </div>
+                      <button
+                        className="cmmt-btn-follow"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/lab/${lab.id}`);
+                        }}
+                      >
+                        Ver
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Nenhum laboratório disponível.</span>
                 )}
               </div>
             </div>

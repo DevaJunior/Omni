@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, FileText, MapPin, Calendar, ExternalLink } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
-import type { Project } from '../../../../src/types/community';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import CreateProjectModal from '../../../../renders/modals/CreateProjectModal';
 import { useAuth } from '../../../../src/contexts/AuthContext';
+import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import './styles.css';
 
 interface ProjectsTabProps {
@@ -17,14 +17,11 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
   const navigate = useNavigate();
   const { userProfile } = useAuth();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { projects, setProjects, appendProjects } = useCommunityStore();
   
   const canCreateProject = /pesquisador|professor|laboratório|admin/i.test(userProfile?.role || '');
 
-  const [projectsList, setProjectsList] = useState<(Project & { icon: React.ReactNode })[]>([]);
-  const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [lastVisible, setLastVisible] = useState<any>(null);
-  const [hasMore, setHasMore] = useState(true);
 
   // Mapeamento dinâmico de ícones com base no tipo vindo do banco
   const getIconForProjectType = (type: string) => {
@@ -36,34 +33,28 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
 
   const fetchProjects = async (isLoadMore = false) => {
     if (isLoadMore) setLoadingMore(true);
-    else setLoading(true);
 
     try {
-      const response = await communityService.getProjectsPaginated(6, isLoadMore ? lastVisible : null);
+      const response = await communityService.getProjectsPaginated(6, isLoadMore ? projects.lastDoc : null);
       if (isLoadMore) {
-        setProjectsList(prev => {
-          const newItems = response.data.filter(p => !prev.find((ext: any) => ext.id === p.id));
-          return [...prev, ...newItems].map(p => ({ ...p, icon: getIconForProjectType(p.type) })) as any;
-        });
+        appendProjects(response.data.map(p => ({ ...p, icon: getIconForProjectType(p.type) })), response.lastDoc, response.data.length === 6 && response.lastDoc !== null);
       } else {
-        setProjectsList(response.data.map((p: any) => ({ ...p, icon: getIconForProjectType(p.type) })) as any);
+        setProjects(response.data.map((p: any) => ({ ...p, icon: getIconForProjectType(p.type) })), response.lastDoc, response.data.length === 6 && response.lastDoc !== null);
       }
-      
-      setLastVisible(response.lastDoc);
-      setHasMore(response.data.length === 6 && response.lastDoc !== null);
     } catch (error) {
       console.error("Erro ao carregar projetos:", error);
     } finally {
       if (isLoadMore) setLoadingMore(false);
-      else setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (!projects.isLoaded) {
+      fetchProjects();
+    }
+  }, [projects.isLoaded]);
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Projetos...</div>;
+  if (!projects.isLoaded && projects.data.length === 0) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Projetos...</div>;
 
   const handleViewProject = (id: string | number) => {
     // Salva scroll antes de ir pro detalhe
@@ -82,7 +73,7 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
     return score;
   };
 
-  const filteredProjects = [...projectsList]
+  const filteredProjects = [...projects.data]
     .map(p => ({ ...p, _searchScore: getSearchScore(p) }))
     .filter(p => p._searchScore > 0)
     .sort((a, b) => {
@@ -104,7 +95,7 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
         </div>
       )}
       
-      {hasMore && !searchQuery && (
+      {projects.hasMore && !searchQuery && (
         <button 
           className="btn-primary" 
           onClick={() => fetchProjects(true)}

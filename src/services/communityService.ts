@@ -91,6 +91,38 @@ export const communityService = {
     return { data, lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null };
   },
 
+  async getGlobalFeedPaginated(limitCount: number = 15, cursors: any = null): Promise<{ data: any[], cursors: any, hasMore: boolean }> {
+    // Divide the limit across the 3 collections to always return ~15 items per scroll
+    const limitPerCollection = Math.ceil(limitCount / 3);
+    
+    const [arts, projs, discs] = await Promise.all([
+      this.getArticlesPaginated(limitPerCollection, cursors?.articles),
+      this.getProjectsPaginated(limitPerCollection, cursors?.projects),
+      this.getDiscussionsPaginated(limitPerCollection, cursors?.discussions)
+    ]);
+    
+    const combined = [
+      ...arts.data.map(a => ({ ...a, _type: 'article', _date: new Date(a.date || 0).getTime() })),
+      ...projs.data.map(p => ({ ...p, _type: 'project', _date: new Date(p.deadline || 0).getTime() })),
+      ...discs.data.map(d => ({ ...d, _type: 'discussion', _date: new Date(d.date || 0).getTime() }))
+    ];
+    
+    // Sort combined results for this page by date descending
+    combined.sort((a, b) => b._date - a._date);
+    
+    const hasMore = (arts.lastDoc !== null) || (projs.lastDoc !== null) || (discs.lastDoc !== null);
+
+    return {
+      data: combined,
+      cursors: {
+        articles: arts.lastDoc,
+        projects: projs.lastDoc,
+        discussions: discs.lastDoc
+      },
+      hasMore
+    };
+  },
+
   async getDiscussionById(id: string): Promise<Discussion | null> {
     const docSnap = await getDoc(doc(db, FIREBASE_ROUTES.DISCUSSIONS, id));
     if (docSnap.exists()) {

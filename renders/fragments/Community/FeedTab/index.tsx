@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MessageSquare, Send, Trash2 } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
-import type { Discussion } from '../../../../src/types/community';
 import { useAuth } from '../../../../src/contexts/AuthContext';
+import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import ConfirmModal from '../../../../renders/components/ConfirmModal';
 import './styles.css';
@@ -17,6 +17,7 @@ interface FeedTabProps {
 const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
   const navigate = useNavigate();
   const { currentUser, userProfile } = useAuth();
+  const { discussions, setDiscussions, appendDiscussions } = useCommunityStore();
 
   const formatTimeAgo = (dateStr: string) => {
     if (!dateStr) return 'Recente';
@@ -34,11 +35,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     return `Há ${diffInDays} dias`;
   };
 
-  const [posts, setPosts] = useState<Discussion[]>([]);
-  const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [lastVisible, setLastVisible] = useState<any>(null);
-  const [hasMore, setHasMore] = useState(true);
   const [newPostText, setNewPostText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState({
@@ -50,32 +47,26 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
 
   const fetchDiscussions = async (isLoadMore = false) => {
     if (isLoadMore) setLoadingMore(true);
-    else setLoading(true);
 
     try {
-      const response = await communityService.getDiscussionsPaginated(5, isLoadMore ? lastVisible : null);
+      const response = await communityService.getDiscussionsPaginated(5, isLoadMore ? discussions.lastDoc : null);
       if (isLoadMore) {
-        setPosts(prev => {
-          const newPosts = response.data.filter(p => !prev.find(ext => ext.id === p.id));
-          return [...prev, ...newPosts];
-        });
+        appendDiscussions(response.data, response.lastDoc, response.data.length === 5 && response.lastDoc !== null);
       } else {
-        setPosts(response.data);
+        setDiscussions(response.data, response.lastDoc, response.data.length === 5 && response.lastDoc !== null);
       }
-      
-      setLastVisible(response.lastDoc);
-      setHasMore(response.data.length === 5 && response.lastDoc !== null);
     } catch (error) {
       console.error("Erro ao carregar feed:", error);
     } finally {
       if (isLoadMore) setLoadingMore(false);
-      else setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDiscussions();
-  }, []);
+    if (!discussions.isLoaded) {
+      fetchDiscussions();
+    }
+  }, [discussions.isLoaded]);
 
   const handleCreatePost = async () => {
     if (!newPostText.trim() || !currentUser) return;
@@ -103,7 +94,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     }
   };
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Discussões...</div>;
+  if (!discussions.isLoaded && discussions.data.length === 0) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Discussões...</div>;
 
   const handleOpenThread = (id: string | number) => {
     // Salva scroll antes de ir pro detalhe
@@ -122,7 +113,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     return score;
   };
 
-  const filteredPosts = [...posts]
+  const filteredPosts = [...discussions.data]
     .map((p: any) => ({ ...p, _searchScore: getSearchScore(p as any) }))
     .filter(p => p._searchScore > 0)
     .sort((a, b) => {
@@ -134,9 +125,11 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     if (!currentUser) return;
     try {
       const { liked, likesCount } = await communityService.voteDiscussion(id, currentUser.uid);
-      setPosts(prev => prev.map(p =>
-        p.id === id ? { ...p, likes: likesCount, likedBy: liked ? [...(p.likedBy || []), currentUser.uid] : (p.likedBy || []).filter(u => u !== currentUser.uid) } : p
-      ));
+      
+      const newData = discussions.data.map((p: any) =>
+        p.id === id ? { ...p, likes: likesCount, likedBy: liked ? [...(p.likedBy || []), currentUser.uid] : (p.likedBy || []).filter((u: string) => u !== currentUser.uid) } : p
+      );
+      setDiscussions(newData, discussions.lastDoc, discussions.hasMore);
     } catch (e) {
       console.error("Erro ao curtir", e);
     }
@@ -150,7 +143,8 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
       onConfirm: async () => {
         try {
           await communityService.deleteDiscussion(id);
-          setPosts(prev => prev.filter(p => p.id !== id));
+          const newData = discussions.data.filter((p: any) => p.id !== id);
+          setDiscussions(newData, discussions.lastDoc, discussions.hasMore);
         } catch (e) {
           console.error("Erro ao excluir", e);
         } finally {
@@ -253,7 +247,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
         ))
       )}
       
-      {hasMore && !searchQuery && (
+      {discussions.hasMore && !searchQuery && (
         <button 
           className="btn-primary" 
           onClick={() => fetchDiscussions(true)}
