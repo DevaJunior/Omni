@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, FileText } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
-import CardProject from '../../../../renders/components/CardProject';
+import CardProjectOportunity from '../../../components/CardProjectOportunity';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import CreateProjectModal from '../../../../renders/modals/CreateProjectModal';
 import { useAuth } from '../../../../src/contexts/AuthContext';
@@ -19,7 +19,7 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
   const { userProfile } = useAuth();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { projects, setProjects, appendProjects } = useCommunityStore();
-  
+
   const canCreateProject = /pesquisador|professor|laboratório|admin/i.test(userProfile?.role || '');
 
   const [loadingMore, setLoadingMore] = useState(false);
@@ -95,10 +95,10 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
           </button>
         </div>
       )}
-      
+
       {projects.hasMore && !searchQuery && (
-        <button 
-          className="btn-primary" 
+        <button
+          className="btn-primary"
           onClick={() => fetchProjects(true)}
           disabled={loadingMore}
           style={{ width: '100%', padding: '12px', marginTop: '16px', display: 'flex', justifyContent: 'center' }}
@@ -106,26 +106,26 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
           {loadingMore ? 'Carregando...' : 'Carregar Mais Projetos'}
         </button>
       )}
-      
-      {filteredProjects.length === 0 ? (
-      <EmptyStateSearch
-        searchQuery={searchQuery}
-        onClear={onClear || (() => { })}
-        showTabSuggestion={true}
-        suggestions={['Bolsa de Estudos', 'Iniciação Científica', 'Biotecnologia', 'Ciência de Dados']}
-      />
-    ) : (
-      filteredProjects.map((project: any) => (
-        <CardProject key={project.id} project={project} onViewProject={handleViewProject} />
-      ))
-    )}
 
-    <CreateProjectModal
-      isOpen={isCreateModalOpen}
-      onClose={() => setIsCreateModalOpen(false)}
-      onSuccess={() => alert('Projeto criado com sucesso!')}
-    />
-  </div>
+      {filteredProjects.length === 0 ? (
+        <EmptyStateSearch
+          searchQuery={searchQuery}
+          onClear={onClear || (() => { })}
+          showTabSuggestion={true}
+          suggestions={['Bolsa de Estudos', 'Iniciação Científica', 'Biotecnologia', 'Ciência de Dados']}
+        />
+      ) : (
+        filteredProjects.map((project: any) => (
+          <CardProjectOportunity key={project.id} project={project} onViewProject={handleViewProject} />
+        ))
+      )}
+
+      <CreateProjectModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => alert('Projeto criado com sucesso!')}
+      />
+    </div>
   );
 };
 

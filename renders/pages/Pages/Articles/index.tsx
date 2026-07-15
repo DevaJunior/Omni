@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../../menus/Footer';
 import { 
-  Search, ChevronDown, LockOpen, Lock, Bookmark, 
-  MessageSquare, Eye, Download, ChevronLeft, ChevronRight, SlidersHorizontal, ExternalLink
+  Search, ChevronDown, LockOpen, Lock, 
+  ChevronLeft, ChevronRight, SlidersHorizontal
 } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import { bookmarkService } from '../../../../src/services/bookmarkService';

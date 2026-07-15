@@ -1,0 +1,211 @@
+/* CardProjectOportunity styles */
+.cmmt-project-card-new {
+  display: flex;
+  background: white;
+  border: 1px solid #e5e7eb; /* tailwind gray-200 */
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.cmmt-project-card-new:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.cmmt-project-content-left {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.cmmt-project-header-top-new {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.cmmt-project-type-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #3b82f6; /* blue-500 */
+  background: #eff6ff; /* blue-50 */
+  padding: 4px 12px;
+  border-radius: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cmmt-project-status-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.cmmt-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981; /* green-500 */
+}
+
+.cmmt-status-closed .cmmt-status-dot {
+  background: #6b7280; /* gray-500 */
+}
+
+.cmmt-project-title-wrapper {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cmmt-project-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: #6366f1; /* indigo-500 */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.cmmt-project-title-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.cmmt-project-title-new {
+  font-size: 1.3rem;
+  color: #111827;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cmmt-project-institution-new {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin: 0;
+}
+
+.cmmt-project-desc-new {
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+}
+
+.cmmt-project-tags-new {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cmmt-project-tag-item-new {
+  background: #f3f4f6; /* gray-100 */
+  color: #4b5563; /* gray-600 */
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.cmmt-project-content-right {
+  width: 280px;
+  background: #f8fafc; /* slate-50 */
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  border-left: 1px dashed #e2e8f0;
+}
+
+.cmmt-project-details-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cmmt-detail-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.cmmt-detail-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: #1e293b;
+  font-weight: 500;
+}
+.cmmt-detail-value svg {
+  color: #6366f1;
+}
+
+.cmmt-btn-apply-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: auto; 
+}
+
+.cmmt-btn-apply-new:hover {
+  background: #4338ca;
+}
+
+.cmmt-btn-details-new {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.cmmt-btn-details-new:hover {
+  color: #4f46e5;
+}
+
+/* Responsividade do novo card */
+@media (max-width: 768px) {
+  .cmmt-project-card-new {
+    flex-direction: column;
+  }
+  .cmmt-project-content-right {
+    width: 100%;
+    border-left: none;
+    border-top: 1px dashed #e2e8f0;
+  }
+}
