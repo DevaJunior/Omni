@@ -53,6 +53,7 @@ const UserProfile: React.FC = () => {
   const [affiliatedLabs, setAffiliatedLabs] = useState<any[]>([]);
   
   const [isSpaceModalOpen, setIsSpaceModalOpen] = useState(false);
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [bookmarkToRemove, setBookmarkToRemove] = useState<IBookmark | null>(null);
   const [spaceFilter, setSpaceFilter] = useState<'all' | 'colab'>('all');
   const [selectedSpaceType, setSelectedSpaceType] = useState<'lab' | 'personal'>('lab');
@@ -370,13 +371,22 @@ const UserProfile: React.FC = () => {
                 <div className="tab-spacer"></div>
 
                 {isOwnProfile && (
-                  <button
-                    className="tab-btn-icon"
-                    title="Configurações da Conta"
-                    onClick={() => navigate('/settings')}
-                  >
-                    <Settings size={20} />
-                  </button>
+                  <>
+                    <button
+                      className="tab-btn-icon"
+                      title="Nova Publicação"
+                      onClick={() => setIsPublishModalOpen(true)}
+                    >
+                      <Plus size={20} />
+                    </button>
+                    <button
+                      className="tab-btn-icon"
+                      title="Configurações da Conta"
+                      onClick={() => navigate('/settings')}
+                    >
+                      <Settings size={20} />
+                    </button>
+                  </>
                 )}
               </div>
 
@@ -619,6 +629,60 @@ const UserProfile: React.FC = () => {
         </div>
       </div>
       <Footer />
+
+      {/* MODAL DE PUBLICAÇÃO */}
+      {isPublishModalOpen && (
+        <div className="modal-overlay publish-modal-overlay" onClick={() => setIsPublishModalOpen(false)}>
+          <div className="modal-container publish-modal-container" onClick={e => e.stopPropagation()}>
+            <div className="modal-header" style={{ borderBottom: 'none', paddingBottom: '0.5rem' }}>
+              <h2>O que você deseja publicar?</h2>
+              <button className="btn-close-modal" onClick={() => setIsPublishModalOpen(false)}><X size={18} /></button>
+            </div>
+            
+            <div className="publish-options-grid">
+              <div className="publish-option-card" onClick={() => {
+                setIsPublishModalOpen(false);
+                // Lógica de navegação ou ação para Conteúdo
+              }}>
+                <div className="publish-option-icon">
+                  <MessageSquare size={24} />
+                </div>
+                <span className="publish-option-title">Conteúdo</span>
+              </div>
+
+              <div className="publish-option-card" onClick={() => {
+                setIsPublishModalOpen(false);
+                navigate('/community/publish-article'); // Exemplo de rota de artigo
+              }}>
+                <div className="publish-option-icon">
+                  <BookOpen size={24} />
+                </div>
+                <span className="publish-option-title">Artigo</span>
+              </div>
+
+              <div className="publish-option-card" onClick={() => {
+                setIsPublishModalOpen(false);
+                navigate('/learn/publish-note'); // Exemplo de rota de nota/resumo
+              }}>
+                <div className="publish-option-icon">
+                  <Bookmark size={24} />
+                </div>
+                <span className="publish-option-title">Resumo</span>
+              </div>
+
+              <div className="publish-option-card" onClick={() => {
+                setIsPublishModalOpen(false);
+                // Lógica de navegação para Pesquisa
+              }}>
+                <div className="publish-option-icon">
+                  <Activity size={24} />
+                </div>
+                <span className="publish-option-title">Pesquisa</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL DE NOVO ESPAÇO */}
       {isSpaceModalOpen && (

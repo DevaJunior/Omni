@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Briefcase, FileText, MapPin, Calendar, ExternalLink } from 'lucide-react';
+import { Briefcase, FileText } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
+import ProjectCard from '../../../../renders/components/ProjectCard';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import CreateProjectModal from '../../../../renders/modals/CreateProjectModal';
 import { useAuth } from '../../../../src/contexts/AuthContext';
@@ -115,40 +116,7 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
       />
     ) : (
       filteredProjects.map((project: any) => (
-        <article key={project.id} className={`cmmt-project-card ${project.status === 'Fechado' ? 'cmmt-project-closed' : ''}`}>
-          <div className="cmmt-project-header-top">
-            <span className="cmmt-project-type">{project.icon} {project.type}</span>
-            <span className={`cmmt-project-status ${project.status === 'Aberto' ? 'cmmt-status-open' : 'cmmt-status-closed'}`}>
-              {project.status}
-            </span>
-          </div>
-
-          <h3 className="cmmt-project-title">{project.title}</h3>
-          <h4 className="cmmt-project-institution">{project.institution}</h4>
-
-          <div className="cmmt-project-meta">
-            <span><MapPin size={16} /> {project.location}</span>
-            <span><Calendar size={16} /> {project.deadline}</span>
-          </div>
-
-          <p className="cmmt-project-desc">{project.description}</p>
-
-          <div className="cmmt-project-footer">
-            <div className="cmmt-project-tags">
-              {project.tags.map((tag: any) => (
-                <span key={tag} className="cmmt-project-tag-item">{tag}</span>
-              ))}
-            </div>
-            {project.status === 'Aberto' && (
-              <button
-                className="cmmt-btn-apply"
-                onClick={() => handleViewProject(project.id)}
-              >
-                Acessar Detalhes <ExternalLink size={16} />
-              </button>
-            )}
-          </div>
-        </article>
+        <ProjectCard key={project.id} project={project} onViewProject={handleViewProject} />
       ))
     )}
 

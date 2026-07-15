@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, TrendingUp, Users, AlertCircle, X, Microscope } from 'lucide-react';
 import './styles.css';
 import ProjectsTab from '../../../../fragments/Community/ProjectsTab';
-import ArticlesTab from '../../../../fragments/Community/ArticlesTab';
 import FeedTab from '../../../../fragments/Community/FeedTab';
 import GlobalFeedTab from '../../../../fragments/Community/GlobalFeedTab';
 import Footer from '../../../../menus/Footer';
@@ -14,8 +13,8 @@ import { useAuth } from '../../../../../src/contexts/AuthContext';
 const Community: React.FC = () => {
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'articles' | 'global_feed'>(
-    (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'articles' | 'global_feed') || 'global_feed'
+  const [activeTab, setActiveTab] = useState<'projects' | 'feed' | 'global_feed'>(
+    (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'global_feed') || 'global_feed'
   );
 
   const { currentUser } = useAuth();
@@ -55,7 +54,7 @@ const Community: React.FC = () => {
     }
   }, [activeTab]);
 
-  const handleTabChange = (tab: 'projects' | 'feed' | 'articles' | 'global_feed') => {
+  const handleTabChange = (tab: 'projects' | 'feed' | 'global_feed') => {
     setActiveTab(tab);
     sessionStorage.setItem('omni_current_tab', tab);
   };
@@ -161,7 +160,6 @@ const Community: React.FC = () => {
             {showFilterMenu && (
               <div className="cmmt-filter-dropdown-menu">
                 <button onClick={() => handleFilterSelect('Todos')}>Todos</button>
-                <button onClick={() => handleFilterSelect('Pesquisas')}>Pesquisas</button>
                 <button onClick={() => handleFilterSelect('Discussões')}>Discussões</button>
                 <button onClick={() => handleFilterSelect('Projetos')}>Projetos</button>
                 <button onClick={() => handleFilterSelect('Laboratórios')}>Laboratórios</button>
@@ -177,18 +175,12 @@ const Community: React.FC = () => {
                 className={`cmmt-tab ${activeTab === 'global_feed' ? 'cmmt-active' : ''}`}
                 onClick={() => handleTabChange('global_feed')}
               >
-                Feed
-              </button>
-              <button
-                className={`cmmt-tab ${activeTab === 'articles' ? 'cmmt-active' : ''}`}
-                onClick={() => handleTabChange('articles')}
-                style={{ marginLeft: 'auto' }}
-              >
-                Pesquisas
+                Início
               </button>
               <button
                 className={`cmmt-tab ${activeTab === 'feed' ? 'cmmt-active' : ''}`}
                 onClick={() => handleTabChange('feed')}
+                style={{ marginLeft: 'auto' }}
               >
                 Discussões
               </button>
@@ -202,7 +194,6 @@ const Community: React.FC = () => {
 
             {activeTab === 'global_feed' && <GlobalFeedTab searchQuery={searchValue} onClear={handleClearSearch} />}
             {activeTab === 'projects' && <ProjectsTab searchQuery={searchValue} onClear={handleClearSearch} />}
-            {activeTab === 'articles' && <ArticlesTab searchQuery={searchValue} onClear={handleClearSearch} />}
             {activeTab === 'feed' && <FeedTab searchQuery={searchValue} onClear={handleClearSearch} />}
 
           </main>
