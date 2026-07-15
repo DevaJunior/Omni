@@ -4,8 +4,8 @@ import { ChevronLeft, ChevronRight, BookOpen, Users, Briefcase, Clock, Calendar,
 import { communityService } from '../../../../src/services/communityService';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
-import DiscussionCard from '../../../../renders/components/DiscussionCard';
-import FeaturedArticleCard from '../../../../renders/components/FeaturedArticleCard';
+import CardDiscussion from '../../../../renders/components/CardDiscussion';
+import CardFeaturedArticle from '../../../../renders/components/CardFeaturedArticle';
 import '../ArticlesTab/styles.css'; 
 import '../FeedTab/styles.css'; 
 
@@ -190,7 +190,7 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
 
     if (item._type === 'discussion') {
       return (
-        <DiscussionCard
+        <CardDiscussion
           key={`disc-${item.id}`}
           post={item}
           onOpenThread={handleOpenThread}
@@ -239,7 +239,7 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
 
             <div className="cmmt-featured-grid">
               {featuredArticles.map((article) => (
-                <FeaturedArticleCard
+                <CardFeaturedArticle
                   key={article.id}
                   article={article}
                   onReadMore={handleViewArticle}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, FileText } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
-import ProjectCard from '../../../../renders/components/ProjectCard';
+import CardProject from '../../../../renders/components/CardProject';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import CreateProjectModal from '../../../../renders/modals/CreateProjectModal';
 import { useAuth } from '../../../../src/contexts/AuthContext';
@@ -116,7 +116,7 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
       />
     ) : (
       filteredProjects.map((project: any) => (
-        <ProjectCard key={project.id} project={project} onViewProject={handleViewProject} />
+        <CardProject key={project.id} project={project} onViewProject={handleViewProject} />
       ))
     )}
 

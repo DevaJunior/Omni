@@ -14,12 +14,12 @@ export interface ProjectData {
   tags: string[];
 }
 
-interface ProjectCardProps {
+interface CardProjectProps {
   project: ProjectData;
   onViewProject: (id: string | number) => void;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, onViewProject }) => {
+const CardProject: React.FC<CardProjectProps> = ({ project, onViewProject }) => {
   return (
     <article className={`cmmt-project-card ${project.status === 'Fechado' ? 'cmmt-project-closed' : ''}`}>
       <div className="cmmt-project-header-top">
@@ -58,4 +58,4 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onViewProject }) => 
   );
 };
 
-export default ProjectCard;
+export default CardProject;

@@ -15,14 +15,14 @@ export interface ArticleResultData {
   pubType: string;
 }
 
-interface ArticleResultCardProps {
+interface CardArticleResultProps {
   article: ArticleResultData;
   isSaved: boolean;
   onViewArticle: (id: string | number) => void;
   onToggleBookmark: (e: React.MouseEvent, article: ArticleResultData) => void;
 }
 
-const ArticleResultCard: React.FC<ArticleResultCardProps> = ({ 
+const CardArticleResult: React.FC<CardArticleResultProps> = ({ 
   article, 
   isSaved, 
   onViewArticle, 
@@ -101,4 +101,4 @@ const ArticleResultCard: React.FC<ArticleResultCardProps> = ({
   );
 };
 
-export default ArticleResultCard;
+export default CardArticleResult;

@@ -6,7 +6,7 @@ import { useAuth } from '../../../../src/contexts/AuthContext';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import ConfirmModal from '../../../../renders/components/ConfirmModal';
-import DiscussionCard from '../../../../renders/components/DiscussionCard';
+import CardDiscussion from '../../../../renders/components/CardDiscussion';
 import './styles.css';
 
 interface FeedTabProps {
@@ -174,7 +174,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
         />
       ) : (
         filteredPosts.map(post => (
-          <DiscussionCard
+          <CardDiscussion
             key={post.id}
             post={post}
             currentUserUid={currentUser?.uid}

@@ -8,12 +8,12 @@ export interface FeaturedArticleData {
   desc: string;
 }
 
-interface FeaturedArticleCardProps {
+interface CardFeaturedArticleProps {
   article: FeaturedArticleData;
   onReadMore: (id: string | number) => void;
 }
 
-const FeaturedArticleCard: React.FC<FeaturedArticleCardProps> = ({ article, onReadMore }) => {
+const CardFeaturedArticle: React.FC<CardFeaturedArticleProps> = ({ article, onReadMore }) => {
   return (
     <article className="cmmt-visual-card">
       <div className="cmmt-visual-image">
@@ -34,4 +34,4 @@ const FeaturedArticleCard: React.FC<FeaturedArticleCardProps> = ({ article, onRe
   );
 };
 
-export default FeaturedArticleCard;
+export default CardFeaturedArticle;

@@ -10,7 +10,7 @@ import { bookmarkService } from '../../../../src/services/bookmarkService';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { useToastStore } from '../../../../src/stores/toastStore';
 import type { Article } from '../../../../src/types/community';
-import ArticleResultCard from '../../../../renders/components/ArticleResultCard';
+import CardArticleResult from '../../../../renders/components/CardArticleResult';
 import './styles.css';
 
 const Articles: React.FC = () => {
@@ -273,7 +273,7 @@ const Articles: React.FC = () => {
               <div className="loading-state">Carregando artigos...</div>
             ) : (
               articlesList.slice(0, 10).map((article: any) => (
-                <ArticleResultCard
+                <CardArticleResult
                   key={article.id}
                   article={article}
                   isSaved={savedArticles.has(article.id)}

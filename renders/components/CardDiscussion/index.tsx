@@ -17,7 +17,7 @@ export interface PostData {
   comments?: number;
 }
 
-interface DiscussionCardProps {
+interface CardDiscussionProps {
   post: PostData;
   currentUserUid?: string;
   onOpenThread: (id: string | number) => void;
@@ -44,7 +44,7 @@ export const formatTimeAgo = (dateStr?: string) => {
   return `Há ${diffInDays} dias`;
 };
 
-const DiscussionCard: React.FC<DiscussionCardProps> = ({
+const CardDiscussion: React.FC<CardDiscussionProps> = ({
   post,
   currentUserUid,
   onOpenThread,
@@ -127,4 +127,4 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
   );
 };
 
-export default DiscussionCard;
+export default CardDiscussion;
