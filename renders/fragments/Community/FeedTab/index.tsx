@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, MessageSquare, Send, Trash2 } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import ConfirmModal from '../../../../renders/components/ConfirmModal';
+import DiscussionCard from '../../../../renders/components/DiscussionCard';
 import './styles.css';
-import ShareMenu from './../../../components/ShareMenu/index';
 
 interface FeedTabProps {
   searchQuery?: string;
@@ -19,21 +19,6 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
   const { currentUser, userProfile } = useAuth();
   const { discussions, setDiscussions, appendDiscussions } = useCommunityStore();
 
-  const formatTimeAgo = (dateStr: string) => {
-    if (!dateStr) return 'Recente';
-    const postDate = new Date(dateStr);
-    const diffInMs = new Date().getTime() - postDate.getTime();
-    const diffInSec = Math.floor(diffInMs / 1000);
-    
-    if (diffInSec < 60) return 'Agora mesmo';
-    const diffInMin = Math.floor(diffInSec / 60);
-    if (diffInMin < 60) return `Há ${diffInMin} min`;
-    const diffInHours = Math.floor(diffInMin / 60);
-    if (diffInHours < 24) return `Há ${diffInHours}h`;
-    const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) return 'Ontem';
-    return `Há ${diffInDays} dias`;
-  };
 
   const [loadingMore, setLoadingMore] = useState(false);
   const [newPostText, setNewPostText] = useState('');
@@ -189,61 +174,14 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
         />
       ) : (
         filteredPosts.map(post => (
-          <article key={post.id} className="cmmt-post-card">
-            <div className="cmmt-post-header">
-              <img 
-                src={post.avatar} 
-                alt={post.author} 
-                className="cmmt-author-avatar" 
-                onClick={(e) => { e.stopPropagation(); navigate(`/profile/${post.authorId}`); }}
-                style={{ cursor: 'pointer' }}
-              />
-              <div className="cmmt-author-info">
-                <h4 onClick={(e) => { e.stopPropagation(); navigate(`/profile/${post.authorId}`); }}>
-                  {post.author}
-                </h4>
-                <span>{post.role} • {formatTimeAgo(post.date)}</span>
-              </div>
-
-              {currentUser?.uid === post.authorId && (
-                <div className="cmmt-post-options">
-                  <button className="cmmt-action-btn cmmt-delete-btn" onClick={() => handleDelete(post.id)} title="Excluir">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="cmmt-post-body" onClick={() => handleOpenThread(post.id)}>
-              <p>{post.content}</p>
-              <div className="cmmt-post-tags">
-                {post.tags.map((tag: any) => (
-                  <span key={tag} className="cmmt-post-tag-item">{tag}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className="cmmt-post-actions">
-              <button
-                className={`cmmt-action-btn ${post.likedBy?.includes(currentUser?.uid || '') ? 'cmmt-liked' : ''}`}
-                onClick={() => handleLike(post.id)}
-              >
-                <Heart
-                  size={18}
-                  fill={post.likedBy?.includes(currentUser?.uid || '') ? 'currentColor' : 'none'}
-                  className={post.likedBy?.includes(currentUser?.uid || '') ? 'cmmt-like-anim' : ''}
-                />
-                {post.likes}
-              </button>
-              <button className="cmmt-action-btn cmmt-comments-btn" onClick={() => handleOpenThread(post.id)} >
-                <MessageSquare size={18} /> {post.comments} Comentários
-              </button>
-              <div className="cmmt-share">
-                <ShareMenu text={`Confira a publicação de ${post.author} na Omni!`}
-                  url={`${window.location.origin}/discussion/${post.id}`} />
-              </div>
-            </div>
-          </article>
+          <DiscussionCard
+            key={post.id}
+            post={post}
+            currentUserUid={currentUser?.uid}
+            onOpenThread={handleOpenThread}
+            onLike={handleLike}
+            onDelete={handleDelete}
+          />
         ))
       )}
       

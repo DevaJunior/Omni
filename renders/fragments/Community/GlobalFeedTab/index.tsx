@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, BookOpen, Users, Briefcase, Clock, Calendar,
 import { communityService } from '../../../../src/services/communityService';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
+import DiscussionCard from '../../../../renders/components/DiscussionCard';
 import '../ArticlesTab/styles.css'; 
 import '../FeedTab/styles.css'; 
 
@@ -188,23 +189,14 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
 
     if (item._type === 'discussion') {
       return (
-        <article key={`disc-${item.id}`} className="cmmt-post-card" {...refProps} style={{ border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--bg-card)' }}>
-          <div className="cmmt-post-header">
-            <img src={item.avatar || `https://ui-avatars.com/api/?name=${item.author}`} alt={item.author} className="cmmt-author-avatar" />
-            <div className="cmmt-author-info">
-              <h4>{item.author}</h4>
-              <span>{item.role} • Recente</span>
-            </div>
-          </div>
-          <div className="cmmt-post-body" onClick={() => handleOpenThread(item.id)}>
-            <p>{item.content}</p>
-            <div className="cmmt-post-tags">
-              {item.tags?.map((tag: any) => (
-                <span key={tag} className="cmmt-post-tag-item">{tag}</span>
-              ))}
-            </div>
-          </div>
-        </article>
+        <DiscussionCard
+          key={`disc-${item.id}`}
+          post={item}
+          onOpenThread={handleOpenThread}
+          hideActions={true}
+          style={{ border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--bg-card)' }}
+          forwardedRef={isTriggerElement ? lastElementRef : undefined}
+        />
       );
     }
 
