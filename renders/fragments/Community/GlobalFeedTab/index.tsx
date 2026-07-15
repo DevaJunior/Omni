@@ -5,6 +5,7 @@ import { communityService } from '../../../../src/services/communityService';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import DiscussionCard from '../../../../renders/components/DiscussionCard';
+import FeaturedArticleCard from '../../../../renders/components/FeaturedArticleCard';
 import '../ArticlesTab/styles.css'; 
 import '../FeedTab/styles.css'; 
 
@@ -238,22 +239,11 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
 
             <div className="cmmt-featured-grid">
               {featuredArticles.map((article) => (
-                <article key={article.id} className="cmmt-visual-card">
-                  <div className="cmmt-visual-image">
-                    <img src={article.image} alt={article.title} />
-                    <span className="cmmt-visual-badge">{article.category}</span>
-                  </div>
-                  <div className="cmmt-visual-info">
-                    <h4>{article.title}</h4>
-                    <p>{article.desc}</p>
-                    <button
-                      className="cmmt-btn-read-more"
-                      onClick={() => handleViewArticle(article.id)}
-                    >
-                      Leia mais &rarr;
-                    </button>
-                  </div>
-                </article>
+                <FeaturedArticleCard
+                  key={article.id}
+                  article={article}
+                  onReadMore={handleViewArticle}
+                />
               ))}
             </div>
           </section>
