@@ -120,7 +120,7 @@ const CardDiscussion: React.FC<CardDiscussionProps> = ({
       </div>
 
       <div className="cmmt-disc-body" onClick={() => onOpenThread(post.id)}>
-        <p className="cmmt-disc-content">{post.content}</p>
+        <p className="cmmt-disc-content" style={{ whiteSpace: 'pre-wrap' }}>{post.content}</p>
 
 
       </div>

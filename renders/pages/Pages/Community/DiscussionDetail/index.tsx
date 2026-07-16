@@ -6,7 +6,11 @@ import {
   UserPlus,
   ChevronUp,
   ChevronDown,
-  CheckCircle2
+  CheckCircle2,
+  Link,
+  ExternalLink,
+  Plus,
+  X
 } from 'lucide-react';
 import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
@@ -14,13 +18,183 @@ import { communityService } from '../../../../../src/services/communityService';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import CardDiscussion from '../../../../components/Cards/CardDiscussion';
+import CardButtonOptions from '../../../../components/Cards/CardButtonOptions';
+import { Edit, Trash2, Flag } from 'lucide-react';
 import './styles.css';
+
+const ReplyItem = ({ reply, navigate, currentUserUid }: { reply: any; navigate: any; currentUserUid?: string }) => {
+  const [expanded, setExpanded] = useState(false);
+  const content = reply.content || '';
+  const linesCount = content.split('\n').length;
+  const isLong = content.length > 300 || linesCount > 3;
+
+  return (
+    <div className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
+      <img 
+        src={reply.avatar} 
+        alt={reply.author} 
+        className="disc-comment-avatar" 
+        onClick={(e) => { e.stopPropagation(); if(reply.authorId) navigate(`/profile/${reply.authorId}`); }}
+        style={{ cursor: 'pointer' }}
+      />
+      <div className="disc-comment-content">
+        <div className="disc-comment-header">
+          <div className="disc-comment-author-info">
+            <h4 
+              onClick={(e) => { e.stopPropagation(); if(reply.authorId) navigate(`/profile/${reply.authorId}`); }}
+              style={{ cursor: 'pointer' }}
+            >
+              {reply.author} {reply.isAuthor && <span className="disc-author-badge">Autor</span>}
+            </h4>
+            <span>{reply.role} • {reply.time}</span>
+          </div>
+          <CardButtonOptions
+            options={
+              currentUserUid === reply.authorId
+                ? [
+                  { label: 'Editar', icon: <Edit size={16} />, onClick: () => alert('Em desenvolvimento') },
+                  { label: 'Excluir', icon: <Trash2 size={16} />, onClick: () => alert('Em desenvolvimento'), danger: true }
+                ]
+                : [
+                  { label: 'Denunciar', icon: <Flag size={16} />, onClick: () => alert('Em desenvolvimento'), danger: true }
+                ]
+            }
+          />
+        </div>
+        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+          <p 
+            className="disc-comment-text" 
+            style={{ 
+              whiteSpace: 'pre-wrap',
+              margin: 0,
+              ...( !expanded && isLong ? {
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+              } : {})
+            }}
+          >
+            {content}
+          </p>
+          {isLong && !expanded && (
+            <button 
+              onClick={() => setExpanded(true)}
+              style={{ 
+                position: 'absolute',
+                bottom: -2,
+                right: 0,
+                background: reply.isAuthor ? '#fcfcff' : '#fff',
+                border: 'none', 
+                color: 'var(--primary)', 
+                cursor: 'pointer', 
+                padding: '0 0 0 24px', 
+                display: 'flex',
+                alignItems: 'center'
+              }}
+              title="Expandir"
+            >
+              <ChevronDown size={18} />
+            </button>
+          )}
+          {isLong && expanded && (
+            <button 
+              onClick={() => setExpanded(false)}
+              style={{ 
+                background: 'transparent', 
+                border: 'none', 
+                color: 'var(--primary)', 
+                cursor: 'pointer', 
+                padding: '4px 0 0 0', 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                width: '100%',
+                marginTop: '4px'
+              }}
+              title="Recolher"
+            >
+              <ChevronUp size={18} />
+            </button>
+          )}
+        </div>
+        
+        {/* Renderiza link legado (string) se existir, por retrocompatibilidade */}
+        {typeof reply.link === 'string' && reply.link && (
+          <a 
+            href={reply.link} 
+            target="_blank" 
+            rel="noreferrer"
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '6px', 
+              background: '#f3f4f6', 
+              padding: '6px 12px', 
+              borderRadius: '6px', 
+              fontSize: '0.85rem',
+              color: 'var(--primary)',
+              textDecoration: 'none',
+              marginTop: '8px',
+              fontWeight: '500',
+              width: 'fit-content'
+            }}
+          >
+            <ExternalLink size={14} /> Acessar Link Anexo
+          </a>
+        )}
+
+        {/* Renderiza lista de links */}
+        {reply.links && reply.links.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '12px' }}>
+            {reply.links.map((lnk: any, idx: number) => (
+              <a 
+                key={idx}
+                href={lnk.url} 
+                target="_blank" 
+                rel="noreferrer"
+                style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '6px', 
+                  background: '#f3f4f6', 
+                  padding: '6px 12px', 
+                  borderRadius: '6px', 
+                  fontSize: '0.85rem',
+                  color: 'var(--primary)',
+                  textDecoration: 'none',
+                  fontWeight: '500',
+                  width: 'fit-content'
+                }}
+              >
+                <Link size={14} /> {lnk.title}
+              </a>
+            ))}
+          </div>
+        )}
+
+        <div className="disc-comment-actions" style={{ marginTop: '12px' }}>
+          <div className="disc-vote-group-small">
+            <button className="disc-action-btn-icon"><ChevronUp size={16} /></button>
+            <span className="disc-vote-count-small">{reply.likes}</span>
+            <button className="disc-action-btn-icon"><ChevronDown size={16} /></button>
+          </div>
+          <button className="disc-action-btn-small">Responder</button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const DiscussionDetail: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { currentUser, userProfile } = useAuth();
   const [replyText, setReplyText] = useState('');
+  const [replyLinks, setReplyLinks] = useState<{title: string, url: string}[]>([]);
+  const [tempLinkTitle, setTempLinkTitle] = useState('');
+  const [tempLinkUrl, setTempLinkUrl] = useState('');
+  const [showLinkInput, setShowLinkInput] = useState(false);
   const [discussion, setDiscussion] = useState<any>(null);
   const [authorProfile, setAuthorProfile] = useState<any>(null);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -113,11 +287,16 @@ const DiscussionDetail: React.FC = () => {
         role: 'Pesquisador(a)',
         time: 'Agora mesmo',
         content: replyText.trim(),
+        links: replyLinks,
         likes: 0,
         isAuthor: discussion.authorId === currentUser.uid
       };
       await communityService.addReply(id, newReply);
       setReplyText('');
+      setReplyLinks([]);
+      setTempLinkTitle('');
+      setTempLinkUrl('');
+      setShowLinkInput(false);
       await fetchDiscussion(); // Refresh
     } catch (e) {
       console.error("Erro ao enviar resposta", e);
@@ -216,15 +395,91 @@ const DiscussionDetail: React.FC = () => {
                 onChange={(e) => setReplyText(e.target.value)}
                 rows={3}
               />
+              {showLinkInput && (
+                <div style={{ padding: '12px 16px', borderTop: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {replyLinks.map((l, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f3f4f6', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem' }}>
+                      <Link size={14} color="var(--primary)" />
+                      <strong style={{ color: 'var(--text-main)' }}>{l.title}</strong>
+                      <span style={{ color: 'var(--text-muted)', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{l.url}</span>
+                      <button 
+                        onClick={() => setReplyLinks(prev => prev.filter((_, idx) => idx !== i))}
+                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                        title="Remover link"
+                      >
+                        <X size={14} color="#ef4444" />
+                      </button>
+                    </div>
+                  ))}
+
+                  {replyLinks.length < 5 && (
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: replyLinks.length > 0 ? '8px' : '0' }}>
+                      <input
+                        type="text"
+                        placeholder="Título do Link (ex: Artigo Base)"
+                        value={tempLinkTitle}
+                        onChange={(e) => setTempLinkTitle(e.target.value)}
+                        style={{ width: '35%', border: '1px solid #d1d5db', outline: 'none', fontSize: '0.85rem', padding: '6px 10px', borderRadius: '4px' }}
+                      />
+                      <input
+                        type="url"
+                        placeholder="https://exemplo.com"
+                        value={tempLinkUrl}
+                        onChange={(e) => setTempLinkUrl(e.target.value)}
+                        style={{ flex: 1, border: '1px solid #d1d5db', outline: 'none', fontSize: '0.85rem', padding: '6px 10px', borderRadius: '4px' }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && tempLinkTitle.trim() && tempLinkUrl.trim()) {
+                            e.preventDefault();
+                            setReplyLinks(prev => [...prev, { title: tempLinkTitle.trim(), url: tempLinkUrl.trim() }]);
+                            setTempLinkTitle('');
+                            setTempLinkUrl('');
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          if(tempLinkTitle.trim() && tempLinkUrl.trim()) {
+                            setReplyLinks(prev => [...prev, { title: tempLinkTitle.trim(), url: tempLinkUrl.trim() }]);
+                            setTempLinkTitle('');
+                            setTempLinkUrl('');
+                          }
+                        }}
+                        disabled={!tempLinkTitle.trim() || !tempLinkUrl.trim()}
+                        style={{ 
+                          background: (tempLinkTitle.trim() && tempLinkUrl.trim()) ? 'var(--primary)' : '#e5e7eb', 
+                          color: (tempLinkTitle.trim() && tempLinkUrl.trim()) ? '#fff' : '#9ca3af', 
+                          border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: (tempLinkTitle.trim() && tempLinkUrl.trim()) ? 'pointer' : 'not-allowed',
+                          display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', fontWeight: 600
+                        }}
+                      >
+                        <Plus size={14} /> Adicionar
+                      </button>
+                    </div>
+                  )}
+                  {replyLinks.length >= 5 && (
+                    <span style={{ fontSize: '0.8rem', color: '#ef4444', fontWeight: 500 }}>Você atingiu o limite de 5 links anexados por resposta.</span>
+                  )}
+                </div>
+              )}
               <div className="disc-reply-footer">
                 <span className="disc-reply-hint">Seja respeitoso e científico.</span>
-                <button
-                  className="disc-btn-send"
-                  disabled={replyText.trim().length === 0 || isSubmitting}
-                  onClick={handleSendReply}
-                >
-                  {isSubmitting ? 'Enviando...' : 'Responder'} <Send size={16} />
-                </button>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <button
+                    className="disc-btn-link-toggle"
+                    style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    onClick={() => setShowLinkInput(!showLinkInput)}
+                    title="Anexar link"
+                  >
+                    <Link size={18} color={showLinkInput || replyLinks.length > 0 ? 'var(--primary)' : 'var(--text-muted)'} />
+                  </button>
+                  <button
+                    className="disc-btn-send"
+                    disabled={replyText.trim().length === 0 || isSubmitting}
+                    onClick={handleSendReply}
+                  >
+                    {isSubmitting ? 'Enviando...' : 'Responder'} <Send size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -240,37 +495,7 @@ const DiscussionDetail: React.FC = () => {
                 <p style={{ color: 'var(--text-muted)' }}>Seja o primeiro a responder esta discussão!</p>
               ) : (
                 discussion.replies.map((reply: Record<string, unknown>) => (
-                  <div key={(reply as any).id} className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
-                    <img 
-                      src={(reply as any).avatar} 
-                      alt={(reply as any).author} 
-                      className="disc-comment-avatar" 
-                      onClick={(e) => { e.stopPropagation(); if((reply as any).authorId) navigate(`/profile/${(reply as any).authorId}`); }}
-                      style={{ cursor: 'pointer' }}
-                    />
-                    <div className="disc-comment-content">
-                      <div className="disc-comment-header">
-                        <div className="disc-comment-author-info">
-                          <h4 
-                            onClick={(e) => { e.stopPropagation(); if((reply as any).authorId) navigate(`/profile/${(reply as any).authorId}`); }}
-                            style={{ cursor: 'pointer' }}
-                          >
-                            {(reply as any).author} {reply.isAuthor && <span className="disc-author-badge">Autor</span>}
-                          </h4>
-                          <span>{(reply as any).role} • {(reply as any).time}</span>
-                        </div>
-                      </div>
-                      <p className="disc-comment-text">{(reply as any).content}</p>
-                      <div className="disc-comment-actions">
-                        <div className="disc-vote-group-small">
-                          <button className="disc-action-btn-icon"><ChevronUp size={16} /></button>
-                          <span className="disc-vote-count-small">{(reply as any).likes}</span>
-                          <button className="disc-action-btn-icon"><ChevronDown size={16} /></button>
-                        </div>
-                        <button className="disc-action-btn-small">Responder</button>
-                      </div>
-                    </div>
-                  </div>
+                  <ReplyItem key={(reply as any).id} reply={reply} navigate={navigate} currentUserUid={currentUser?.uid} />
                 ))
               )}
             </div>
