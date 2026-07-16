@@ -2,7 +2,8 @@
 .cmmt-project-card-new {
   display: flex;
   background: white;
-  border: 1px solid #e5e7eb; /* tailwind gray-200 */
+  border: 1px solid #e5e7eb;
+  /* tailwind gray-200 */
   border-radius: 12px;
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -32,8 +33,10 @@
   gap: 6px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #3b82f6; /* blue-500 */
-  background: #eff6ff; /* blue-50 */
+  color: #3b82f6;
+  /* blue-500 */
+  background: #eff6ff;
+  /* blue-50 */
   padding: 4px 12px;
   border-radius: 16px;
   text-transform: uppercase;
@@ -53,11 +56,13 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #10b981; /* green-500 */
+  background: #10b981;
+  /* green-500 */
 }
 
 .cmmt-status-closed .cmmt-status-dot {
-  background: #6b7280; /* gray-500 */
+  background: #6b7280;
+  /* gray-500 */
 }
 
 .cmmt-project-title-wrapper {
@@ -70,7 +75,8 @@
   width: 50px;
   height: 50px;
   border-radius: 12px;
-  background: #6366f1; /* indigo-500 */
+  background: #6366f1;
+  /* indigo-500 */
   color: white;
   display: flex;
   align-items: center;
@@ -119,8 +125,10 @@
 }
 
 .cmmt-project-tag-item-new {
-  background: #f3f4f6; /* gray-100 */
-  color: #4b5563; /* gray-600 */
+  background: #f3f4f6;
+  /* gray-100 */
+  color: #4b5563;
+  /* gray-600 */
   padding: 4px 12px;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -129,12 +137,13 @@
 
 .cmmt-project-content-right {
   width: 280px;
-  background: #f8fafc; /* slate-50 */
+  background: #f8fafc;
+  /* slate-50 */
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  border-left: 1px dashed #e2e8f0;
+  border-left: 1px dashed #e2e8f0b0;
 }
 
 .cmmt-project-details-row {
@@ -158,6 +167,7 @@
   color: #1e293b;
   font-weight: 500;
 }
+
 .cmmt-detail-value svg {
   color: #6366f1;
 }
@@ -176,7 +186,7 @@
   font-size: 0.95rem;
   cursor: pointer;
   transition: background 0.2s;
-  margin-top: auto; 
+  margin-top: auto;
 }
 
 .cmmt-btn-apply-new:hover {
@@ -203,6 +213,7 @@
   .cmmt-project-card-new {
     flex-direction: column;
   }
+
   .cmmt-project-content-right {
     width: 100%;
     border-left: none;

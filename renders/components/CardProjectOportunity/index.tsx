@@ -19,9 +19,10 @@ export interface ProjectData {
 interface CardProjectOportunityProps {
   project: ProjectData;
   onViewProject: (id: string | number) => void;
+  forwardedRef?: React.Ref<HTMLElement>;
 }
 
-const CardProjectOportunity: React.FC<CardProjectOportunityProps> = ({ project, onViewProject }) => {
+const CardProjectOportunity: React.FC<CardProjectOportunityProps> = ({ project, onViewProject, forwardedRef }) => {
   // Extrair iniciais para o avatar
   const getInitials = (title: string) => {
     if (!title) return 'PR';
@@ -33,7 +34,7 @@ const CardProjectOportunity: React.FC<CardProjectOportunityProps> = ({ project, 
   };
 
   return (
-    <article className={`cmmt-project-card-new ${project.status === 'Fechado' ? 'cmmt-project-closed' : ''}`}>
+    <article className={`cmmt-project-card-new ${project.status === 'Fechado' ? 'cmmt-project-closed' : ''}`} ref={forwardedRef}>
       <div className="cmmt-project-content-left">
         <div className="cmmt-project-header-top-new">
           <span className="cmmt-project-type-new">

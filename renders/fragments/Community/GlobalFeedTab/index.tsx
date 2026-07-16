@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, BookOpen, Users, Briefcase, Clock, Calendar, Download, ExternalLink, Bookmark, MessageSquare, Eye } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, Users, Calendar, Download, ExternalLink, Bookmark, MessageSquare, Eye } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import CardDiscussion from '../../../../renders/components/CardDiscussion';
 import CardFeaturedArticle from '../../../../renders/components/CardFeaturedArticle';
+import CardProjectOportunity from '../../../../renders/components/CardProjectOportunity';
 import '../ArticlesTab/styles.css'; 
 import '../FeedTab/styles.css'; 
 
@@ -194,7 +195,6 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
           key={`disc-${item.id}`}
           post={item}
           onOpenThread={handleOpenThread}
-          hideActions={true}
           style={{ border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--bg-card)' }}
           forwardedRef={isTriggerElement ? lastElementRef : undefined}
         />
@@ -203,21 +203,25 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
 
     if (item._type === 'project') {
       return (
-        <article key={`proj-${item.id}`} className="cmmt-article-card" {...refProps} style={{ borderLeft: '4px solid #10b981' }}>
-           <div className="cmmt-article-header-top">
-            <span className="cmmt-article-type" style={{ color: '#10b981' }}>
-              <Briefcase size={16} /> Oportunidade / Projeto
-            </span>
-          </div>
-          <h3 className="cmmt-article-title">{item.title}</h3>
-          <div className="cmmt-article-meta">
-            <span><Users size={16} /> {item.author || item.institution}</span>
-            <span><Clock size={16} /> Prazo: {item.deadline}</span>
-          </div>
-          <div className="cmmt-article-abstract">
-            {item.description}
-          </div>
-        </article>
+        <CardProjectOportunity
+          key={`proj-${item.id}`}
+          project={{
+            id: item.id,
+            type: item.projectType || item.type || 'Projeto',
+            status: item.status || 'Aberto',
+            title: item.title,
+            institution: item.institution || item.author || 'Instituição não informada',
+            location: item.location || 'Remoto/Híbrido',
+            deadline: item.deadline || 'Não informado',
+            description: item.description || item.abstract || '',
+            tags: item.tags || [],
+            scholarship: item.scholarship
+          }}
+          onViewProject={() => {
+            // Se tiver uma rota para projeto, ex: navigate(`/project/${item.id}`)
+          }}
+          forwardedRef={isTriggerElement ? lastElementRef : undefined}
+        />
       );
     }
 
