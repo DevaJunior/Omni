@@ -10,7 +10,7 @@ import { bookmarkService } from '../../../../src/services/bookmarkService';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { useToastStore } from '../../../../src/stores/toastStore';
 import type { Article } from '../../../../src/types/community';
-import CardArticleResult from '../../../../renders/components/CardArticleResult';
+import CardArticleResult from '../../../../renders/components/Cards/CardArticleResult';
 import './styles.css';
 
 const Articles: React.FC = () => {

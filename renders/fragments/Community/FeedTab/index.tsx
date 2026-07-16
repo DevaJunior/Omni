@@ -6,7 +6,7 @@ import { useAuth } from '../../../../src/contexts/AuthContext';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import ConfirmModal from '../../../../renders/components/ConfirmModal';
-import CardDiscussion from '../../../../renders/components/CardDiscussion';
+import CardDiscussion from '../../../../renders/components/Cards/CardDiscussion';
 import './styles.css';
 
 interface FeedTabProps {

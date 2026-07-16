@@ -4,10 +4,10 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
-import CardDiscussion from '../../../../renders/components/CardDiscussion';
-import CardFeaturedArticle from '../../../../renders/components/CardFeaturedArticle';
-import CardProjectOportunity from '../../../../renders/components/CardProjectOportunity';
-import CardArticle from '../../../../renders/components/CardArticle';
+import CardDiscussion from '../../../../renders/components/Cards/CardDiscussion';
+import CardFeaturedArticle from '../../../../renders/components/Cards/CardFeaturedArticle';
+import CardProjectOportunity from '../../../../renders/components/Cards/CardProjectOportunity';
+import CardArticle from '../../../../renders/components/Cards/CardArticle';
 import '../ArticlesTab/styles.css';
 import '../FeedTab/styles.css';
 

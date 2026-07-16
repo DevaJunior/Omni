@@ -13,7 +13,7 @@ import { db } from '../../../../../src/config/firebaseConfig';
 import { communityService } from '../../../../../src/services/communityService';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
 import ConfirmModal from '../../../../components/ConfirmModal';
-import CardDiscussion from '../../../../components/CardDiscussion';
+import CardDiscussion from '../../../../components/Cards/CardDiscussion';
 import './styles.css';
 
 const DiscussionDetail: React.FC = () => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, FileText } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
-import CardProjectOportunity from '../../../components/CardProjectOportunity';
+import CardProjectOportunity from '../../../components/Cards/CardProjectOportunity';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import CreateProjectModal from '../../../../renders/modals/CreateProjectModal';
 import { useAuth } from '../../../../src/contexts/AuthContext';
