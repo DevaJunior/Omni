@@ -1,4 +1,5 @@
 import React from 'react';
+import './styles.css';
 
 export interface FeaturedArticleData {
   id: string | number;
@@ -8,12 +9,12 @@ export interface FeaturedArticleData {
   desc: string;
 }
 
-interface CardFeaturedArticleProps {
+interface CardResearchProps {
   article: FeaturedArticleData;
   onReadMore: (id: string | number) => void;
 }
 
-const CardFeaturedArticle: React.FC<CardFeaturedArticleProps> = ({ article, onReadMore }) => {
+const CardResearch: React.FC<CardResearchProps> = ({ article, onReadMore }) => {
   return (
     <article className="cmmt-visual-card">
       <div className="cmmt-visual-image">
@@ -34,4 +35,4 @@ const CardFeaturedArticle: React.FC<CardFeaturedArticleProps> = ({ article, onRe
   );
 };
 
-export default CardFeaturedArticle;
+export default CardResearch;

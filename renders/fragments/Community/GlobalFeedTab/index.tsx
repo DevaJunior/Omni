@@ -7,7 +7,7 @@ import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import ConfirmModal from '../../../../renders/components/ConfirmModal';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import CardDiscussion from '../../../../renders/components/Cards/CardDiscussion';
-import CardFeaturedArticle from '../../../../renders/components/Cards/CardFeaturedArticle';
+import CardResearch from '../../../../renders/components/Cards/CardResearch';
 import CardProjectOportunity from '../../../../renders/components/Cards/CardProjectOportunity';
 import CardArticle from '../../../../renders/components/Cards/CardArticle';
 import '../ArticlesTab/styles.css';
@@ -263,7 +263,7 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
 
             <div className="cmmt-featured-grid">
               {featuredArticles.map((article) => (
-                <CardFeaturedArticle
+                <CardResearch
                   key={article.id}
                   article={article}
                   onReadMore={handleViewArticle}

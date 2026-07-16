@@ -132,10 +132,10 @@ const Home: React.FC = () => {
         <section className="articles-section">
           <div className="articles-header">
             <div className="articles-title">
-              <h2>Últimos <br className="mobile-hidden-br" />artigos</h2>
+              <h2>Últimas <br className="mobile-hidden-br" />pesquisas</h2>
               <p>Bem-vindo à nossa seção de blog, onde o conhecimento encontra a inspiração. Explore artigos perspicazes, dicas de especialistas e as últimas tendências em nosso campo.</p>
               <button className="btn-secondary articles-btn-desktop" onClick={() => navigate('/community')}>
-                Ver todos
+                Ver mais
               </button>
             </div>
             <div className="slider-controls">
