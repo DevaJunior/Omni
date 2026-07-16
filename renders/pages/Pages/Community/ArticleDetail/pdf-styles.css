@@ -1,0 +1,150 @@
+/* pdf-styles.css */
+
+.pdf-template-container {
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  color: #1e293b;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 40px;
+  line-height: 1.6;
+}
+
+.pdf-header {
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.pdf-author-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.pdf-author-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.pdf-author-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-author-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.pdf-author-inst {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.pdf-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.pdf-header-divider {
+  border-bottom: 1px solid #e2e8f0;
+  margin: 30px 0 20px 0;
+}
+
+.pdf-meta-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pdf-doi, .pdf-date {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.pdf-icon {
+  margin-right: 8px;
+  color: #94a3b8;
+}
+
+.pdf-meta-label {
+  color: #64748b;
+  margin-right: 4px;
+}
+
+.pdf-doi-link {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.pdf-abstract {
+  margin-bottom: 20px;
+  font-size: 15px;
+  text-align: justify;
+}
+
+.pdf-keywords {
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 40px;
+}
+
+.pdf-content h1, .pdf-content h2, .pdf-content h3,
+.pdf-abstract h1, .pdf-abstract h2, .pdf-abstract h3 {
+  color: #0f172a;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.pdf-content p, .pdf-abstract p {
+  text-align: justify;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.pdf-content img, .pdf-abstract img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+  border-radius: 4px;
+}
+
+.pdf-content table, .pdf-abstract table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+}
+
+.pdf-content th, .pdf-content td,
+.pdf-abstract th, .pdf-abstract td {
+  border: 1px solid #cbd5e1;
+  padding: 10px;
+  text-align: left;
+}
+
+.pdf-content th, .pdf-abstract th {
+  background-color: #f1f5f9;
+  font-weight: bold;
+}
+
+.pdf-footer {
+  margin-top: 50px;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 20px;
+}

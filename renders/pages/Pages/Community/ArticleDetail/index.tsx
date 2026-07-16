@@ -17,9 +17,9 @@ import { db } from '../../../../../src/config/firebaseConfig';
 import { articleService } from '../../../../../src/services/articleService';
 import { bookmarkService } from '../../../../../src/services/bookmarkService';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
+import html2pdf from 'html2pdf.js';
 import MarkdownRenderer from '../../../../../src/components/MarkdownRenderer';
+import { ArticlePDFTemplate } from './ArticlePDFTemplate';
 import './styles.css';
 
 const ArticleDetail: React.FC = () => {
@@ -115,41 +115,22 @@ Existe uma visão altamente romantizada na cultura popular sobre a descoberta ci
   const handleDownload = async () => {
     if (!article) return;
     setIsDownloading(true);
-    addToast("Gerando PDF, aguarde...", 'info');
+    addToast("Gerando PDF Oficial, aguarde...", 'info');
     
     try {
-      const element = document.getElementById('article-pdf-content');
+      const element = document.getElementById('hidden-pdf-template-container');
       if (!element) throw new Error("Conteúdo não encontrado");
 
-      const canvas = await html2canvas(element, {
-        scale: 2, // Melhor resolução
-        useCORS: true, // Para imagens externas
-        logging: false
-      });
+      const opt: any = {
+        margin:       15,
+        filename:     `${article.title.replace(/\s+/g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+      };
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      
-      let heightLeft = pdfHeight;
-      let position = 0;
-
-      // Adiciona primeira página
-      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-      heightLeft -= pageHeight;
-
-      // Adiciona páginas extras se a imagem for maior que a página
-      while (heightLeft > 0) {
-        position = heightLeft - pdfHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-        heightLeft -= pageHeight;
-      }
-
-      pdf.save(`${article.title.replace(/\s+/g, '_')}.pdf`);
+      await html2pdf().set(opt).from(element).save();
       
       // Incrementa download nas estatísticas
       const isHome = article.tags?.includes("Destaque");
@@ -316,6 +297,13 @@ Existe uma visão altamente romantizada na cultura popular sobre a descoberta ci
             </div>
           </div>
         </aside>
+      </div>
+
+      {/* TEMA DO PDF ESCONDIDO DA INTERFACE PRINCIPAL */}
+      <div style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}>
+        <div id="hidden-pdf-template-container">
+          <ArticlePDFTemplate article={article} />
+        </div>
       </div>
     </div>
   );
