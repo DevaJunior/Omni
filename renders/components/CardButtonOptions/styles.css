@@ -1,0 +1,73 @@
+.card-btn-options-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.card-btn-options-trigger {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.card-btn-options-trigger:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.card-btn-options-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 8px 0;
+  min-width: max-content;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-btn-options-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.card-btn-options-item:hover {
+  background: #f8fafc;
+}
+
+.card-btn-options-item.danger {
+  color: #ef4444;
+}
+
+.card-btn-options-item.danger:hover {
+  background: #fef2f2;
+}
+
+.card-btn-options-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

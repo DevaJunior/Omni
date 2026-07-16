@@ -2,15 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
-  MessageSquare,
-  Share2,
-  MoreHorizontal,
   Send,
   UserPlus,
   ChevronUp,
   ChevronDown,
-  Trash2,
-  Heart,
   CheckCircle2
 } from 'lucide-react';
 import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
@@ -18,6 +13,7 @@ import { db } from '../../../../../src/config/firebaseConfig';
 import { communityService } from '../../../../../src/services/communityService';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
 import ConfirmModal from '../../../../components/ConfirmModal';
+import CardDiscussion from '../../../../components/CardDiscussion';
 import './styles.css';
 
 const DiscussionDetail: React.FC = () => {
@@ -183,64 +179,32 @@ const DiscussionDetail: React.FC = () => {
         <main className="disc-main-content">
 
           {/* Post Original */}
-          <article className="disc-original-post">
-            <div className="disc-post-header">
-              <img 
-                src={discussion.avatar} 
-                alt={discussion.author} 
-                className="disc-author-avatar" 
-                onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
-                style={{ cursor: 'pointer' }}
-              />
-              <div className="disc-author-info">
-                <h4 
-                  onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {discussion.author}
-                </h4>
-                <span>{discussion.role} • {discussion.time}</span>
-              </div>
-              
-              <div style={{ marginLeft: 'auto', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                {currentUser?.uid === discussion.authorId && (
-                  <button className="disc-action-btn disc-delete-btn" onClick={handleDelete} title="Excluir">
-                    <Trash2 size={16} />
-                  </button>
-                )}
-                <button className="disc-btn-more"><MoreHorizontal size={20} /></button>
-              </div>
-            </div>
-
-            <div className="disc-post-body">
-              <p>{discussion.content}</p>
-              <div className="disc-post-tags">
-                {discussion.tags.map((tag: string) => (
-                  <span key={tag} className="disc-tag">{tag}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className="disc-post-actions">
-              <button 
-                className={`disc-action-btn ${discussion.likedBy?.includes(currentUser?.uid || '') ? 'disc-liked' : ''}`} 
-                onClick={handleLike}
-              >
-                <Heart 
-                  size={18} 
-                  fill={discussion.likedBy?.includes(currentUser?.uid || '') ? 'currentColor' : 'none'} 
-                  className={discussion.likedBy?.includes(currentUser?.uid || '') ? 'disc-like-anim' : ''}
-                /> 
-                {discussion.likes}
-              </button>
-              <button className="disc-action-btn active-state">
-                <MessageSquare size={18} /> {discussion.commentsCount} Comentários
-              </button>
-              <button className="disc-action-btn disc-share">
-                <Share2 size={18} /> Compartilhar
-              </button>
-            </div>
-          </article>
+          {/* Post Original */}
+          <CardDiscussion
+            post={{
+              id: discussion.id,
+              avatar: discussion.avatar,
+              author: discussion.author,
+              authorId: discussion.authorId,
+              role: discussion.role,
+              date: discussion.date || discussion.time,
+              content: discussion.content,
+              tags: discussion.tags,
+              likedBy: discussion.likedBy,
+              likes: discussion.likes,
+              comments: discussion.commentsCount,
+            }}
+            currentUserUid={currentUser?.uid}
+            onOpenThread={() => {}}
+            onLike={() => handleLike()}
+            onDelete={() => setConfirmConfig({
+              isOpen: true,
+              title: 'Excluir discussão',
+              message: 'Tem certeza que deseja excluir esta discussão? Esta ação não pode ser desfeita.',
+              onConfirm: handleDelete
+            })}
+            style={{ marginBottom: '24px' }}
+          />
 
           {/* Área de Resposta */}
           <div className="disc-reply-box">

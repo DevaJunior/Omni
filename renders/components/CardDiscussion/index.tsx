@@ -1,7 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, MessageSquare, Trash2 } from 'lucide-react';
-import ShareMenu from '../ShareMenu';
+import { Heart, MessageSquare, Trash2, Clock, Edit, Flag } from 'lucide-react';
+//import ShareMenu from '../ShareMenu';
+import CardButtonOptions from '../CardButtonOptions';
+import './styles.css';
 
 export interface PostData {
   id: string;
@@ -23,6 +25,8 @@ interface CardDiscussionProps {
   onOpenThread: (id: string | number) => void;
   onLike?: (id: string) => void;
   onDelete?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  onReport?: (id: string) => void;
   hideActions?: boolean;
   style?: React.CSSProperties;
   forwardedRef?: React.Ref<HTMLElement>;
@@ -33,7 +37,7 @@ export const formatTimeAgo = (dateStr?: string) => {
   const postDate = new Date(dateStr);
   const diffInMs = new Date().getTime() - postDate.getTime();
   const diffInSec = Math.floor(diffInMs / 1000);
-  
+
   if (diffInSec < 60) return 'Agora mesmo';
   const diffInMin = Math.floor(diffInSec / 60);
   if (diffInMin < 60) return `Há ${diffInMin} min`;
@@ -50,6 +54,8 @@ const CardDiscussion: React.FC<CardDiscussionProps> = ({
   onOpenThread,
   onLike,
   onDelete,
+  onEdit,
+  onReport,
   hideActions = false,
   style,
   forwardedRef,
@@ -58,68 +64,89 @@ const CardDiscussion: React.FC<CardDiscussionProps> = ({
   const avatarSrc = post.avatar || `https://ui-avatars.com/api/?name=${post.author}`;
 
   return (
-    <article className="cmmt-post-card" style={style} ref={forwardedRef}>
-      <div className="cmmt-post-header">
-        <img 
-          src={avatarSrc} 
-          alt={post.author} 
-          className="cmmt-author-avatar" 
-          onClick={(e) => { 
-            e.stopPropagation(); 
-            if (post.authorId) navigate(`/profile/${post.authorId}`); 
-          }}
-          style={{ cursor: post.authorId ? 'pointer' : 'default' }}
-        />
-        <div className="cmmt-author-info">
-          <h4 
-            onClick={(e) => { 
-              e.stopPropagation(); 
-              if (post.authorId) navigate(`/profile/${post.authorId}`); 
+    <article
+      className={`cmmt-card-discussion-new ${currentUserUid === post.authorId ? 'cmmt-card-own-post' : ''}`}
+      style={style}
+      ref={forwardedRef}
+    >
+      <div className="cmmt-disc-header">
+        <div className="cmmt-disc-author-section">
+          <img
+            src={avatarSrc}
+            alt={post.author}
+            className="cmmt-disc-avatar"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (post.authorId) navigate(`/profile/${post.authorId}`);
             }}
             style={{ cursor: post.authorId ? 'pointer' : 'default' }}
-          >
-            {post.author}
-          </h4>
-          <span>{post.role} • {formatTimeAgo(post.date)}</span>
+          />
+          <div className="cmmt-disc-author-info">
+            <h4
+              className="cmmt-disc-author-name"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (post.authorId) navigate(`/profile/${post.authorId}`);
+              }}
+              style={{ cursor: post.authorId ? 'pointer' : 'default' }}
+            >
+              {post.author}
+            </h4>
+            <span className="cmmt-disc-author-role">{post.role}</span>
+          </div>
         </div>
 
-        {!hideActions && currentUserUid === post.authorId && onDelete && (
-          <div className="cmmt-post-options">
-            <button className="cmmt-action-btn cmmt-delete-btn" onClick={() => onDelete(post.id)} title="Excluir">
-              <Trash2 size={16} />
-            </button>
+        <div className="cmmt-disc-header-right">
+
+          <div className="cmmt-disc-time">
+            <Clock size={16} /> {formatTimeAgo(post.date)}
           </div>
-        )}
+
+          {!hideActions && (
+            <CardButtonOptions
+              options={
+                currentUserUid === post.authorId
+                  ? [
+                    { label: 'Editar', icon: <Edit size={16} />, onClick: () => onEdit && onEdit(post.id) },
+                    { label: 'Excluir', icon: <Trash2 size={16} />, onClick: () => onDelete && onDelete(post.id), danger: true }
+                  ]
+                  : [
+                    { label: 'Denunciar', icon: <Flag size={16} />, onClick: () => onReport && onReport(post.id), danger: true }
+                  ]
+              }
+            />
+          )}
+        </div>
       </div>
 
-      <div className="cmmt-post-body" onClick={() => onOpenThread(post.id)}>
-        <p>{post.content}</p>
-        <div className="cmmt-post-tags">
-          {post.tags?.map((tag: string) => (
-            <span key={tag} className="cmmt-post-tag-item">{tag}</span>
-          ))}
-        </div>
+      <div className="cmmt-disc-body" onClick={() => onOpenThread(post.id)}>
+        <p className="cmmt-disc-content">{post.content}</p>
+
+
       </div>
 
       {!hideActions && (
-        <div className="cmmt-post-actions">
-          <button
-            className={`cmmt-action-btn ${post.likedBy?.includes(currentUserUid || '') ? 'cmmt-liked' : ''}`}
-            onClick={() => onLike && onLike(post.id)}
-          >
-            <Heart
-              size={18}
-              fill={post.likedBy?.includes(currentUserUid || '') ? 'currentColor' : 'none'}
-              className={post.likedBy?.includes(currentUserUid || '') ? 'cmmt-like-anim' : ''}
-            />
-            {post.likes || 0}
-          </button>
-          <button className="cmmt-action-btn cmmt-comments-btn" onClick={() => onOpenThread(post.id)} >
-            <MessageSquare size={18} /> {post.comments || 0} Comentários
-          </button>
-          <div className="cmmt-share">
-            <ShareMenu text={`Confira a publicação de ${post.author} na Omni!`}
-              url={`${window.location.origin}/discussion/${post.id}`} />
+        <div className="cmmt-disc-footer">
+
+          <div className="cmmt-disc-badge">
+            <MessageSquare size={14} /> DISCUSSÃO
+          </div>
+
+          <div className="cmmt-disc-actions">
+            <button className="cmmt-disc-action-btn" onClick={() => onOpenThread(post.id)} >
+              <span className="cmmt-disc-action-count">{post.comments || 0}</span>
+              <MessageSquare size={18} />
+            </button>
+            <button
+              className={`cmmt-disc-action-btn ${post.likedBy?.includes(currentUserUid || '') ? 'cmmt-liked' : ''}`}
+              onClick={() => onLike && onLike(post.id)}
+            >
+              <span className="cmmt-disc-action-count">{post.likes || 0}</span>
+              <Heart size={18} fill={post.likedBy?.includes(currentUserUid || '') ? 'currentColor' : 'none'}
+              />
+            </button>
+
+
           </div>
         </div>
       )}
