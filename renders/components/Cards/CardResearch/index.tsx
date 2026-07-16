@@ -12,18 +12,20 @@ export interface FeaturedArticleData {
 interface CardResearchProps {
   article: FeaturedArticleData;
   onReadMore: (id: string | number) => void;
+  style?: React.CSSProperties;
+  maxLines?: number;
 }
 
-const CardResearch: React.FC<CardResearchProps> = ({ article, onReadMore }) => {
+const CardResearch: React.FC<CardResearchProps> = ({ article, onReadMore, style, maxLines = 4 }) => {
   return (
-    <article className="cmmt-visual-card">
+    <article className="cmmt-visual-card" style={style}>
       <div className="cmmt-visual-image">
         <img src={article.image} alt={article.title} />
         <span className="cmmt-visual-badge">{article.category}</span>
       </div>
       <div className="cmmt-visual-info">
         <h4>{article.title}</h4>
-        <p>{article.desc}</p>
+        <p style={{ WebkitLineClamp: maxLines }}>{article.desc}</p>
         <button
           className="cmmt-btn-read-more"
           onClick={() => onReadMore(article.id)}

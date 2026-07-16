@@ -60,6 +60,11 @@
   line-height: 1.4;
   color: var(--text-main);
   overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cmmt-visual-info p {
@@ -69,6 +74,11 @@
   line-height: 1.6;
   flex: 1;
   overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cmmt-btn-read-more {

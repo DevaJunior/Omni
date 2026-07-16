@@ -8,6 +8,7 @@ import type { LabPartner } from '../../../../src/types/community';
 
 import Footer from './../../../menus/Footer/index';
 import Skeleton from '../../../components/Skeleton';
+import CardResearch from '../../../components/Cards/CardResearch';
 
 const Home: React.FC = () => {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -157,18 +158,19 @@ const Home: React.FC = () => {
               </div>
             ) : (
               articles.map((art) => (
-                <div key={art.id} className="article-card">
-                  <div className="article-image">
-                    <img src={art.image} alt={art.title} />
-                  </div>
-                  <div className="article-info">
-                    <h3>{art.title}</h3>
-                    <p>{art.desc}</p>
-                    <span className="read-more" onClick={() => navigate(`/article/${art.id}`)} style={{ cursor: 'pointer' }}>
-                      Leia mais &rarr;
-                    </span>
-                  </div>
-                </div>
+                <CardResearch
+                  key={art.id}
+                  article={{
+                    id: art.id,
+                    image: art.image || 'https://via.placeholder.com/300x200',
+                    category: art.category || 'Artigo',
+                    title: art.title,
+                    desc: art.desc || 'Sem descrição.'
+                  }}
+                  onReadMore={(id) => navigate(`/article/${id}`)}
+                  style={{ minWidth: '320px', maxWidth: '320px' }}
+                  maxLines={3}
+                />
               ))
             )}
           </div>
