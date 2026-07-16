@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, BookOpen, Users, Calendar, Download, ExternalLink, Bookmark, MessageSquare, Eye } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import CardDiscussion from '../../../../renders/components/CardDiscussion';
 import CardFeaturedArticle from '../../../../renders/components/CardFeaturedArticle';
 import CardProjectOportunity from '../../../../renders/components/CardProjectOportunity';
-import '../ArticlesTab/styles.css'; 
-import '../FeedTab/styles.css'; 
+import CardArticle from '../../../../renders/components/CardArticle';
+import '../ArticlesTab/styles.css';
+import '../FeedTab/styles.css';
 
 import img1 from '../../../../src/assets/wallapapers/wpp_cience_000.png';
 import img2 from '../../../../src/assets/wallapapers/wpp_cience_001.png';
@@ -62,7 +63,7 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
   const lastElementRef = useCallback((node: any) => {
     if (!globalFeed.isLoaded) return;
     if (observer.current) observer.current.disconnect();
-    
+
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && globalFeed.hasMore) {
         fetchGlobalFeed(true);
@@ -97,7 +98,7 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
     .filter(p => p._searchScore > 0)
     .sort((a, b) => {
       if (searchQuery) return b._searchScore - a._searchScore;
-      return b._date - a._date; 
+      return b._date - a._date;
     });
 
   if (!globalFeed.isLoaded && globalFeed.data.length === 0) {
@@ -108,84 +109,15 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
     // Para disparar no 12º item de uma lista de 15, usamos length - 4
     // Se a lista tem 15 (indices 0 a 14), 15 - 4 = 11. O índice 11 é o 12º elemento real.
     const isTriggerElement = index === filteredData.length - 4;
-    const refProps = isTriggerElement ? { ref: lastElementRef } : {};
 
     if (item._type === 'article') {
       return (
-        <article key={`art-${item.id}`} className="cmmt-article-card" {...refProps}>
-          <div className="cmmt-article-header-top">
-            <span
-              className="cmmt-article-type"
-              onClick={() => navigate('/learn')}
-              style={{ cursor: 'pointer' }}
-              title="Ir para trilhas de aprendizado"
-            >
-              <BookOpen size={16} /> Publicação Científica
-            </span>
-            <div className="cmmt-article-status-container">
-              {item.isFree ? (
-                <span className="cmmt-article-status-open">Open Access</span>
-              ) : (
-                <span className="cmmt-article-status-closed">Paywall</span>
-              )}
-              <Bookmark size={20} color="var(--text-muted)" style={{ cursor: 'pointer' }} />
-            </div>
-          </div>
-
-          <h3
-            className="cmmt-article-title"
-            onClick={() => handleViewArticle(item.id)}
-            style={{ cursor: 'pointer' }}
-            title="Ler artigo"
-          >
-            {item.title}
-          </h3>
-
-          <div className="cmmt-article-meta">
-            <span><Users size={16} /> {item.authors}</span>
-          </div>
-
-          <div className="cmmt-article-meta cmmt-article-source">
-            <span><strong>{item.journal}</strong></span>
-            <span><Calendar size={16} /> {item.date}</span>
-            <span className="cmmt-meta-impact">FI: {item.impactFactor}</span>
-          </div>
-
-          <div className="cmmt-article-abstract">
-            <strong>Resumo: </strong>{item.abstract}
-          </div>
-
-          <div className="cmmt-article-stats-row">
-            <div className="cmmt-article-stats-left">
-              <span><MessageSquare size={16} /> 35 Citações</span>
-              <span><Eye size={16} /> 1.0k Leituras</span>
-            </div>
-            <span className="cmmt-doi">DOI: {item.doi}</span>
-          </div>
-
-          <div className="cmmt-article-footer">
-            <div className="cmmt-article-tags">
-              {item.tags?.map((tag: any) => (
-                <span key={tag} className="cmmt-article-tag-item">{tag}</span>
-              ))}
-            </div>
-            <div className="cmmt-article-actions">
-              <div className="cmmt-article-btn-group">
-                {item.isFree && (
-                  <button className="cmmt-btn-secondary">
-                    <Download size={16} /> PDF
-                  </button>
-                )}
-                <button
-                  className="cmmt-btn-primary-read"
-                  onClick={() => handleViewArticle(item.id)}
-                >
-                  Ler Artigo <ExternalLink size={16} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </article>
+        <CardArticle
+          key={`art-${item.id}`}
+          article={item}
+          onViewArticle={handleViewArticle}
+          forwardedRef={isTriggerElement ? lastElementRef : undefined}
+        />
       );
     }
 

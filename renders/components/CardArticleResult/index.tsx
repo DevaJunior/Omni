@@ -1,5 +1,6 @@
 import React from 'react';
 import { LockOpen, Lock, Bookmark, MessageSquare, Eye, Download, ExternalLink } from 'lucide-react';
+import './styles.css';
 
 export interface ArticleResultData {
   id: string | number;
