@@ -9,6 +9,34 @@ import ConfirmModal from '../../../../renders/components/ConfirmModal';
 import CardDiscussion from '../../../../renders/components/Cards/CardDiscussion';
 import './styles.css';
 
+// Modal simples de edição inline
+const EditDiscussionModal: React.FC<{
+  isOpen: boolean;
+  content: string;
+  onSave: (newContent: string) => void;
+  onCancel: () => void;
+}> = ({ isOpen, content, onSave, onCancel }) => {
+  const [editText, setEditText] = useState(content);
+  useEffect(() => { setEditText(content); }, [content]);
+  if (!isOpen) return null;
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ background: '#fff', borderRadius: '12px', padding: '24px', width: '90%', maxWidth: '540px', boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}>
+        <h3 style={{ margin: '0 0 16px', fontSize: '1.1rem' }}>Editar Discussão</h3>
+        <textarea
+          value={editText}
+          onChange={(e) => setEditText(e.target.value)}
+          style={{ width: '100%', minHeight: '120px', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb', fontFamily: 'inherit', resize: 'vertical', fontSize: '0.95rem' }}
+        />
+        <div style={{ display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'flex-end' }}>
+          <button onClick={onCancel} style={{ padding: '8px 16px', background: 'transparent', border: '1px solid #ccc', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}>Cancelar</button>
+          <button onClick={() => onSave(editText)} style={{ padding: '8px 20px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Salvar</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 interface FeedTabProps {
   searchQuery?: string;
   onClear?: () => void;
@@ -29,6 +57,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     message: '',
     onConfirm: () => { }
   });
+  const [editModal, setEditModal] = useState({ isOpen: false, id: '', content: '' });
 
   const fetchDiscussions = async (isLoadMore = false) => {
     if (isLoadMore) setLoadingMore(true);
@@ -139,6 +168,28 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     });
   };
 
+  const handleEdit = (id: string) => {
+    const post = discussions.data.find((p: any) => p.id === id);
+    if (post) {
+      setEditModal({ isOpen: true, id, content: (post as any).content || '' });
+    }
+  };
+
+  const handleSaveEdit = async (newContent: string) => {
+    if (!editModal.id || !newContent.trim()) return;
+    try {
+      await communityService.updateDiscussion(editModal.id, newContent.trim());
+      const newData = discussions.data.map((p: any) =>
+        p.id === editModal.id ? { ...p, content: newContent.trim() } : p
+      );
+      setDiscussions(newData, discussions.lastDoc, discussions.hasMore);
+    } catch (e) {
+      console.error('Erro ao editar', e);
+    } finally {
+      setEditModal({ isOpen: false, id: '', content: '' });
+    }
+  };
+
   return (
     <div className="cmmt-posts-list">
 
@@ -181,6 +232,7 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
             onOpenThread={handleOpenThread}
             onLike={handleLike}
             onDelete={handleDelete}
+            onEdit={handleEdit}
           />
         ))
       )}
@@ -201,6 +253,12 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
         message={confirmConfig.message}
         onConfirm={confirmConfig.onConfirm}
         onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+      />
+      <EditDiscussionModal
+        isOpen={editModal.isOpen}
+        content={editModal.content}
+        onSave={handleSaveEdit}
+        onCancel={() => setEditModal({ isOpen: false, id: '', content: '' })}
       />
     </div>
   );

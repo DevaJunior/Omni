@@ -148,6 +148,41 @@ export const communityService = {
     }, { merge: true });
   },
 
+  async deleteReply(discussionId: string, replyId: string): Promise<void> {
+    const docRef = doc(db, FIREBASE_ROUTES.DISCUSSIONS, discussionId);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    
+    const data = docSnap.data();
+    const replies = data.replies || [];
+    const updatedReplies = replies.filter((r: any) => r.id !== replyId);
+    
+    await setDoc(docRef, {
+      replies: updatedReplies,
+      commentsCount: increment(-1),
+      comments: increment(-1)
+    }, { merge: true });
+  },
+
+  async updateReply(discussionId: string, replyId: string, newContent: string, newLinks?: {title: string, url: string}[]): Promise<void> {
+    const docRef = doc(db, FIREBASE_ROUTES.DISCUSSIONS, discussionId);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    
+    const data = docSnap.data();
+    const replies = data.replies || [];
+    const updatedReplies = replies.map((r: any) => {
+      if (r.id === replyId) {
+        return { ...r, content: newContent, ...(newLinks ? { links: newLinks } : {}) };
+      }
+      return r;
+    });
+    
+    await setDoc(docRef, {
+      replies: updatedReplies
+    }, { merge: true });
+  },
+
   async voteDiscussion(discussionId: string, userId: string): Promise<{liked: boolean, likesCount: number}> {
     const docRef = doc(db, FIREBASE_ROUTES.DISCUSSIONS, discussionId);
     const docSnap = await getDoc(docRef);
@@ -178,6 +213,11 @@ export const communityService = {
 
   async deleteDiscussion(discussionId: string): Promise<void> {
     await deleteDoc(doc(db, FIREBASE_ROUTES.DISCUSSIONS, discussionId));
+  },
+
+  async updateDiscussion(discussionId: string, newContent: string): Promise<void> {
+    const docRef = doc(db, FIREBASE_ROUTES.DISCUSSIONS, discussionId);
+    await setDoc(docRef, { content: newContent }, { merge: true });
   },
 
   // Laboratórios Parceiros

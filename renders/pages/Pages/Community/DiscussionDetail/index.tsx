@@ -22,8 +22,16 @@ import CardButtonOptions from '../../../../components/Cards/CardButtonOptions';
 import { Edit, Trash2, Flag } from 'lucide-react';
 import './styles.css';
 
-const ReplyItem = ({ reply, navigate, currentUserUid }: { reply: any; navigate: any; currentUserUid?: string }) => {
+const ReplyItem = ({ 
+  reply, navigate, currentUserUid, onEdit, onDelete 
+}: { 
+  reply: any; navigate: any; currentUserUid?: string;
+  onEdit: (id: string, content: string) => void;
+  onDelete: (id: string) => void;
+}) => {
   const [expanded, setExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(reply.content || '');
   const content = reply.content || '';
   const linesCount = content.split('\n').length;
   const isLong = content.length > 300 || linesCount > 3;
@@ -52,8 +60,8 @@ const ReplyItem = ({ reply, navigate, currentUserUid }: { reply: any; navigate: 
             options={
               currentUserUid === reply.authorId
                 ? [
-                  { label: 'Editar', icon: <Edit size={16} />, onClick: () => alert('Em desenvolvimento') },
-                  { label: 'Excluir', icon: <Trash2 size={16} />, onClick: () => alert('Em desenvolvimento'), danger: true }
+                  { label: 'Editar', icon: <Edit size={16} />, onClick: () => { setIsEditing(true); setEditContent(reply.content); } },
+                  { label: 'Excluir', icon: <Trash2 size={16} />, onClick: () => onDelete(reply.id), danger: true }
                 ]
                 : [
                   { label: 'Denunciar', icon: <Flag size={16} />, onClick: () => alert('Em desenvolvimento'), danger: true }
@@ -61,8 +69,32 @@ const ReplyItem = ({ reply, navigate, currentUserUid }: { reply: any; navigate: 
             }
           />
         </div>
-        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-          <p 
+
+        {isEditing ? (
+          <div style={{ marginTop: '8px' }}>
+            <textarea 
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              style={{ width: '100%', minHeight: '80px', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb', fontFamily: 'inherit', resize: 'vertical' }}
+            />
+            <div style={{ display: 'flex', gap: '8px', marginTop: '8px', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => { setIsEditing(false); setEditContent(reply.content); }} 
+                style={{ padding: '6px 12px', background: 'transparent', border: '1px solid #ccc', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={() => { onEdit(reply.id, editContent); setIsEditing(false); }} 
+                style={{ padding: '6px 16px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div style={{ position: 'relative' }}>
+            <p 
             className="disc-comment-text" 
             style={{ 
               whiteSpace: 'pre-wrap',
@@ -117,7 +149,8 @@ const ReplyItem = ({ reply, navigate, currentUserUid }: { reply: any; navigate: 
               <ChevronUp size={18} />
             </button>
           )}
-        </div>
+          </div>
+        )}
         
         {/* Renderiza link legado (string) se existir, por retrocompatibilidade */}
         {typeof reply.link === 'string' && reply.link && (
@@ -207,6 +240,7 @@ const DiscussionDetail: React.FC = () => {
     message: '',
     onConfirm: () => {}
   });
+  const [editModal, setEditModal] = useState({ isOpen: false, content: '' });
 
   const fetchDiscussion = async () => {
     if (!id) return;
@@ -298,11 +332,40 @@ const DiscussionDetail: React.FC = () => {
       setTempLinkUrl('');
       setShowLinkInput(false);
       await fetchDiscussion(); // Refresh
-    } catch (e) {
-      console.error("Erro ao enviar resposta", e);
+    } catch (err) {
+      console.error("Erro ao responder", err);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleEditReply = async (replyId: string, newContent: string) => {
+    if (!id || !newContent.trim()) return;
+    try {
+      await communityService.updateReply(id, replyId, newContent);
+      await fetchDiscussion();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleDeleteReply = (replyId: string) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Excluir Resposta',
+      message: 'Tem certeza que deseja excluir esta resposta? Esta ação não pode ser desfeita.',
+      onConfirm: async () => {
+        if (!id) return;
+        try {
+          await communityService.deleteReply(id, replyId);
+          await fetchDiscussion();
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        }
+      }
+    });
   };
 
   const handleLike = async () => {
@@ -336,6 +399,23 @@ const DiscussionDetail: React.FC = () => {
         }
       }
     });
+  };
+
+  const handleEditDiscussion = () => {
+    if (!discussion) return;
+    setEditModal({ isOpen: true, content: discussion.content || '' });
+  };
+
+  const handleSaveEditDiscussion = async (newContent: string) => {
+    if (!id || !newContent.trim()) return;
+    try {
+      await communityService.updateDiscussion(id, newContent.trim());
+      setDiscussion((prev: any) => ({ ...prev, content: newContent.trim() }));
+    } catch (e) {
+      console.error('Erro ao editar', e);
+    } finally {
+      setEditModal({ isOpen: false, content: '' });
+    }
   };
 
   if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando postagem...</div>;
@@ -382,6 +462,7 @@ const DiscussionDetail: React.FC = () => {
               message: 'Tem certeza que deseja excluir esta discussão? Esta ação não pode ser desfeita.',
               onConfirm: handleDelete
             })}
+            onEdit={handleEditDiscussion}
             style={{ marginBottom: '24px' }}
           />
 
@@ -495,7 +576,14 @@ const DiscussionDetail: React.FC = () => {
                 <p style={{ color: 'var(--text-muted)' }}>Seja o primeiro a responder esta discussão!</p>
               ) : (
                 discussion.replies.map((reply: Record<string, unknown>) => (
-                  <ReplyItem key={(reply as any).id} reply={reply} navigate={navigate} currentUserUid={currentUser?.uid} />
+                  <ReplyItem 
+                    key={(reply as any).id} 
+                    reply={reply} 
+                    navigate={navigate} 
+                    currentUserUid={currentUser?.uid} 
+                    onEdit={handleEditReply}
+                    onDelete={handleDeleteReply}
+                  />
                 ))
               )}
             </div>
@@ -566,6 +654,22 @@ const DiscussionDetail: React.FC = () => {
         onConfirm={confirmConfig.onConfirm}
         onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
       />
+      {editModal.isOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#fff', borderRadius: '12px', padding: '24px', width: '90%', maxWidth: '540px', boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}>
+            <h3 style={{ margin: '0 0 16px', fontSize: '1.1rem' }}>Editar Discussão</h3>
+            <textarea
+              defaultValue={editModal.content}
+              id="disc-edit-textarea"
+              style={{ width: '100%', minHeight: '120px', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb', fontFamily: 'inherit', resize: 'vertical', fontSize: '0.95rem' }}
+            />
+            <div style={{ display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setEditModal({ isOpen: false, content: '' })} style={{ padding: '8px 16px', background: 'transparent', border: '1px solid #ccc', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}>Cancelar</button>
+              <button onClick={() => { const el = document.getElementById('disc-edit-textarea') as HTMLTextAreaElement; handleSaveEditDiscussion(el?.value || ''); }} style={{ padding: '8px 20px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Salvar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
