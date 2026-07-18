@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, X, Beaker, Users, BookOpen, Bell, Heart, MessageSquare, UserPlus, Info, Settings, LogOut, FileText } from 'lucide-react';
+import { Search, Menu, Heart, MessageSquare, UserPlus, Info, Bell } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { notificationService, type NotificationData } from '../../../src/services/notificationService';
+import Sidebar from '../Sidebar';
 import './styles.css';
 
 const Navbar: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Search state
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -20,11 +20,10 @@ const Navbar: React.FC = () => {
 
   // Profile menu state
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentUser, userProfile, logout } = useAuth();
+  const { currentUser } = useAuth();
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -35,13 +34,10 @@ const Navbar: React.FC = () => {
       if (isSearchOpen && searchInputRef.current && !searchInputRef.current.contains(event.target as Node) && !(event.target as Element).closest('.search-toggle')) {
         setIsSearchOpen(false);
       }
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
-        setIsProfileMenuOpen(false);
-      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isSearchOpen, isProfileMenuOpen]);
+  }, [isSearchOpen]);
 
   // Fetch real-time notifications
   useEffect(() => {
@@ -105,12 +101,7 @@ const Navbar: React.FC = () => {
           Omni
         </Link>
 
-        <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
-          <Link to="/community" className={`nav-link ${isActive('/community')}`} onClick={() => setIsMenuOpen(false)} > <Users size={18} /> Community </Link>
-          {/* <Link to="/lab/pfuzzy-rizofiltracao" className={`nav-link ${isActive('/lab/pfuzzy-rizofiltracao')}`} onClick={() => setIsMenuOpen(false)} > <LayoutDashboard size={18} /> Análise P-Fuzzy </Link> */}
-          <Link to="/learn" className={`nav-link ${isActive('/learn')}`} onClick={() => setIsMenuOpen(false)} > <BookOpen size={18} /> Learn </Link>
-          <Link to="/articles" className={`nav-link ${isActive('/articles')}`} onClick={() => setIsMenuOpen(false)} > <FileText size={18} /> Articles </Link>
-        </div>
+
 
         <div className="nav-actions">
 
@@ -198,49 +189,27 @@ const Navbar: React.FC = () => {
             </button>
           )} */}
 
-          {/* Profile Menu */}
+          {/* Profile Menu Button */}
           {currentUser && (
-            <div className="profile-menu-container" ref={profileMenuRef}>
+            <div className="profile-menu-container">
               <button
                 className={`icon-btn profile-btn ${isActive('/profile') || isProfileMenuOpen ? 'active' : ''}`}
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                onClick={() => setIsProfileMenuOpen(true)}
                 title="Menu do Usuário"
               >
                 <Menu size={20} />
               </button>
-
-              {isProfileMenuOpen && (
-                <div className="profile-dropdown">
-                  <div className="profile-dropdown-header">
-                    <strong>{userProfile?.name || currentUser.displayName || 'Usuário'}</strong>
-                    <span>{userProfile?.role || 'Pesquisador'}</span>
-                  </div>
-                  <div className="profile-dropdown-list">
-                    <button onClick={() => { setIsProfileMenuOpen(false); navigate('/profile'); }} className="profile-dropdown-item">
-                      <User size={16} /> Meu Perfil
-                    </button>
-                    <button onClick={() => { setIsProfileMenuOpen(false); navigate('/lab'); }} className="profile-dropdown-item">
-                      <Beaker size={16} /> Workbench
-                    </button>
-                    <button onClick={() => { setIsProfileMenuOpen(false); navigate('/settings'); }} className="profile-dropdown-item">
-                      <Settings size={16} /> Configurações
-                    </button>
-                    <div className="profile-dropdown-divider"></div>
-                    <button onClick={async () => { setIsProfileMenuOpen(false); await logout(); navigate('/login'); }} className="profile-dropdown-item logout">
-                      <LogOut size={16} /> Sair
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
-          {/* Mobile Toggle */}
-          <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </div>
       </div>
+
+      {/* Sidebar Menu Component */}
+      <Sidebar
+        isOpen={isProfileMenuOpen}
+        onClose={() => setIsProfileMenuOpen(false)}
+      />
     </nav>
   );
 };
