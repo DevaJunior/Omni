@@ -47,14 +47,15 @@ import img2 from '../../../../src/assets/wallapapers/wpp_cience_001.png';
 interface GlobalFeedTabProps {
   searchQuery?: string;
   onClear?: () => void;
+  suggestedResearchersWidget?: React.ReactNode;
 }
 
-const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear }) => {
+const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear, suggestedResearchersWidget }) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { globalFeed, setGlobalFeed, appendGlobalFeed } = useCommunityStore();
   const observer = useRef<IntersectionObserver | null>(null);
-  const [confirmConfig, setConfirmConfig] = useState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
+  const [confirmConfig, setConfirmConfig] = useState({ isOpen: false, title: '', message: '', onConfirm: () => { } });
   const [editModal, setEditModal] = useState({ isOpen: false, id: '', content: '' });
 
   const featuredArticles = [
@@ -272,9 +273,10 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
             </div>
           </section>
 
-          <hr className="cmmt-divider" />
         </>
       )}
+
+      {suggestedResearchersWidget}
 
       <section className="cmmt-technical-list-section">
         <div className="cmmt-list-controls">

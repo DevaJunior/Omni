@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, MessageSquare, Trash2, Clock, Edit, Flag } from 'lucide-react';
+import { Heart, MessageSquare, Trash2, Edit, Flag } from 'lucide-react';
 //import ShareMenu from '../ShareMenu';
 import CardButtonOptions from '../CardButtonOptions';
 import './styles.css';
@@ -92,15 +92,13 @@ const CardDiscussion: React.FC<CardDiscussionProps> = ({
             >
               {post.author}
             </h4>
-            <span className="cmmt-disc-author-role">{post.role}</span>
+            <span className="cmmt-disc-author-role">
+              {post.role} &bull; {formatTimeAgo(post.date)}
+            </span>
           </div>
         </div>
 
         <div className="cmmt-disc-header-right">
-
-          <div className="cmmt-disc-time">
-            <Clock size={16} /> {formatTimeAgo(post.date)}
-          </div>
 
           {!hideActions && (
             <CardButtonOptions

@@ -34,62 +34,60 @@ const CardProjectOportunity: React.FC<CardProjectOportunityProps> = ({ project, 
   };
 
   return (
-    <article className={`cmmt-project-card-new ${project.status === 'Fechado' ? 'cmmt-project-closed' : ''}`} ref={forwardedRef}>
-      <div className="cmmt-project-content-left">
-        <div className="cmmt-project-header-top-new">
-          <span className="cmmt-project-type-new">
+    <article className={`carrd_oportunity-project-card-new ${project.status === 'Fechado' ? 'carrd_oportunity-project-closed' : ''}`} ref={forwardedRef}>
+      <div className="carrd_oportunity-project-content-left">
+        <div className="carrd_oportunity-project-header-top-new">
+          <span className="carrd_oportunity-project-type-new">
             {project.icon || <Microscope size={14} />} {project.type || "PROJETO"}
           </span>
-          <span className={`cmmt-project-status-new ${project.status === 'Aberto' ? 'cmmt-status-open-new' : 'cmmt-status-closed'}`}>
-            <span className="cmmt-status-dot"></span> {project.status}
+          <span className={`carrd_oportunity-project-status-new ${project.status === 'Aberto' ? 'carrd_oportunity-status-open-new' : 'carrd_oportunity-status-closed'}`}>
+            <span className="carrd_oportunity-status-dot"></span> {project.status}
           </span>
         </div>
 
-        <div className="cmmt-project-title-wrapper">
-          <div className="cmmt-project-avatar">
+        <div className="carrd_oportunity-project-title-wrapper">
+          <div className="carrd_oportunity-project-avatar">
             {getInitials(project.institution || project.title)}
           </div>
-          <div className="cmmt-project-title-info">
-            <h3 className="cmmt-project-title-new">{project.title}</h3>
-            <h4 className="cmmt-project-institution-new">
+          <div className="carrd_oportunity-project-title-info">
+            <h3 className="carrd_oportunity-project-title-new">{project.title}</h3>
+            <h4 className="carrd_oportunity-project-institution-new">
               <Building2 size={14} /> {project.institution}
             </h4>
           </div>
         </div>
 
-        <p className="cmmt-project-desc-new">
-          {project.description && project.description.length > 150 
-            ? project.description.substring(0, 150) + '...' 
-            : project.description}
+        <p className="carrd_oportunity-project-desc-new">
+          {project.description}
         </p>
 
-        <div className="cmmt-project-tags-new">
+        <div className="carrd_oportunity-project-tags-new">
           {project.tags?.map((tag: string) => (
-            <span key={tag} className="cmmt-project-tag-item-new">{tag}</span>
+            <span key={tag} className="carrd_oportunity-project-tag-item-new">{tag}</span>
           ))}
         </div>
       </div>
 
-      <div className="cmmt-project-content-right">
-        <div className="cmmt-project-details-row">
-          <span className="cmmt-detail-label">PRAZO DE SUBMISSÃO</span>
-          <span className="cmmt-detail-value"><Calendar size={16} /> {project.deadline || "Fluxo Contínuo"}</span>
+      <div className="carrd_oportunity-project-content-right">
+        <div className="carrd_oportunity-project-details-row">
+          <span className="carrd_oportunity-detail-label">PRAZO DE SUBMISSÃO</span>
+          <span className="carrd_oportunity-detail-value"><Calendar size={16} /> {project.deadline || "Fluxo Contínuo"}</span>
         </div>
-        
-        <div className="cmmt-project-details-row">
-          <span className="cmmt-detail-label">BOLSA / AUXÍLIO</span>
-          <span className="cmmt-detail-value"><FileText size={16} /> {project.scholarship || "Bolsa CNPq"}</span>
+
+        <div className="carrd_oportunity-project-details-row display-none">
+          <span className="carrd_oportunity-detail-label">BOLSA / AUXÍLIO</span>
+          <span className="carrd_oportunity-detail-value"><FileText size={16} /> {project.scholarship || "Bolsa CNPq"}</span>
         </div>
 
         <button
-          className="cmmt-btn-apply-new"
+          className="carrd_oportunity-btn-apply-new"
           onClick={() => onViewProject(project.id)}
         >
           Candidatar-se <ArrowUpRight size={16} />
         </button>
 
         <button
-          className="cmmt-btn-details-new"
+          className="carrd_oportunity-btn-details-new display-none"
           onClick={() => onViewProject(project.id)}
         >
           Ver mais detalhes

@@ -502,15 +502,21 @@
     width: 90%;
     top: 10px;
   }
+
+
+
+
 }
 
 @media (max-width: 390px) {
   .cmmt-brand h1 {
     font-size: 2rem;
   }
+
   .cmmt-promo-text {
     font-size: 1.05rem;
   }
+
   .cmmt-partners-list {
     gap: 1.2rem;
     font-size: 0.9rem;
@@ -521,9 +527,37 @@
   .cmmt-brand h1 {
     font-size: 1.9rem;
   }
+
   .cmmt-tab {
     font-size: 1rem;
   }
+}
+
+.cmmt-desktop-pesq {
+  display: block;
+}
+
+.cmmt-mobile-pesq {
+  display: none;
+}
+
+@media (max-width: 650px) {
+  .cmmt-desktop-pesq {
+    display: none;
+  }
+
+  .cmmt-mobile-pesq {
+    display: block;
+    /* margin-top: 1.5rem;
+    margin-bottom: 1.5rem; */
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+
+  .cmmt_display-none {
+    display: none;
+  }
+
 }
 
 @media (max-width: 320px) {

@@ -99,6 +99,50 @@ const Community: React.FC = () => {
     setSearchFilter('');
   };
 
+  const renderSuggestedResearchersWidget = (isMobile: boolean) => (
+    <div className={`cmmt-sidebar-widget cmmt-pesq ${isMobile ? 'cmmt-mobile-pesq' : 'cmmt-desktop-pesq'}`}>
+      <div className="cmmt-widget-header">
+        <Users size={20} className="cmmt-widget-icon" />
+        <h2>Pesquisadores Sugeridos</h2>
+      </div>
+      <div className="cmmt-suggested-users">
+        {suggestedUsers.length > 0 ? (
+          suggestedUsers.map(user => (
+            <div
+              key={user.id}
+              className="cmmt-user-item"
+              onClick={() => navigate(`/profile/${user.id}`)}
+              style={{ cursor: 'pointer' }}
+            >
+              {user.avatar ? (
+                <img src={user.avatar} alt={user.name || 'User'} className="cmmt-user-avatar-img" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                <div className="cmmt-user-avatar-placeholder">
+                  {user.name ? user.name.substring(0, 2).toUpperCase() : 'US'}
+                </div>
+              )}
+              <div className="cmmt-user-details">
+                <h5>{user.name || 'Usuário Sem Nome'}</h5>
+                <span>{user.headline ? user.headline.split('|')[0] : ''}</span>
+              </div>
+              <button
+                className="cmmt-btn-follow"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleFollow(user.id);
+                }}
+              >
+                Seguir
+              </button>
+            </div>
+          ))
+        ) : (
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Você já segue todos ou a rede está pequena.</span>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <>
       {/* TOAST NOTIFICATION */}
@@ -192,14 +236,14 @@ const Community: React.FC = () => {
               </button>
             </div>
 
-            {activeTab === 'global_feed' && <GlobalFeedTab searchQuery={searchValue} onClear={handleClearSearch} />}
+            {activeTab === 'global_feed' && <GlobalFeedTab searchQuery={searchValue} onClear={handleClearSearch} suggestedResearchersWidget={renderSuggestedResearchersWidget(true)} />}
             {activeTab === 'projects' && <ProjectsTab searchQuery={searchValue} onClear={handleClearSearch} />}
             {activeTab === 'feed' && <FeedTab searchQuery={searchValue} onClear={handleClearSearch} />}
 
           </main>
 
           <aside className="cmmt-sidebar">
-            <div className="cmmt-sidebar-widget">
+            <div className="cmmt-sidebar-widget cmmt_display-none">
               <div className="cmmt-widget-header">
                 <TrendingUp size={20} className="cmmt-widget-icon" />
                 <h2>Tópicos em Alta</h2>
@@ -217,49 +261,9 @@ const Community: React.FC = () => {
               </ul>
             </div>
 
-            <div className="cmmt-sidebar-widget">
-              <div className="cmmt-widget-header">
-                <Users size={20} className="cmmt-widget-icon" />
-                <h2>Pesquisadores Sugeridos</h2>
-              </div>
-              <div className="cmmt-suggested-users">
-                {suggestedUsers.length > 0 ? (
-                  suggestedUsers.map(user => (
-                    <div
-                      key={user.id}
-                      className="cmmt-user-item"
-                      onClick={() => navigate(`/profile/${user.id}`)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {user.avatar ? (
-                        <img src={user.avatar} alt={user.name || 'User'} className="cmmt-user-avatar-img" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
-                      ) : (
-                        <div className="cmmt-user-avatar-placeholder">
-                          {user.name ? user.name.substring(0, 2).toUpperCase() : 'US'}
-                        </div>
-                      )}
-                      <div className="cmmt-user-details">
-                        <h5>{user.name || 'Usuário Sem Nome'}</h5>
-                        <span>{user.headline ? user.headline.split('|')[0] : ''}</span>
-                      </div>
-                      <button
-                        className="cmmt-btn-follow"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleFollow(user.id);
-                        }}
-                      >
-                        Seguir
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Você já segue todos ou a rede está pequena.</span>
-                )}
-              </div>
-            </div>
+            {renderSuggestedResearchersWidget(false)}
 
-            <div className="cmmt-sidebar-widget">
+            <div className="cmmt-sidebar-widget cmmt_display-none">
               <div className="cmmt-widget-header">
                 <Microscope size={20} className="cmmt-widget-icon" />
                 <h2>Laboratórios</h2>

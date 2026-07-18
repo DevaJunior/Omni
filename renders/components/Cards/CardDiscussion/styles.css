@@ -177,29 +177,17 @@
 
 /* Responsividade */
 @media (max-width: 600px) {
-  .cmmt-disc-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .cmmt-disc-header-right {
-    width: 100%;
-    justify-content: space-between;
-  }
-
   .cmmt-disc-content {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
+}
 
-  .cmmt-disc-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .cmmt-disc-actions {
-    width: 100%;
-    justify-content: space-between;
+@media (max-width: 480px) {
+  .cmmt-disc-content {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

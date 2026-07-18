@@ -23,78 +23,78 @@ interface CardArticleResultProps {
   onToggleBookmark: (e: React.MouseEvent, article: ArticleResultData) => void;
 }
 
-const CardArticleResult: React.FC<CardArticleResultProps> = ({ 
-  article, 
-  isSaved, 
-  onViewArticle, 
-  onToggleBookmark 
+const CardArticleResult: React.FC<CardArticleResultProps> = ({
+  article,
+  isSaved,
+  onViewArticle,
+  onToggleBookmark
 }) => {
   return (
-    <article className="article-result-card" onClick={() => onViewArticle(article.id)}>
-      
+    <article className="carrd-article_result-article-result-card" onClick={() => onViewArticle(article.id)}>
+
       {/* Card Header */}
-      <div className="card-top-bar">
-        <div className="card-badges">
+      <div className="carrd-article_result-card-top-bar">
+        <div className="carrd-article_result-card-badges">
           {article.accessType === 'open' ? (
-            <span className="badge-access badge-open">
+            <span className="carrd-article_result-badge-access carrd-article_result-badge-open">
               <LockOpen size={12} /> OPEN ACCESS
             </span>
           ) : article.pubType === 'Preprint' ? (
-            <span className="badge-access badge-preprint">
+            <span className="carrd-article_result-badge-access carrd-article_result-badge-preprint">
               PREPRINT
             </span>
           ) : (
-            <span className="badge-access badge-restricted">
+            <span className="carrd-article_result-badge-access carrd-article_result-badge-restricted">
               <Lock size={12} /> RESTRITO
             </span>
           )}
-          
+
           {article.pubType !== 'Preprint' && (
-            <span className="badge-pubtype">{article.pubType}</span>
+            <span className="carrd-article_result-badge-pubtype">{article.pubType}</span>
           )}
         </div>
-        <button className="btn-bookmark" onClick={(e) => onToggleBookmark(e, article)}>
+        <button className="carrd-article_result-btn-bookmark" onClick={(e) => onToggleBookmark(e, article)}>
           <Bookmark size={18} fill={isSaved ? 'currentColor' : 'none'} />
         </button>
       </div>
 
       {/* Card Content */}
-      <h3 className="card-title">{article.title}</h3>
-      <div className="card-authors">
+      <h3 className="carrd-article_result-card-title">{article.title}</h3>
+      <div className="carrd-article_result-card-authors">
         {article.authors ? article.authors.split(',').map((author: string, idx: number, arr: any[]) => (
           <React.Fragment key={idx}>
-            <span className="author-link">{author.trim()}</span>
+            <span className="carrd-article_result-author-link">{author.trim()}</span>
             {idx < arr.length - 1 && ', '}
           </React.Fragment>
         )) : 'Desconhecido'}
       </div>
-      
-      <div className="card-meta-line">
+
+      <div className="carrd-article_result-card-meta-line">
         {article.journal || 'Journal'} &bull; {article.date || 'Data Desconhecida'} &bull; DOI: {article.doi || 'N/A'}
       </div>
 
-      <p className="card-abstract">
-        {article.abstract && article.abstract.length > 220 
-          ? article.abstract.substring(0, 220) + '...' 
+      <p className="carrd-article_result-card-abstract">
+        {article.abstract && article.abstract.length > 220
+          ? article.abstract.substring(0, 220) + '...'
           : article.abstract}
       </p>
 
       {/* Card Footer */}
-      <div className="card-footer-actions">
-        <div className="card-stats">
-          <span className="stat-item"><MessageSquare size={14} className="stat-icon" /> {article.citations} Citações</span>
-          <span className="stat-item"><Eye size={14} className="stat-icon" /> {article.reads >= 1000 ? (article.reads/1000).toFixed(1)+'k' : article.reads} Leituras</span>
+      <div className="carrd-article_result-card-footer-actions">
+        <div className="carrd-article_result-card-stats">
+          <span className="carrd-article_result-stat-item"><MessageSquare size={14} className="carrd-article_result-stat-icon" /> {article.citations} Citações</span>
+          <span className="carrd-article_result-stat-item"><Eye size={14} className="carrd-article_result-stat-icon" /> {article.reads >= 1000 ? (article.reads / 1000).toFixed(1) + 'k' : article.reads} Leituras</span>
         </div>
-        <div className="card-buttons">
+        <div className="carrd-article_result-card-buttons">
           {article.accessType === 'open' ? (
             <>
-              <button className="btn-action-outline" onClick={(e) => { e.stopPropagation(); }}><MessageSquare size={14} /> Citar</button>
-              <button className="btn-action-solid" onClick={(e) => { e.stopPropagation(); }}><Download size={14} /> Baixar PDF</button>
+              <button className="carrd-article_result-btn-action-outline" onClick={(e) => { e.stopPropagation(); }}><MessageSquare size={14} /> Citar</button>
+              <button className="carrd-article_result-btn-action-solid" onClick={(e) => { e.stopPropagation(); }}><Download size={14} /> Baixar PDF</button>
             </>
           ) : article.pubType === 'Preprint' ? (
-            <button className="btn-action-solid" onClick={(e) => { e.stopPropagation(); }}><Download size={14} /> Baixar PDF</button>
+            <button className="carrd-article_result-btn-action-solid" onClick={(e) => { e.stopPropagation(); }}><Download size={14} /> Baixar PDF</button>
           ) : (
-            <button className="btn-action-outline" onClick={(e) => { e.stopPropagation(); }}><ExternalLink size={14} /> Solicitar Acesso</button>
+            <button className="carrd-article_result-btn-action-outline" onClick={(e) => { e.stopPropagation(); }}><ExternalLink size={14} /> Solicitar Acesso</button>
           )}
         </div>
       </div>
