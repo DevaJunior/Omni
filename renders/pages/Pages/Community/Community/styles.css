@@ -247,7 +247,7 @@
 /* Layout Principal (Feed + Sidebar) */
 .cmmt-layout {
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: minmax(0, 1fr) 350px;
   gap: 2rem;
   align-items: start;
   width: 100%;
@@ -442,14 +442,14 @@
 ========================================= */
 @media (max-width: 1024px) {
   .cmmt-layout {
-    grid-template-columns: 1fr 280px;
+    grid-template-columns: minmax(0, 1fr) 280px;
     gap: 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
   .cmmt-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .cmmt-header {
