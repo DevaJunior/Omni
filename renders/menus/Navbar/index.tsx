@@ -101,7 +101,11 @@ const Navbar: React.FC = () => {
           Omni
         </Link>
 
-
+        <div className="nav-links">
+          <Link to="/community" className={isActive('/community')}>Community</Link>
+          <Link to="/learn" className={isActive('/learn')}>Learn</Link>
+          <Link to="/articles" className={isActive('/articles')}>Articles</Link>
+        </div>
 
         <div className="nav-actions">
 
