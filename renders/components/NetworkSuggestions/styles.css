@@ -1,0 +1,204 @@
+.frag_sugestnetowrk-sidebar-widget {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 12px);
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+
+.frag_sugestnetowrk-desktop {
+  display: block;
+}
+
+.frag_sugestnetowrk-mobile {
+  display: none;
+  margin: 0.5rem 0 2rem 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .frag_sugestnetowrk-desktop {
+    display: none;
+  }
+
+  .frag_sugestnetowrk-mobile {
+    display: block;
+  }
+}
+.frag_sugestnetowrk-widget-header {
+  margin-bottom: 0.2rem;
+}
+
+.frag_sugestnetowrk-desktop .frag_sugestnetowrk-widget-header {
+  /* margin-bottom: 0.5rem; */
+}
+
+.frag_sugestnetowrk-widget-header h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.frag_sugestnetowrk-desktop .frag_sugestnetowrk-widget-header h2 {
+  font-size: 1.1rem;
+}
+
+.frag_sugestnetowrk-widget-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.frag_sugestnetowrk-desktop .frag_sugestnetowrk-widget-subtitle {
+  margin-bottom: 1.5rem;
+}
+
+/* User List */
+.frag_sugestnetowrk-suggested-users {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-suggested-users {
+  flex-direction: row;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  gap: 1rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-suggested-users::-webkit-scrollbar {
+  display: none;
+}
+
+/* User Item */
+.frag_sugestnetowrk-user-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-user-item {
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 12px);
+  padding: 1.5rem 1rem;
+  width: 170px;
+  background: white;
+}
+
+/* Avatar */
+.frag_sugestnetowrk-user-avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  background: #e0e0fc;
+  color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.frag_sugestnetowrk-user-avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-user-avatar-img,
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-user-avatar-placeholder {
+  width: 64px !important;
+  height: 64px !important;
+  font-size: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
+/* Details */
+.frag_sugestnetowrk-user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-user-details {
+  width: 100%;
+}
+
+.frag_sugestnetowrk-user-details p {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 0.2rem 0;
+}
+
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-user-details p {
+  font-size: 1rem;
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 0.3rem;
+}
+
+.frag_sugestnetowrk-user-details span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-user-details span {
+  width: 100%;
+}
+
+/* Follow Button */
+.frag_sugestnetowrk-btn-follow {
+  background: none;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.frag_sugestnetowrk-btn-follow:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-btn-follow {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--border-color, #e5e7eb);
+  color: var(--text-main);
+  font-size: 0.85rem;
+}
+
+.frag_sugestnetowrk-mobile .frag_sugestnetowrk-btn-follow:hover {
+  background: var(--card-bg, #f9fafb);
+  color: var(--text-main);
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, TrendingUp, AlertCircle, X, Microscope } from 'lucide-react';
+import { Search, Filter, AlertCircle, X } from 'lucide-react';
 import './styles.css';
 import ProjectsTab from '../../../../fragments/Community/ProjectsTab';
 import FeedTab from '../../../../fragments/Community/FeedTab';
@@ -8,7 +8,9 @@ import Footer from '../../../../menus/Footer';
 import { useNavigate } from 'react-router-dom';
 import { communityService } from '../../../../../src/services/communityService';
 import type { LabPartner } from '../../../../../src/types/community';
-import { useAuth } from '../../../../../src/contexts/AuthContext';
+import NetworkSuggestions from '../../../../components/NetworkSuggestions';
+import TrendingTopicsWidget from '../../../../components/TrendingTopicsWidget';
+import LabsWidget from '../../../../components/LabsWidget';
 
 const Community: React.FC = () => {
   const navigate = useNavigate();
@@ -17,19 +19,9 @@ const Community: React.FC = () => {
     (sessionStorage.getItem('omni_current_tab') as 'projects' | 'feed' | 'global_feed') || 'global_feed'
   );
 
-  const { currentUser } = useAuth();
-  const [randomLabs, setRandomLabs] = useState<LabPartner[]>([]);
-  const [suggestedUsers, setSuggestedUsers] = useState<any[]>([]);
-  const [trendingTopics, setTrendingTopics] = useState<string[]>([
-    "Carregando..."
-  ]);
 
-  useEffect(() => {
-    if (currentUser) {
-      communityService.getSuggestedUsers(currentUser.uid).then(setSuggestedUsers);
-    }
-    communityService.getTrendingTopics(5).then(setTrendingTopics);
-  }, [currentUser]);
+  const [randomLabs, setRandomLabs] = useState<LabPartner[]>([]);
+
 
   useEffect(() => {
     const fetchLabs = async () => {
@@ -84,14 +76,9 @@ const Community: React.FC = () => {
     setToastMessage(null);
   };
 
-  const handleFollow = async (userId: string) => {
-    if (!currentUser) return;
-    const success = await communityService.followUser(currentUser.uid, userId);
-    if (success) {
-      setSuggestedUsers(prev => prev.filter(u => u.id !== userId));
-      setToastMessage("Você começou a seguir este pesquisador!");
-      setTimeout(() => setToastMessage(null), 3000);
-    }
+  const handleFollowSuccess = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   const handleClearSearch = () => {
@@ -99,49 +86,7 @@ const Community: React.FC = () => {
     setSearchFilter('');
   };
 
-  const renderSuggestedResearchersWidget = (isMobile: boolean) => (
-    <div className={`cmmt-sidebar-widget cmmt-pesq ${isMobile ? 'cmmt-mobile-pesq' : 'cmmt-desktop-pesq'}`}>
-      <div className="cmmt-widget-header">
-        <h2>Sugestões de Rede</h2>
-      </div>
-      <p className="cmmt-widget-subtitle">Conecte-se com pares da sua área de pesquisa.</p>
-      <div className="cmmt-suggested-users">
-        {suggestedUsers.length > 0 ? (
-          suggestedUsers.map(user => (
-            <div
-              key={user.id}
-              className="cmmt-user-item"
-              onClick={() => navigate(`/profile/${user.id}`)}
-              style={{ cursor: 'pointer' }}
-            >
-              {user.avatar ? (
-                <img src={user.avatar} alt={user.name || 'User'} className="cmmt-user-avatar-img" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
-              ) : (
-                <div className="cmmt-user-avatar-placeholder">
-                  {user.name ? user.name.substring(0, 2).toUpperCase() : 'US'}
-                </div>
-              )}
-              <div className="cmmt-user-details">
-                <h5>{user.name || 'Usuário Sem Nome'}</h5>
-                <span>{user.headline ? user.headline.split('|')[0] : ''}</span>
-              </div>
-              <button
-                className="cmmt-btn-follow"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleFollow(user.id);
-                }}
-              >
-                Seguir
-              </button>
-            </div>
-          ))
-        ) : (
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Você já segue todos ou a rede está pequena.</span>
-        )}
-      </div>
-    </div>
-  );
+  // renderSuggestedResearchersWidget extracted to NetworkSuggestions component
 
   return (
     <>
@@ -236,69 +181,23 @@ const Community: React.FC = () => {
               </button>
             </div>
 
-            {activeTab === 'global_feed' && <GlobalFeedTab searchQuery={searchValue} onClear={handleClearSearch} suggestedResearchersWidget={renderSuggestedResearchersWidget(true)} />}
+            {activeTab === 'global_feed' && <GlobalFeedTab searchQuery={searchValue} onClear={handleClearSearch} suggestedResearchersWidget={<NetworkSuggestions isMobile={true} onFollowSuccess={handleFollowSuccess} />} />}
             {activeTab === 'projects' && <ProjectsTab searchQuery={searchValue} onClear={handleClearSearch} />}
             {activeTab === 'feed' && <FeedTab searchQuery={searchValue} onClear={handleClearSearch} />}
 
           </main>
 
           <aside className="cmmt-sidebar">
-            <div className="cmmt-sidebar-widget cmmt_display-none">
-              <div className="cmmt-widget-header">
-                <TrendingUp size={20} className="cmmt-widget-icon" />
-                <h2>Tópicos em Alta</h2>
-              </div>
-              <ul className="cmmt-trending-list">
-                {trendingTopics.map((topic, index) => (
-                  <li key={index}>
-                    <a href="#" onClick={(e) => {
-                      e.preventDefault();
-                      setSearchFilter('Todos');
-                      setSearchValue(topic);
-                    }}>#{topic}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <TrendingTopicsWidget 
+              onTopicClick={(topic) => {
+                setSearchFilter('Todos');
+                setSearchValue(topic);
+              }} 
+            />
 
-            {renderSuggestedResearchersWidget(false)}
+            <NetworkSuggestions isMobile={false} onFollowSuccess={handleFollowSuccess} />
 
-            <div className="cmmt-sidebar-widget cmmt_display-none">
-              <div className="cmmt-widget-header">
-                <Microscope size={20} className="cmmt-widget-icon" />
-                <h2>Laboratórios</h2>
-              </div>
-              <div className="cmmt-suggested-users">
-                {randomLabs.length > 0 ? (
-                  randomLabs.map(lab => (
-                    <div
-                      key={lab.id}
-                      className="cmmt-user-item"
-                      onClick={() => navigate(`/lab/${lab.id}`)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <div className="cmmt-user-avatar-placeholder">
-                        {lab.name ? lab.name.substring(0, 2).toUpperCase() : 'LB'}
-                      </div>
-                      <div className="cmmt-user-details">
-                        <h5>{lab.name || 'Laboratório Sem Nome'}</h5>
-                      </div>
-                      <button
-                        className="cmmt-btn-follow"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/lab/${lab.id}`);
-                        }}
-                      >
-                        Ver
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Nenhum laboratório disponível.</span>
-                )}
-              </div>
-            </div>
+            <LabsWidget labs={randomLabs} />
           </aside>
         </div>
       </div>
