@@ -70,8 +70,13 @@ const CardProjectOportunity: React.FC<CardProjectOportunityProps> = ({ project, 
 
       <div className="carrd_oportunity-project-content-right">
         <div className="carrd_oportunity-project-details-row">
-          <span className="carrd_oportunity-detail-label">PRAZO DE SUBMISSÃO</span>
-          <span className="carrd_oportunity-detail-value"><Calendar size={16} /> {project.deadline || "Fluxo Contínuo"}</span>
+          <span className="carrd_oportunity-detail-label">
+            <span className="co-desktop-text">PRAZO DE SUBMISSÃO</span>
+            <span className="co-mobile-text">SUBMISSÃO ATÉ</span>
+          </span>
+          <span className="carrd_oportunity-detail-value">
+            <span className="co-calendar-icon"><Calendar size={16} /></span> {project.deadline || "Fluxo Contínuo"}
+          </span>
         </div>
 
         <div className="carrd_oportunity-project-details-row display-none">

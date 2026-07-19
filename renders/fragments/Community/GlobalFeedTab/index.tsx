@@ -279,9 +279,9 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
       {suggestedResearchersWidget}
 
       <section className="cmmt-technical-list-section">
-        <div className="cmmt-list-controls">
+        {/* <div className="cmmt-list-controls">
           <h3>Feed Global</h3>
-        </div>
+        </div> */}
 
         <div className="cmmt-articles-list">
           {filteredData.length === 0 && searchQuery ? (

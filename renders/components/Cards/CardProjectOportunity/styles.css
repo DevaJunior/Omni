@@ -96,7 +96,7 @@
 .carrd_oportunity-project-title-new {
   font-size: 1.3rem;
   color: #111827;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0;
   line-height: 1.2;
   display: -webkit-box;
@@ -235,6 +235,28 @@
   }
 }
 
+@media (max-width: 600px) {
+  .carrd_oportunity-project-tags-new {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .carrd_oportunity-project-tags-new::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carrd_oportunity-project-tag-item-new {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+.co-mobile-text {
+  display: none;
+}
+
 @media (max-width: 480px) {
 
   .carrd_oportunity-project-details-row {
@@ -248,5 +270,24 @@
     display: none;
   }
 
+  .co-desktop-text {
+    display: none;
+  }
 
+  .co-mobile-text {
+    display: inline;
+  }
+
+  .co-calendar-icon {
+    display: none;
+  }
+
+  .carrd_oportunity-detail-value {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 70%;
+    text-align: right;
+  }
 }
