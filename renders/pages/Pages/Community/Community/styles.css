@@ -346,6 +346,13 @@
   color: var(--text-main);
 }
 
+.cmmt-widget-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
 .cmmt-trending-list {
   list-style: none;
 }
@@ -548,10 +555,97 @@
 
   .cmmt-mobile-pesq {
     display: block;
-    /* margin-top: 1.5rem;
-    margin-bottom: 1.5rem; */
-    margin: 0.5rem 0;
+    margin: 0.5rem 0 2rem 0;
     width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  .cmmt-mobile-pesq .cmmt-widget-header {
+    margin-bottom: 0.2rem;
+  }
+
+  .cmmt-mobile-pesq .cmmt-widget-header h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .cmmt-mobile-pesq .cmmt-widget-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .cmmt-mobile-pesq .cmmt-suggested-users {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    gap: 1rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .cmmt-mobile-pesq .cmmt-suggested-users::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cmmt-mobile-pesq .cmmt-user-item {
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md, 12px);
+    padding: 1.5rem 1rem;
+    width: 170px;
+    background: white;
+  }
+
+  .cmmt-mobile-pesq .cmmt-user-avatar-img,
+  .cmmt-mobile-pesq .cmmt-user-avatar-placeholder {
+    width: 64px !important;
+    height: 64px !important;
+    font-size: 1.5rem;
+    /* border: solid 1px red; */
+  }
+
+  .cmmt-mobile-pesq .cmmt-user-details {
+    width: 100%;
+  }
+
+  .cmmt-mobile-pesq .cmmt-user-details h5 {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+    width: 100%;
+  }
+
+  .cmmt-mobile-pesq .cmmt-user-details span {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+  }
+
+  .cmmt-mobile-pesq .cmmt-btn-follow {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border-color, #e5e7eb);
+    color: var(--text-main);
+    font-size: 0.85rem;
+  }
+
+  .cmmt-mobile-pesq .cmmt-btn-follow:hover {
+    background: var(--card-bg, #f9fafb);
+    color: var(--text-main);
   }
 
   .cmmt_display-none {

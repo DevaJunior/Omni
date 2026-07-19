@@ -64,7 +64,7 @@
 
 .nav-actions {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
 }
 
@@ -370,9 +370,9 @@
     bottom: -20px;
   }
 
-  .nav-actions {
+  /* .nav-actions {
     gap: 0.75rem;
-  }
+  } */
 
   .notifications-dropdown {
     width: 300px;
@@ -413,9 +413,9 @@
     top: 56px;
   }
 
-  .nav-actions {
+  /* .nav-actions {
     gap: 0.6rem;
-  }
+  } */
 
   .notifications-dropdown {
     position: fixed;

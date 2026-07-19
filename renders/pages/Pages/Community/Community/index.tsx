@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, TrendingUp, Users, AlertCircle, X, Microscope } from 'lucide-react';
+import { Search, Filter, TrendingUp, AlertCircle, X, Microscope } from 'lucide-react';
 import './styles.css';
 import ProjectsTab from '../../../../fragments/Community/ProjectsTab';
 import FeedTab from '../../../../fragments/Community/FeedTab';
@@ -102,9 +102,9 @@ const Community: React.FC = () => {
   const renderSuggestedResearchersWidget = (isMobile: boolean) => (
     <div className={`cmmt-sidebar-widget cmmt-pesq ${isMobile ? 'cmmt-mobile-pesq' : 'cmmt-desktop-pesq'}`}>
       <div className="cmmt-widget-header">
-        <Users size={20} className="cmmt-widget-icon" />
-        <h2>Pesquisadores Sugeridos</h2>
+        <h2>Sugestões de Rede</h2>
       </div>
+      <p className="cmmt-widget-subtitle">Conecte-se com pares da sua área de pesquisa.</p>
       <div className="cmmt-suggested-users">
         {suggestedUsers.length > 0 ? (
           suggestedUsers.map(user => (
