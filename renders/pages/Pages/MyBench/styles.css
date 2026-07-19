@@ -1,0 +1,572 @@
+.mybench-page {
+  min-height: 100vh;
+  background-color: #f8f9fa; /* slightly off-white like the image */
+  padding-bottom: 4rem;
+}
+
+.mybench-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* HEADER */
+.mybench-header {
+  margin-bottom: 3rem;
+}
+
+.mybench-header-kicker {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #4b6bfb;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.mybench-header-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
+}
+
+.mybench-header-subtitle {
+  font-size: 1.05rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+/* STATUS BADGE */
+.mybench-status-badge {
+  display: inline-flex;
+  align-items: center;
+  background: white;
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.mybench-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+}
+
+.status-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.mybench-status-divider {
+  width: 1px;
+  height: 16px;
+  background-color: #e2e8f0;
+  margin: 0 1rem;
+}
+
+.mybench-status-members {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.members-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.members-avatars {
+  display: flex;
+}
+
+.avatar-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+  border: 2px solid white;
+  margin-left: -8px;
+}
+.avatar-circle:first-child {
+  margin-left: 0;
+  background-color: #94a3b8;
+}
+
+/* MAIN GRID */
+.mybench-grid {
+  display: grid;
+  grid-template-columns: 2fr 1.1fr;
+  gap: 2rem;
+}
+
+/* SECTIONS */
+.mybench-section {
+  margin-bottom: 2.5rem;
+}
+
+.mybench-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.mybench-section-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.mybench-link-action {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b6bfb;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+}
+
+.btn-icon-circular {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-icon-circular:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* CARDS COMMON */
+.mybench-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0,0,0,0.02);
+}
+
+/* EXPERIMENT CARD */
+.mybench-experiment-card h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
+}
+
+.mybench-experiment-card p {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.experiment-badge {
+  display: inline-block;
+  background-color: #eff6ff;
+  color: #3b82f6;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.experiment-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-dark {
+  background-color: #0f172a;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 100px;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+}
+
+/* NOTES GRID */
+.mybench-notes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.mybench-note-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.note-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.icon-orange {
+  background-color: #fff7ed;
+  color: #ea580c;
+}
+
+.icon-blue {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.mybench-note-card h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.mybench-note-card span {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* IMAGES GRID */
+.mybench-images-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.lab-image-box {
+  aspect-ratio: 1;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.lab-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lab-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #f1f5f9;
+}
+
+.lab-image-more {
+  border: 2px dashed #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background-color: transparent;
+}
+
+/* RIGHT COLUMN WIDGETS */
+.mybench-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ALERT CARD */
+.mybench-alert-card {
+  border: 2px solid #fecdd3;
+  padding: 1.5rem;
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.alert-icon {
+  color: #ef4444;
+}
+
+.alert-header h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.mybench-alert-card p {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.alert-link {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ef4444;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+/* SCHEDULE CARD */
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.schedule-header h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.schedule-icon {
+  color: #94a3b8;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.schedule-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.schedule-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 48px;
+  border-radius: 8px;
+}
+
+.date-blue {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.date-gray {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+}
+
+.date-month {
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.1rem;
+}
+
+.date-day {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.schedule-info h5 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+}
+
+.schedule-info span {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.schedule-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 1.5rem 0;
+}
+
+.reminders-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reminders-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.reminder-item input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reminder-item input[type="checkbox"]:checked {
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+.reminder-item label {
+  font-size: 0.9rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+/* COMMS CARD */
+.comms-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.comms-header h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.comms-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #4b6bfb;
+  border-radius: 50%;
+}
+
+.comms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.comm-item {
+  display: flex;
+  gap: 1rem;
+}
+
+.comm-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.avatar-gray {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.avatar-img img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comm-content {
+  flex: 1;
+}
+
+.comm-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.comm-meta h5 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.comm-time {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.comm-content p {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .mybench-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .mybench-notes-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .mybench-images-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

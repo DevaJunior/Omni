@@ -1,4 +1,3 @@
-import { useToastStore } from '../../../../../src/stores/toastStore';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
@@ -9,18 +8,18 @@ import {
   Users,
   Settings
 } from 'lucide-react';
-import LabTeamTab from '../../../../fragments/Lab/LabTeamTab';
-import BancadaTab from '../../../../fragments/Lab/BancadaTab';
-import AreaComumTab from '../../../../fragments/Lab/AreaComumTab';
-import CadernoTab from '../../../../fragments/Lab/CadernoTab';
-import GestaoEquipamentosTab from '../../../../fragments/Lab/GestaoEquipamentosTab';
+import FragLabEstoque from '../../../../components/FragLabEstoque';
+import FragLabBancada from '../../../../components/FragLabBancada';
+import FragLabAreaComum from '../../../../components/FragLabAreaComum';
+import FragLabCaderno from '../../../../components/FragLabCaderno';
+import FragLabEquipamentos from '../../../../components/FragLabEquipamentos';
+import FragLabConfig from '../../../../components/FragLabConfig';
 import './styles.css';
 
 const LabWorkspace: React.FC = () => {
-  const { addToast } = useToastStore();
   const navigate = useNavigate();
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState<'bancada' | 'forum' | 'caderno' | 'gestao' | 'equipamentos'>('bancada');
+  const [activeTab, setActiveTab] = useState<'bancada' | 'forum' | 'caderno' | 'gestao' | 'equipamentos' | 'configuracoes'>('bancada');
 
   return (
     <div className="lab-workspace-page">
@@ -69,7 +68,7 @@ const LabWorkspace: React.FC = () => {
             onClick={() => setActiveTab('gestao')}
           >
             <Users size={18} />
-            Gestão da Equipe
+            Gestão de Estoque
           </button>
 
           <button 
@@ -81,8 +80,8 @@ const LabWorkspace: React.FC = () => {
           </button>
           
           <button 
-            className="workspace-nav-btn"
-            onClick={() => addToast('Configurações do Lab em breve!', 'info')}
+            className={`workspace-nav-btn ${activeTab === 'configuracoes' ? 'active' : ''}`}
+            onClick={() => setActiveTab('configuracoes')}
           >
             <Settings size={18} />
             Configurações
@@ -92,25 +91,29 @@ const LabWorkspace: React.FC = () => {
         {/* Área de Conteúdo Principal */}
         <main className="workspace-main-content">
           {activeTab === 'bancada' && (
-            <BancadaTab labId={id || '1'} />
+            <FragLabBancada labId={id || '1'} />
           )}
 
           {activeTab === 'forum' && (
-            <AreaComumTab labId={id || '1'} />
+            <FragLabAreaComum labId={id || '1'} />
           )}
 
           {activeTab === 'caderno' && (
-            <CadernoTab labId={id || '1'} />
+            <FragLabCaderno labId={id || '1'} />
           )}
 
           {activeTab === 'gestao' && (
             <div className="workspace-content-card">
-              <LabTeamTab mode="manage" labId={id || '1'} />
+              <FragLabEstoque mode="manage" labId={id || '1'} />
             </div>
           )}
 
           {activeTab === 'equipamentos' && (
-            <GestaoEquipamentosTab labId={id || '1'} />
+            <FragLabEquipamentos labId={id || '1'} />
+          )}
+
+          {activeTab === 'configuracoes' && (
+            <FragLabConfig labId={id || '1'} />
           )}
         </main>
       </div>

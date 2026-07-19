@@ -346,6 +346,10 @@
   .cmmt-sidebar {
     margin-top: 2rem;
   }
+
+  .cmmt-display-none {
+    display: none;
+  }
 }
 
 @media (max-width: 600px) {

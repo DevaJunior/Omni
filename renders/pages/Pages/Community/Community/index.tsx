@@ -187,17 +187,19 @@ const Community: React.FC = () => {
 
           </main>
 
-          <aside className="cmmt-sidebar">
-            <TrendingTopicsWidget 
+          <aside className="cmmt-sidebar cmmt-display-none">
+            <TrendingTopicsWidget
               onTopicClick={(topic) => {
                 setSearchFilter('Todos');
                 setSearchValue(topic);
-              }} 
+              }}
             />
 
             <NetworkSuggestions isMobile={false} onFollowSuccess={handleFollowSuccess} />
 
-            <LabsWidget labs={randomLabs} />
+            <div className='cmmt-display-none'>
+              <LabsWidget labs={randomLabs} />
+            </div>
           </aside>
         </div>
       </div>
