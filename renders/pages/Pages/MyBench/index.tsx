@@ -10,10 +10,13 @@ import Communications from './Communications';
 import './styles.css';
 import InventoryModal from '../../../modals/InventoryModal';
 import AgendaModal from '../../../modals/AgendaModal';
+import NotesModal from '../../../modals/NotesModal';
 
 const MyBench: React.FC = () => {
   const [isInventoryModalOpen, setInventoryModalOpen] = useState(false);
   const [isAgendaModalOpen, setAgendaModalOpen] = useState(false);
+  const [isNotesModalOpen, setNotesModalOpen] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
   return (
     <>
@@ -39,8 +42,14 @@ const MyBench: React.FC = () => {
 
               {/* ANOTAÇÕES RECENTES */}
               <RecentNotes
-                onAddNote={() => console.log('Add note')}
-                onOpenNote={(id) => console.log('Open note', id)}
+                onAddNote={() => {
+                  setSelectedNoteId(null);
+                  setNotesModalOpen(true);
+                }}
+                onOpenNote={(id) => {
+                  setSelectedNoteId(id);
+                  setNotesModalOpen(true);
+                }}
               />
 
               {/* IMAGENS DO LAB */}
@@ -82,6 +91,12 @@ const MyBench: React.FC = () => {
       <AgendaModal
         isOpen={isAgendaModalOpen}
         onClose={() => setAgendaModalOpen(false)}
+      />
+
+      <NotesModal
+        isOpen={isNotesModalOpen}
+        onClose={() => setNotesModalOpen(false)}
+        initialNoteId={selectedNoteId}
       />
     </>
   );
