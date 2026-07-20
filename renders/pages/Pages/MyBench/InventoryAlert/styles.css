@@ -7,8 +7,14 @@
 .alert-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
   margin-bottom: 0.75rem;
+}
+
+.alert-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .alert-icon {
@@ -34,4 +40,18 @@
   color: #ef4444;
   text-decoration: none;
   letter-spacing: 0.5px;
+}
+
+.view-inventory-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.view-inventory-btn:hover {
+  color: #0f172a;
 }

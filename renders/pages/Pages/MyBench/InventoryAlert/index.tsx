@@ -6,18 +6,23 @@ interface InventoryAlertProps {
   itemName?: string;
   volumeInfo?: string;
   onRequestRestock?: () => void;
+  onOpenInventory?: () => void;
 }
 
 const InventoryAlert: React.FC<InventoryAlertProps> = ({
   itemName = 'Tampão TAE 50x',
   volumeInfo = 'volume crítico (restam apenas 2L)',
-  onRequestRestock
+  onRequestRestock,
+  onOpenInventory
 }) => {
   return (
     <div className="mybench-card mybench-alert-card">
       <div className="alert-header">
-        <AlertTriangle size={20} className="alert-icon" />
-        <h4>Aviso de Estoque</h4>
+        <div className="alert-title-group">
+          <AlertTriangle size={20} className="alert-icon" />
+          <h4>Aviso de Estoque</h4>
+        </div>
+        <button className="view-inventory-btn" onClick={onOpenInventory}>Ver estoque</button>
       </div>
       <p>O {itemName} está com {volumeInfo}.</p>
       <button 

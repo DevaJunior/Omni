@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 //import Navbar from '../../../menus/Navbar';
 import Header from './Header';
 import BenchWork from './BenchWork';
@@ -8,8 +8,11 @@ import InventoryAlert from './InventoryAlert';
 import Schedule from './Schedule';
 import Communications from './Communications';
 import './styles.css';
+import InventoryModal from '../../../modals/InventoryModal';
 
 const MyBench: React.FC = () => {
+  const [isInventoryModalOpen, setInventoryModalOpen] = useState(false);
+
   return (
     <>
       {/* <Navbar /> */}
@@ -52,6 +55,7 @@ const MyBench: React.FC = () => {
               {/* AVISO DE ESTOQUE */}
               <InventoryAlert
                 onRequestRestock={() => console.log('Request restock')}
+                onOpenInventory={() => setInventoryModalOpen(true)}
               />
 
               {/* A SUA AGENDA */}
@@ -66,6 +70,11 @@ const MyBench: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <InventoryModal
+        isOpen={isInventoryModalOpen}
+        onClose={() => setInventoryModalOpen(false)}
+      />
     </>
   );
 };
