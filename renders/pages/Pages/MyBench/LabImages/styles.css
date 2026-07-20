@@ -1,0 +1,53 @@
+/* IMAGES GRID */
+.mybench-images-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.lab-image-box {
+  aspect-ratio: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lab-image-box:not(.lab-image-placeholder):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.lab-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lab-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #f1f5f9;
+}
+
+.lab-image-more {
+  border: 2px dashed #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background-color: transparent;
+}
+
+.lab-image-more:hover {
+  background-color: #f8fafc;
+  color: #475569;
+  border-color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+  .mybench-images-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

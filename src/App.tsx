@@ -27,7 +27,7 @@ import Articles from './../renders/pages/Pages/Articles';
 // Ecossistema do Laboratório
 import Lab from './../renders/pages/Pages/Lab/Lab';
 import LabProfile from './../renders/pages/Pages/Lab/LabProfile';
-import LabWorkspace from './../renders/pages/Pages/Lab/LabWorkspace';
+// import LabWorkspace from './../renders/pages/Pages/Lab/LabWorkspace';
 
 // Ferramentas da LabBancada
 import MolarityCalc from './../renders/widgets/MolarityCalc/index';
@@ -48,6 +48,7 @@ import SearchPage from '../renders/pages/Pages/Search';
 import Inbox from '../renders/pages/Pages/Inbox';
 import AdminRoute from '../renders/components/AdminRoute';
 import AdminReports from '../renders/pages/Pages/Admin/Reports';
+import MyBench from '../renders/pages/Pages/MyBench';
 
 const App: React.FC = () => {
   return (
@@ -105,7 +106,8 @@ const App: React.FC = () => {
 
                   {/* Perfis Dinâmicos */}
                   <Route path="/lab/:id" element={<ProtectedRoute><LabProfile /></ProtectedRoute>} />
-                  <Route path="/lab/:id/workspace" element={<ProtectedRoute><LabWorkspace /></ProtectedRoute>} />
+                  {/* <Route path="/lab/:id/workspace" element={<ProtectedRoute><LabWorkspace /></ProtectedRoute>} /> */}
+                  <Route path="/lab/:id/workspace" element={<ProtectedRoute><MyBench /></ProtectedRoute>} />
 
                   {/* Rotas Administrativas */}
                   <Route path="/admin/reports" element={<ProtectedRoute><AdminRoute><AdminReports /></AdminRoute></ProtectedRoute>} />

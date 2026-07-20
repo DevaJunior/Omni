@@ -1,0 +1,121 @@
+/* SCHEDULE CARD */
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.schedule-header h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.schedule-icon {
+  color: #94a3b8;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.schedule-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.schedule-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 48px;
+  border-radius: 8px;
+}
+
+.date-blue {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.date-gray {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+}
+
+.date-month {
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.1rem;
+}
+
+.date-day {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.schedule-info h5 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+}
+
+.schedule-info span {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.schedule-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 1.5rem 0;
+}
+
+.reminders-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reminders-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.reminder-item input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reminder-item input[type="checkbox"]:checked {
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+.reminder-item label {
+  font-size: 0.9rem;
+  color: #475569;
+  cursor: pointer;
+}
