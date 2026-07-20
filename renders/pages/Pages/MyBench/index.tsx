@@ -9,9 +9,11 @@ import Schedule from './Schedule';
 import Communications from './Communications';
 import './styles.css';
 import InventoryModal from '../../../modals/InventoryModal';
+import AgendaModal from '../../../modals/AgendaModal';
 
 const MyBench: React.FC = () => {
   const [isInventoryModalOpen, setInventoryModalOpen] = useState(false);
+  const [isAgendaModalOpen, setAgendaModalOpen] = useState(false);
 
   return (
     <>
@@ -61,6 +63,7 @@ const MyBench: React.FC = () => {
               {/* A SUA AGENDA */}
               <Schedule
                 onToggleReminder={(id, checked) => console.log('Toggle reminder', id, checked)}
+                onOpenAgenda={() => setAgendaModalOpen(true)}
               />
 
               {/* COMUNICAÇÕES */}
@@ -74,6 +77,11 @@ const MyBench: React.FC = () => {
       <InventoryModal
         isOpen={isInventoryModalOpen}
         onClose={() => setInventoryModalOpen(false)}
+      />
+
+      <AgendaModal
+        isOpen={isAgendaModalOpen}
+        onClose={() => setAgendaModalOpen(false)}
       />
     </>
   );

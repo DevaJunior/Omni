@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, ChevronRight } from 'lucide-react';
 import './styles.css';
 
 export interface ScheduleItem {
@@ -21,6 +21,7 @@ interface ScheduleProps {
   scheduleItems?: ScheduleItem[];
   reminders?: ReminderItem[];
   onToggleReminder?: (id: string, checked: boolean) => void;
+  onOpenAgenda?: () => void;
 }
 
 const defaultSchedule: ScheduleItem[] = [
@@ -50,7 +51,8 @@ const defaultReminders: ReminderItem[] = [
 const Schedule: React.FC<ScheduleProps> = ({
   scheduleItems = defaultSchedule,
   reminders = defaultReminders,
-  onToggleReminder
+  onToggleReminder,
+  onOpenAgenda
 }) => {
   // Local state just to show interactivity if uncontrolled from above
   const [localReminders, setLocalReminders] = useState(reminders);
@@ -69,7 +71,7 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   return (
     <div className="mybench-card mybench-schedule-card">
-      <div className="schedule-header">
+      <div className="schedule-header" style={{ cursor: 'pointer' }} onClick={onOpenAgenda}>
         <h4>A sua Agenda</h4>
         <CalendarIcon size={18} className="schedule-icon" />
       </div>
