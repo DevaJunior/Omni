@@ -29,7 +29,7 @@ const LabTimer: React.FC = () => {
   // Efeito principal: O "Coração" do relógio que bate a cada segundo
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimers(prevTimers => 
+      setTimers(prevTimers =>
         prevTimers.map(timer => {
           if (timer.isRunning && timer.remainingSeconds > 0) {
             const nextRemaining = timer.remainingSeconds - 1;
@@ -52,7 +52,7 @@ const LabTimer: React.FC = () => {
     const h = Math.floor(totalSeconds / 3600);
     const m = Math.floor((totalSeconds % 3600) / 60);
     const s = totalSeconds % 60;
-    
+
     // Esconde a hora se for 0 para ficar mais limpo, mas mantém se for > 0
     if (h > 0) {
       return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
@@ -69,11 +69,11 @@ const LabTimer: React.FC = () => {
   // Adicionar um novo cronômetro
   const handleAddTimer = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const h = parseInt(newHours || '0', 10);
     const m = parseInt(newMinutes || '0', 10);
     const s = parseInt(newSeconds || '0', 10);
-    
+
     const totalSeconds = (h * 3600) + (m * 60) + s;
 
     if (totalSeconds <= 0) return;
@@ -88,7 +88,7 @@ const LabTimer: React.FC = () => {
     };
 
     setTimers([...timers, newTimer]);
-    
+
     // Limpa o formulário
     setNewName('');
     setNewHours('');
@@ -123,14 +123,14 @@ const LabTimer: React.FC = () => {
     <>
       <div className="tool-page-wrapper">
         <div className="tool-container">
-          
-          <button className="tool-btn-back" onClick={() => navigate('/lab')}>
+
+          <button className="tool-btn-back" onClick={() => navigate(-1)}>
             <ArrowLeft size={18} />
-            Voltar para Bancada
+            Voltar
           </button>
 
           <div className="tool-grid-layout">
-            
+
             {/* Coluna Principal: Lista de Cronômetros */}
             <div className="tool-main-panel">
               <div className="tool-header">
@@ -144,19 +144,19 @@ const LabTimer: React.FC = () => {
               </div>
 
               <div className="tool-card-content">
-                
+
                 {/* Formulário de Adição */}
                 <form className="timer-add-form" onSubmit={handleAddTimer}>
                   <div className="timer-input-name">
                     <label>Rótulo (Ex: PCR Amostra A)</label>
-                    <input 
-                      type="text" 
-                      placeholder="Nome do processo..." 
+                    <input
+                      type="text"
+                      placeholder="Nome do processo..."
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
                     />
                   </div>
-                  
+
                   <div className="timer-input-time-group">
                     <div className="timer-time-box">
                       <label>Horas</label>
@@ -185,12 +185,12 @@ const LabTimer: React.FC = () => {
                   {timers.length === 0 ? (
                     <div className="timers-empty-state">
                       <Timer size={40} />
-                      <p>Nenhum cronômetro ativo.<br/>Adicione um acima para começar.</p>
+                      <p>Nenhum cronômetro ativo.<br />Adicione um acima para começar.</p>
                     </div>
                   ) : (
                     timers.map(timer => (
                       <div key={timer.id} className={`timer-item-card ${timer.isFinished ? 'timer-finished' : ''}`}>
-                        
+
                         <div className="timer-info">
                           <h4>{timer.name}</h4>
                           <span className="timer-original-time">Original: {formatTime(timer.initialSeconds)}</span>
@@ -201,11 +201,11 @@ const LabTimer: React.FC = () => {
                             {timer.isFinished && <BellRing size={24} className="ring-icon" />}
                             {formatTime(timer.remainingSeconds)}
                           </div>
-                          
+
                           {/* Barra de Progresso */}
                           <div className="timer-progress-bar-bg">
-                            <div 
-                              className="timer-progress-bar-fill" 
+                            <div
+                              className="timer-progress-bar-fill"
                               style={{ width: `${calculateProgress(timer.remainingSeconds, timer.initialSeconds)}%` }}
                             ></div>
                           </div>
@@ -213,7 +213,7 @@ const LabTimer: React.FC = () => {
 
                         <div className="timer-controls">
                           {!timer.isFinished && (
-                            <button 
+                            <button
                               className={`ctrl-btn ${timer.isRunning ? 'btn-pause' : 'btn-play'}`}
                               onClick={() => toggleTimer(timer.id)}
                               title={timer.isRunning ? "Pausar" : "Iniciar"}
@@ -245,10 +245,10 @@ const LabTimer: React.FC = () => {
                 <ul className="tool-info-list timer-tips">
                   <li><strong>1. Nomeie:</strong> Dê um nome claro (ex: "Centrífuga 1").</li>
                   <li><strong>2. Configure:</strong> Insira horas, minutos e segundos.</li>
-                  <li><strong>3. Inicie:</strong> Adicione à lista e clique no ícone de Play (<Play size={14}/>).</li>
+                  <li><strong>3. Inicie:</strong> Adicione à lista e clique no ícone de Play (<Play size={14} />).</li>
                 </ul>
                 <div className="info-alert alert-amber">
-                  <BellRing size={16}/>
+                  <BellRing size={16} />
                   <small>Quando o tempo zerar, o card piscará indicando que o processo foi concluído.</small>
                 </div>
               </div>

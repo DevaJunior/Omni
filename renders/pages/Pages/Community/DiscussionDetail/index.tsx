@@ -22,9 +22,9 @@ import CardButtonOptions from '../../../../components/Cards/CardButtonOptions';
 import { Edit, Trash2, Flag } from 'lucide-react';
 import './styles.css';
 
-const ReplyItem = ({ 
-  reply, navigate, currentUserUid, onEdit, onDelete 
-}: { 
+const ReplyItem = ({
+  reply, navigate, currentUserUid, onEdit, onDelete
+}: {
   reply: any; navigate: any; currentUserUid?: string;
   onEdit: (id: string, content: string) => void;
   onDelete: (id: string) => void;
@@ -38,18 +38,18 @@ const ReplyItem = ({
 
   return (
     <div className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
-      <img 
-        src={reply.avatar} 
-        alt={reply.author} 
-        className="disc-comment-avatar" 
-        onClick={(e) => { e.stopPropagation(); if(reply.authorId) navigate(`/profile/${reply.authorId}`); }}
+      <img
+        src={reply.avatar}
+        alt={reply.author}
+        className="disc-comment-avatar"
+        onClick={(e) => { e.stopPropagation(); if (reply.authorId) navigate(`/profile/${reply.authorId}`); }}
         style={{ cursor: 'pointer' }}
       />
       <div className="disc-comment-content">
         <div className="disc-comment-header">
           <div className="disc-comment-author-info">
-            <h4 
-              onClick={(e) => { e.stopPropagation(); if(reply.authorId) navigate(`/profile/${reply.authorId}`); }}
+            <h4
+              onClick={(e) => { e.stopPropagation(); if (reply.authorId) navigate(`/profile/${reply.authorId}`); }}
               style={{ cursor: 'pointer' }}
             >
               {reply.author} {reply.isAuthor && <span className="disc-author-badge">Autor</span>}
@@ -72,20 +72,20 @@ const ReplyItem = ({
 
         {isEditing ? (
           <div style={{ marginTop: '8px' }}>
-            <textarea 
+            <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
               style={{ width: '100%', minHeight: '80px', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb', fontFamily: 'inherit', resize: 'vertical' }}
             />
             <div style={{ display: 'flex', gap: '8px', marginTop: '8px', justifyContent: 'flex-end' }}>
-              <button 
-                onClick={() => { setIsEditing(false); setEditContent(reply.content); }} 
+              <button
+                onClick={() => { setIsEditing(false); setEditContent(reply.content); }}
                 style={{ padding: '6px 12px', background: 'transparent', border: '1px solid #ccc', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}
               >
                 Cancelar
               </button>
-              <button 
-                onClick={() => { onEdit(reply.id, editContent); setIsEditing(false); }} 
+              <button
+                onClick={() => { onEdit(reply.id, editContent); setIsEditing(false); }}
                 style={{ padding: '6px 16px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
               >
                 Salvar
@@ -94,77 +94,77 @@ const ReplyItem = ({
           </div>
         ) : (
           <div style={{ position: 'relative' }}>
-            <p 
-            className="disc-comment-text" 
-            style={{ 
-              whiteSpace: 'pre-wrap',
-              margin: 0,
-              ...( !expanded && isLong ? {
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden'
-              } : {})
-            }}
-          >
-            {content}
-          </p>
-          {isLong && !expanded && (
-            <button 
-              onClick={() => setExpanded(true)}
-              style={{ 
-                position: 'absolute',
-                bottom: -2,
-                right: 0,
-                background: reply.isAuthor ? '#fcfcff' : '#fff',
-                border: 'none', 
-                color: 'var(--primary)', 
-                cursor: 'pointer', 
-                padding: '0 0 0 24px', 
-                display: 'flex',
-                alignItems: 'center'
+            <p
+              className="disc-comment-text"
+              style={{
+                whiteSpace: 'pre-wrap',
+                margin: 0,
+                ...(!expanded && isLong ? {
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                } : {})
               }}
-              title="Expandir"
             >
-              <ChevronDown size={18} />
-            </button>
-          )}
-          {isLong && expanded && (
-            <button 
-              onClick={() => setExpanded(false)}
-              style={{ 
-                background: 'transparent', 
-                border: 'none', 
-                color: 'var(--primary)', 
-                cursor: 'pointer', 
-                padding: '4px 0 0 0', 
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                width: '100%',
-                marginTop: '4px'
-              }}
-              title="Recolher"
-            >
-              <ChevronUp size={18} />
-            </button>
-          )}
+              {content}
+            </p>
+            {isLong && !expanded && (
+              <button
+                onClick={() => setExpanded(true)}
+                style={{
+                  position: 'absolute',
+                  bottom: -2,
+                  right: 0,
+                  background: reply.isAuthor ? '#fcfcff' : '#fff',
+                  border: 'none',
+                  color: 'var(--primary)',
+                  cursor: 'pointer',
+                  padding: '0 0 0 24px',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+                title="Expandir"
+              >
+                <ChevronDown size={18} />
+              </button>
+            )}
+            {isLong && expanded && (
+              <button
+                onClick={() => setExpanded(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--primary)',
+                  cursor: 'pointer',
+                  padding: '4px 0 0 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  width: '100%',
+                  marginTop: '4px'
+                }}
+                title="Recolher"
+              >
+                <ChevronUp size={18} />
+              </button>
+            )}
           </div>
         )}
-        
+
         {/* Renderiza link legado (string) se existir, por retrocompatibilidade */}
         {typeof reply.link === 'string' && reply.link && (
-          <a 
-            href={reply.link} 
-            target="_blank" 
+          <a
+            href={reply.link}
+            target="_blank"
             rel="noreferrer"
-            style={{ 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '6px', 
-              background: '#f3f4f6', 
-              padding: '6px 12px', 
-              borderRadius: '6px', 
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: '#f3f4f6',
+              padding: '6px 12px',
+              borderRadius: '6px',
               fontSize: '0.85rem',
               color: 'var(--primary)',
               textDecoration: 'none',
@@ -181,18 +181,18 @@ const ReplyItem = ({
         {reply.links && reply.links.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '12px' }}>
             {reply.links.map((lnk: any, idx: number) => (
-              <a 
+              <a
                 key={idx}
-                href={lnk.url} 
-                target="_blank" 
+                href={lnk.url}
+                target="_blank"
                 rel="noreferrer"
-                style={{ 
-                  display: 'inline-flex', 
-                  alignItems: 'center', 
-                  gap: '6px', 
-                  background: '#f3f4f6', 
-                  padding: '6px 12px', 
-                  borderRadius: '6px', 
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: '#f3f4f6',
+                  padding: '6px 12px',
+                  borderRadius: '6px',
                   fontSize: '0.85rem',
                   color: 'var(--primary)',
                   textDecoration: 'none',
@@ -224,7 +224,7 @@ const DiscussionDetail: React.FC = () => {
   const { id } = useParams();
   const { currentUser, userProfile } = useAuth();
   const [replyText, setReplyText] = useState('');
-  const [replyLinks, setReplyLinks] = useState<{title: string, url: string}[]>([]);
+  const [replyLinks, setReplyLinks] = useState<{ title: string, url: string }[]>([]);
   const [tempLinkTitle, setTempLinkTitle] = useState('');
   const [tempLinkUrl, setTempLinkUrl] = useState('');
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -238,7 +238,7 @@ const DiscussionDetail: React.FC = () => {
     isOpen: false,
     title: '',
     message: '',
-    onConfirm: () => {}
+    onConfirm: () => { }
   });
   const [editModal, setEditModal] = useState({ isOpen: false, content: '' });
 
@@ -427,9 +427,9 @@ const DiscussionDetail: React.FC = () => {
     <div className="disc-detail-container">
 
       {/* Botão de Voltar */}
-      <button className="disc-btn-back" onClick={() => navigate('/community')}>
+      <button className="disc-btn-back" onClick={() => navigate(-1)}>
         <ArrowLeft size={20} />
-        Voltar para Discussões
+        Voltar
       </button>
 
       <div className="disc-detail-layout">
@@ -454,7 +454,7 @@ const DiscussionDetail: React.FC = () => {
               comments: discussion.commentsCount,
             }}
             currentUserUid={currentUser?.uid}
-            onOpenThread={() => {}}
+            onOpenThread={() => { }}
             onLike={() => handleLike()}
             onDelete={() => setConfirmConfig({
               isOpen: true,
@@ -483,7 +483,7 @@ const DiscussionDetail: React.FC = () => {
                       <Link size={14} color="var(--primary)" />
                       <strong style={{ color: 'var(--text-main)' }}>{l.title}</strong>
                       <span style={{ color: 'var(--text-muted)', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{l.url}</span>
-                      <button 
+                      <button
                         onClick={() => setReplyLinks(prev => prev.filter((_, idx) => idx !== i))}
                         style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                         title="Remover link"
@@ -519,16 +519,16 @@ const DiscussionDetail: React.FC = () => {
                       />
                       <button
                         onClick={() => {
-                          if(tempLinkTitle.trim() && tempLinkUrl.trim()) {
+                          if (tempLinkTitle.trim() && tempLinkUrl.trim()) {
                             setReplyLinks(prev => [...prev, { title: tempLinkTitle.trim(), url: tempLinkUrl.trim() }]);
                             setTempLinkTitle('');
                             setTempLinkUrl('');
                           }
                         }}
                         disabled={!tempLinkTitle.trim() || !tempLinkUrl.trim()}
-                        style={{ 
-                          background: (tempLinkTitle.trim() && tempLinkUrl.trim()) ? 'var(--primary)' : '#e5e7eb', 
-                          color: (tempLinkTitle.trim() && tempLinkUrl.trim()) ? '#fff' : '#9ca3af', 
+                        style={{
+                          background: (tempLinkTitle.trim() && tempLinkUrl.trim()) ? 'var(--primary)' : '#e5e7eb',
+                          color: (tempLinkTitle.trim() && tempLinkUrl.trim()) ? '#fff' : '#9ca3af',
                           border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: (tempLinkTitle.trim() && tempLinkUrl.trim()) ? 'pointer' : 'not-allowed',
                           display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', fontWeight: 600
                         }}
@@ -576,11 +576,11 @@ const DiscussionDetail: React.FC = () => {
                 <p style={{ color: 'var(--text-muted)' }}>Seja o primeiro a responder esta discussão!</p>
               ) : (
                 discussion.replies.map((reply: Record<string, unknown>) => (
-                  <ReplyItem 
-                    key={(reply as any).id} 
-                    reply={reply} 
-                    navigate={navigate} 
-                    currentUserUid={currentUser?.uid} 
+                  <ReplyItem
+                    key={(reply as any).id}
+                    reply={reply}
+                    navigate={navigate}
+                    currentUserUid={currentUser?.uid}
                     onEdit={handleEditReply}
                     onDelete={handleDeleteReply}
                   />
@@ -596,19 +596,19 @@ const DiscussionDetail: React.FC = () => {
 
             {/* Sobre o Autor */}
             <div className="disc-widget disc-author-widget">
-              <div 
+              <div
                 className="disc-author-cover"
                 style={authorProfile?.cover ? { backgroundImage: `url(${authorProfile.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
               ></div>
-              <img 
-                src={authorProfile?.avatar || discussion.avatar} 
-                alt={discussion.author} 
-                className="disc-author-profile-pic" 
+              <img
+                src={authorProfile?.avatar || discussion.avatar}
+                alt={discussion.author}
+                className="disc-author-profile-pic"
                 onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
                 style={{ cursor: 'pointer' }}
               />
               <div className="disc-author-widget-info">
-                <h3 
+                <h3
                   onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
                   style={{ cursor: 'pointer' }}
                 >
@@ -620,7 +620,7 @@ const DiscussionDetail: React.FC = () => {
                   <div><strong>{authorStats.followers}</strong><span>Seguidores</span></div>
                 </div>
                 {currentUser?.uid !== discussion.authorId && (
-                  <button 
+                  <button
                     className={`disc-btn-follow-full ${isFollowing ? 'following' : ''}`}
                     onClick={handleFollowAuthor}
                     style={isFollowing ? { backgroundColor: '#f1f5f9', color: '#0f172a', border: '1px solid #cbd5e1' } : {}}
@@ -647,7 +647,7 @@ const DiscussionDetail: React.FC = () => {
 
       </div>
 
-      <ConfirmModal 
+      <ConfirmModal
         isOpen={confirmConfig.isOpen}
         title={confirmConfig.title}
         message={confirmConfig.message}

@@ -52,9 +52,9 @@ const ProjectDetail: React.FC = () => {
     <div className="prj-detail-container">
 
       {/* Botão de Voltar */}
-      <button className="prj-btn-back" onClick={() => navigate('/community')}>
+      <button className="prj-btn-back" onClick={() => navigate(-1)}>
         <ArrowLeft size={20} />
-        Voltar para Projetos
+        Voltar
       </button>
 
       <div className="prj-detail-layout">

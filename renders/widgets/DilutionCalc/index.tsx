@@ -18,7 +18,7 @@ const DilutionCalc: React.FC = () => {
 
   const handleCalculate = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const valC1 = parseFloat(c1);
     const valV1 = parseFloat(v1);
     const valC2 = parseFloat(c2);
@@ -62,12 +62,12 @@ const DilutionCalc: React.FC = () => {
     <div className="tool-input-group">
       <label>{label} ({symbol})</label>
       <div className="tool-input-wrapper">
-        <input 
-          type="number" 
-          step="any" 
-          value={value} 
-          onChange={(e) => setter(e.target.value)} 
-          required 
+        <input
+          type="number"
+          step="any"
+          value={value}
+          onChange={(e) => setter(e.target.value)}
+          required
           placeholder="Ex: 10"
         />
         <span className="tool-unit">{unitType === 'conc' ? 'U.C.' : 'U.V.'}</span>
@@ -79,14 +79,14 @@ const DilutionCalc: React.FC = () => {
     <>
       <div className="tool-page-wrapper">
         <div className="tool-container">
-          
-          <button className="tool-btn-back" onClick={() => navigate('/lab')}>
+
+          <button className="tool-btn-back" onClick={() => navigate(-1)}>
             <ArrowLeft size={18} />
-            Voltar para Bancada
+            Voltar
           </button>
 
           <div className="tool-grid-layout">
-            
+
             {/* Coluna Principal: Calculadora */}
             <div className="tool-main-panel">
               <div className="tool-header">
@@ -123,12 +123,12 @@ const DilutionCalc: React.FC = () => {
                 </div>
 
                 <form className="tool-form" onSubmit={handleCalculate}>
-                  
+
                   <div className="form-row-split">
                     {target !== 'c1' && renderInput("Concentração Inicial", "C1", c1, setC1, "conc")}
                     {target !== 'v1' && renderInput("Volume Inicial (Estoque)", "V1", v1, setV1, "vol")}
                   </div>
-                  
+
                   <div className="form-row-split">
                     {target !== 'c2' && renderInput("Concentração Final", "C2", c2, setC2, "conc")}
                     {target !== 'v2' && renderInput("Volume Final (Desejado)", "V2", v2, setV2, "vol")}
@@ -172,7 +172,7 @@ const DilutionCalc: React.FC = () => {
                   <li><strong>V₂:</strong> Volume final da nova solução</li>
                 </ul>
                 <div className="info-alert">
-                  <Droplet size={16}/>
+                  <Droplet size={16} />
                   <small>As unidades de concentração (U.C.) e volume (U.V.) devem ser iguais nos dois lados da equação.</small>
                 </div>
               </div>

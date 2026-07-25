@@ -400,8 +400,8 @@ const PFuzzyEngine: React.FC = () => {
         <div className="engine-container">
 
           <div className="engine-top-bar">
-            <button className="btn-back-engine" onClick={() => navigate('/lab')}>
-              <ArrowLeft size={18} /> Voltar para Bancada
+            <button className="btn-back-engine" onClick={() => navigate(-1)}>
+              <ArrowLeft size={18} /> Voltar
             </button>
             <button className="btn-save-engine">
               <Save size={18} /> Salvar Modelo

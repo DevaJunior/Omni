@@ -18,7 +18,7 @@ const MolarityCalc: React.FC = () => {
 
   const handleCalculate = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const m = parseFloat(mass);
     const v = parseFloat(volume);
     const mm = parseFloat(molarMass);
@@ -58,14 +58,14 @@ const MolarityCalc: React.FC = () => {
     <>
       <div className="tool-page-wrapper">
         <div className="tool-container">
-          
-          <button className="tool-btn-back" onClick={() => navigate('/lab')}>
+
+          <button className="tool-btn-back" onClick={() => navigate(-1)}>
             <ArrowLeft size={18} />
-            Voltar para Bancada
+            Voltar
           </button>
 
           <div className="tool-grid-layout">
-            
+
             {/* Coluna Principal: Calculadora */}
             <div className="tool-main-panel">
               <div className="tool-header">
@@ -98,7 +98,7 @@ const MolarityCalc: React.FC = () => {
                 </div>
 
                 <form className="tool-form" onSubmit={handleCalculate}>
-                  
+
                   {mode !== 'mass' && (
                     <div className="tool-input-group">
                       <label>Massa do Soluto (m)</label>

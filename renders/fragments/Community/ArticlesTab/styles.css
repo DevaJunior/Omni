@@ -70,12 +70,13 @@
   display: none;
 }
 
-.cmmt-featured-grid > * {
+.cmmt-featured-grid>* {
   min-width: 300px;
   max-width: 320px;
   flex: 0 0 auto;
   scroll-snap-align: start;
 }
+
 /* Divisor */
 .cmmt-divider {
   border: 0;
@@ -398,14 +399,14 @@
    RESPONSIVIDADE (Articles Tab)
 ========================================= */
 @media (max-width: 1024px) {
-  .cmmt-featured-grid > * {
+  .cmmt-featured-grid>* {
     min-width: 280px;
     max-width: 300px;
   }
 }
 
 @media (max-width: 600px) {
-  .cmmt-featured-grid > * {
+  .cmmt-featured-grid>* {
     min-width: 85vw;
     max-width: 85vw;
   }

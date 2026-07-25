@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../../menus/Footer';
-import { 
-  Search, ChevronDown, LockOpen, Lock, 
+import {
+  Search, ChevronDown, LockOpen, Lock,
   ChevronLeft, ChevronRight, SlidersHorizontal
 } from 'lucide-react';
 import { communityService } from '../../../../src/services/communityService';
@@ -16,7 +16,7 @@ import './styles.css';
 const Articles: React.FC = () => {
   const { currentUser } = useAuth();
   const { addToast } = useToastStore();
-  
+
   const [articlesList, setArticlesList] = useState<Article[]>([]);
   const [savedArticles, setSavedArticles] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -25,11 +25,16 @@ const Articles: React.FC = () => {
   // Filters State
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('Relevância');
-  
+
   const [accessFilters, setAccessFilters] = useState({ openAccess: true, restricted: false });
   const [pubFilters, setPubFilters] = useState({ original: true, review: false, preprint: false, book: false });
   const [discFilters, setDiscFilters] = useState({ biology: true, genetics: false, bioinformatics: false, pharmacology: false });
   const [yearFilter, setYearFilter] = useState('Qualquer ano');
+
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const toggleDropdown = (dropdown: string) => {
+    setOpenDropdown(prev => prev === dropdown ? null : dropdown);
+  };
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -77,7 +82,7 @@ const Articles: React.FC = () => {
         'article',
         article.title
       );
-      
+
       setSavedArticles(prev => {
         const newSet = new Set(prev);
         if (isNowSaved) {
@@ -105,24 +110,56 @@ const Articles: React.FC = () => {
 
   // Mock Pagination logic
   const totalResults = articlesList.length > 0 ? articlesList.length : 4592;
+
+  // Count active filters
+  const pubCount = Object.values(pubFilters).filter(Boolean).length;
   
+  const getActivePills = () => {
+    const pills: { id: string; label: string; onRemove: () => void }[] = [];
+    if (accessFilters.openAccess) pills.push({ id: 'open', label: 'Acesso Aberto', onRemove: () => setAccessFilters(p => ({...p, openAccess: false})) });
+    if (accessFilters.restricted) pills.push({ id: 'rest', label: 'Acesso Restrito', onRemove: () => setAccessFilters(p => ({...p, restricted: false})) });
+    
+    if (pubFilters.original) pills.push({ id: 'orig', label: 'Artigo Original', onRemove: () => setPubFilters(p => ({...p, original: false})) });
+    if (pubFilters.review) pills.push({ id: 'rev', label: 'Revisão Literária', onRemove: () => setPubFilters(p => ({...p, review: false})) });
+    if (pubFilters.preprint) pills.push({ id: 'prep', label: 'Preprint', onRemove: () => setPubFilters(p => ({...p, preprint: false})) });
+    if (pubFilters.book) pills.push({ id: 'book', label: 'Capítulo de Livro', onRemove: () => setPubFilters(p => ({...p, book: false})) });
+    
+    if (discFilters.biology) pills.push({ id: 'bio', label: 'Biologia Molecular', onRemove: () => setDiscFilters(p => ({...p, biology: false})) });
+    if (discFilters.genetics) pills.push({ id: 'gen', label: 'Genética', onRemove: () => setDiscFilters(p => ({...p, genetics: false})) });
+    if (discFilters.bioinformatics) pills.push({ id: 'binf', label: 'Bioinformática', onRemove: () => setDiscFilters(p => ({...p, bioinformatics: false})) });
+    if (discFilters.pharmacology) pills.push({ id: 'pha', label: 'Farmacologia', onRemove: () => setDiscFilters(p => ({...p, pharmacology: false})) });
+    
+    if (yearFilter !== 'Qualquer ano') pills.push({ id: 'year', label: yearFilter, onRemove: () => setYearFilter('Qualquer ano') });
+    
+    return pills;
+  };
+
+  const activePills = getActivePills();
+
+  const handleClearAll = () => {
+    setAccessFilters({ openAccess: false, restricted: false });
+    setPubFilters({ original: false, review: false, preprint: false, book: false });
+    setDiscFilters({ biology: false, genetics: false, bioinformatics: false, pharmacology: false });
+    setYearFilter('Qualquer ano');
+  };
+
   return (
     <div className="articles-page-wrapper">
-      
+
       {/* HERO SECTION */}
       <section className="articles-hero">
         <h1>Pesquise literatura científica</h1>
         <p>Acesse mais de 50.000 artigos revisados por pares, preprints, capítulos de livros e datasets em diversas áreas do conhecimento.</p>
-        
+
         <div className="articles-search-bar">
           <div className="search-dropdown">
             Todos os campos <ChevronDown size={16} />
           </div>
           <div className="search-input-wrapper">
             <Search size={18} className="search-icon-input" />
-            <input 
-              type="text" 
-              placeholder="Ex: CRISPR-Cas9, Machine Learning, Devair Junior..." 
+            <input
+              type="text"
+              placeholder="Ex: CRISPR-Cas9, Machine Learning, Devair Junior..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -140,8 +177,125 @@ const Articles: React.FC = () => {
 
       {/* MAIN LAYOUT (GRID) */}
       <main className="articles-main-grid">
-        
-        {/* SIDEBAR FILTERS */}
+
+        {/* MOBILE HORIZONTAL FILTERS */}
+        <div className="mobile-horizontal-filters-wrapper">
+          <div className="mobile-horizontal-filters">
+            <div className="mobile-filters-label">FILTROS</div>
+            
+            <div className="mobile-filter-dropdown-container">
+              <button className="mobile-filter-btn" onClick={() => toggleDropdown('acesso')}>
+                <LockOpen size={14} className="btn-icon" /> Acesso <ChevronDown size={14} />
+              </button>
+              {openDropdown === 'acesso' && (
+                <div className="mobile-filter-dropdown-menu">
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={accessFilters.openAccess} onChange={(e) => setAccessFilters({...accessFilters, openAccess: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Acesso Aberto (OA)
+                  </label>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={accessFilters.restricted} onChange={(e) => setAccessFilters({...accessFilters, restricted: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Acesso Restrito
+                  </label>
+                </div>
+              )}
+            </div>
+
+            <div className="mobile-filter-dropdown-container">
+              <button className="mobile-filter-btn" onClick={() => toggleDropdown('pub')}>
+                Tipo de Documento {pubCount > 0 && <span className="filter-badge">{pubCount}</span>} <ChevronDown size={14} />
+              </button>
+              {openDropdown === 'pub' && (
+                <div className="mobile-filter-dropdown-menu">
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={pubFilters.original} onChange={(e) => setPubFilters({...pubFilters, original: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Artigo Original
+                  </label>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={pubFilters.review} onChange={(e) => setPubFilters({...pubFilters, review: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Revisão Literária
+                  </label>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={pubFilters.preprint} onChange={(e) => setPubFilters({...pubFilters, preprint: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Preprint
+                  </label>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={pubFilters.book} onChange={(e) => setPubFilters({...pubFilters, book: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Capítulo de Livro
+                  </label>
+                </div>
+              )}
+            </div>
+
+            <div className="mobile-filter-dropdown-container">
+              <button className="mobile-filter-btn" onClick={() => toggleDropdown('disc')}>
+                Disciplina <ChevronDown size={14} />
+              </button>
+              {openDropdown === 'disc' && (
+                <div className="mobile-filter-dropdown-menu">
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={discFilters.biology} onChange={(e) => setDiscFilters({...discFilters, biology: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Biologia Molecular
+                  </label>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={discFilters.genetics} onChange={(e) => setDiscFilters({...discFilters, genetics: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Genética
+                  </label>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={discFilters.bioinformatics} onChange={(e) => setDiscFilters({...discFilters, bioinformatics: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Bioinformática
+                  </label>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={discFilters.pharmacology} onChange={(e) => setDiscFilters({...discFilters, pharmacology: e.target.checked})} />
+                    <span className="checkbox-custom"></span> Farmacologia
+                  </label>
+                </div>
+              )}
+            </div>
+
+            <div className="mobile-filter-dropdown-container">
+              <button className="mobile-filter-btn" onClick={() => toggleDropdown('year')}>
+                Data <ChevronDown size={14} />
+              </button>
+              {openDropdown === 'year' && (
+                <div className="mobile-filter-dropdown-menu">
+                  <label className="radio-label">
+                    <input type="radio" name="year_m" checked={yearFilter === 'Qualquer ano'} onChange={() => setYearFilter('Qualquer ano')} />
+                    <span className="radio-custom"></span> Qualquer ano
+                  </label>
+                  <label className="radio-label">
+                    <input type="radio" name="year_m" checked={yearFilter === '2026'} onChange={() => setYearFilter('2026')} />
+                    <span className="radio-custom"></span> 2026
+                  </label>
+                  <label className="radio-label">
+                    <input type="radio" name="year_m" checked={yearFilter === '2025'} onChange={() => setYearFilter('2025')} />
+                    <span className="radio-custom"></span> 2025
+                  </label>
+                  <label className="radio-label">
+                    <input type="radio" name="year_m" checked={yearFilter === 'Ultimos 5 anos'} onChange={() => setYearFilter('Ultimos 5 anos')} />
+                    <span className="radio-custom"></span> Últimos 5 anos
+                  </label>
+                </div>
+              )}
+            </div>
+
+            <button className="mobile-clear-btn" onClick={handleClearAll}>
+              x Limpar Todos
+            </button>
+          </div>
+          
+          {activePills.length > 0 && (
+            <div className="mobile-active-pills">
+              {activePills.map(pill => (
+                <span key={pill.id} className="active-pill">
+                  {pill.label} <button onClick={pill.onRemove}>×</button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* SIDEBAR FILTERS (DESKTOP) */}
         <aside className="articles-sidebar">
           <div className="sidebar-header">
             <div className="sidebar-title"><SlidersHorizontal size={18} /> Filtros</div>
@@ -151,12 +305,12 @@ const Articles: React.FC = () => {
           <div className="filter-group">
             <h4>TIPO DE ACESSO</h4>
             <label className="checkbox-label">
-              <input type="checkbox" checked={accessFilters.openAccess} onChange={(e) => setAccessFilters({...accessFilters, openAccess: e.target.checked})} />
+              <input type="checkbox" checked={accessFilters.openAccess} onChange={(e) => setAccessFilters({ ...accessFilters, openAccess: e.target.checked })} />
               <span className="checkbox-custom"></span>
               <LockOpen size={14} className="filter-icon-inline green-icon" /> Acesso Aberto (OA)
             </label>
             <label className="checkbox-label">
-              <input type="checkbox" checked={accessFilters.restricted} onChange={(e) => setAccessFilters({...accessFilters, restricted: e.target.checked})} />
+              <input type="checkbox" checked={accessFilters.restricted} onChange={(e) => setAccessFilters({ ...accessFilters, restricted: e.target.checked })} />
               <span className="checkbox-custom"></span>
               <Lock size={14} className="filter-icon-inline gray-icon" /> Acesso Restrito
             </label>
@@ -165,22 +319,22 @@ const Articles: React.FC = () => {
           <div className="filter-group">
             <h4>TIPO DE PUBLICAÇÃO</h4>
             <label className="checkbox-label">
-              <input type="checkbox" checked={pubFilters.original} onChange={(e) => setPubFilters({...pubFilters, original: e.target.checked})} />
+              <input type="checkbox" checked={pubFilters.original} onChange={(e) => setPubFilters({ ...pubFilters, original: e.target.checked })} />
               <span className="checkbox-custom"></span>
               Artigo Original
             </label>
             <label className="checkbox-label">
-              <input type="checkbox" checked={pubFilters.review} onChange={(e) => setPubFilters({...pubFilters, review: e.target.checked})} />
+              <input type="checkbox" checked={pubFilters.review} onChange={(e) => setPubFilters({ ...pubFilters, review: e.target.checked })} />
               <span className="checkbox-custom"></span>
               Revisão Literária
             </label>
             <label className="checkbox-label">
-              <input type="checkbox" checked={pubFilters.preprint} onChange={(e) => setPubFilters({...pubFilters, preprint: e.target.checked})} />
+              <input type="checkbox" checked={pubFilters.preprint} onChange={(e) => setPubFilters({ ...pubFilters, preprint: e.target.checked })} />
               <span className="checkbox-custom"></span>
               Preprint
             </label>
             <label className="checkbox-label">
-              <input type="checkbox" checked={pubFilters.book} onChange={(e) => setPubFilters({...pubFilters, book: e.target.checked})} />
+              <input type="checkbox" checked={pubFilters.book} onChange={(e) => setPubFilters({ ...pubFilters, book: e.target.checked })} />
               <span className="checkbox-custom"></span>
               Capítulo de Livro
             </label>
@@ -195,7 +349,7 @@ const Articles: React.FC = () => {
             <div className="discipline-list">
               <label className="checkbox-label space-between">
                 <div>
-                  <input type="checkbox" checked={discFilters.biology} onChange={(e) => setDiscFilters({...discFilters, biology: e.target.checked})} />
+                  <input type="checkbox" checked={discFilters.biology} onChange={(e) => setDiscFilters({ ...discFilters, biology: e.target.checked })} />
                   <span className="checkbox-custom"></span>
                   Biologia Molecular
                 </div>
@@ -203,7 +357,7 @@ const Articles: React.FC = () => {
               </label>
               <label className="checkbox-label space-between">
                 <div>
-                  <input type="checkbox" checked={discFilters.genetics} onChange={(e) => setDiscFilters({...discFilters, genetics: e.target.checked})} />
+                  <input type="checkbox" checked={discFilters.genetics} onChange={(e) => setDiscFilters({ ...discFilters, genetics: e.target.checked })} />
                   <span className="checkbox-custom"></span>
                   Genética
                 </div>
@@ -211,7 +365,7 @@ const Articles: React.FC = () => {
               </label>
               <label className="checkbox-label space-between">
                 <div>
-                  <input type="checkbox" checked={discFilters.bioinformatics} onChange={(e) => setDiscFilters({...discFilters, bioinformatics: e.target.checked})} />
+                  <input type="checkbox" checked={discFilters.bioinformatics} onChange={(e) => setDiscFilters({ ...discFilters, bioinformatics: e.target.checked })} />
                   <span className="checkbox-custom"></span>
                   Bioinformática
                 </div>
@@ -219,7 +373,7 @@ const Articles: React.FC = () => {
               </label>
               <label className="checkbox-label space-between">
                 <div>
-                  <input type="checkbox" checked={discFilters.pharmacology} onChange={(e) => setDiscFilters({...discFilters, pharmacology: e.target.checked})} />
+                  <input type="checkbox" checked={discFilters.pharmacology} onChange={(e) => setDiscFilters({ ...discFilters, pharmacology: e.target.checked })} />
                   <span className="checkbox-custom"></span>
                   Farmacologia
                 </div>
@@ -255,11 +409,11 @@ const Articles: React.FC = () => {
 
         {/* RESULTS AREA */}
         <section className="articles-results-section">
-          
+
           <div className="results-header-bar">
             <span className="results-count">Mostrando <strong>1 - 10</strong> de <strong>{totalResults}</strong> resultados</span>
             <div className="results-sort">
-              Ordenar por: 
+              Ordenar por:
               <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                 <option value="Relevância">Relevância</option>
                 <option value="Recentes">Mais Recentes</option>

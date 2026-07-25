@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  FlaskConical, 
-  MessageSquare, 
-  Book, 
+import {
+  ArrowLeft,
+  FlaskConical,
+  MessageSquare,
+  Book,
   Users,
   Settings
 } from 'lucide-react';
@@ -24,9 +24,9 @@ const LabWorkspace: React.FC = () => {
   return (
     <div className="lab-workspace-page">
       <div className="lab-workspace-header">
-        <button className="tool-btn-back" onClick={() => navigate(`/lab/${id || '1'}`)}>
+        <button className="tool-btn-back" onClick={() => navigate(-1)}>
           <ArrowLeft size={18} />
-          Voltar para o Perfil do Lab
+          Voltar
         </button>
         <div className="workspace-title">
           <h2>Workspace do Laboratório</h2>
@@ -37,33 +37,33 @@ const LabWorkspace: React.FC = () => {
       <div className="lab-workspace-container">
         {/* Menu Lateral do Workspace */}
         <aside className="workspace-sidebar">
-          <button 
+          <button
             className={`workspace-nav-btn ${activeTab === 'bancada' ? 'active' : ''}`}
             onClick={() => setActiveTab('bancada')}
           >
             <FlaskConical size={18} />
             Bancada & LIMS
           </button>
-          
-          <button 
+
+          <button
             className={`workspace-nav-btn ${activeTab === 'forum' ? 'active' : ''}`}
             onClick={() => setActiveTab('forum')}
           >
             <MessageSquare size={18} />
             Área Comum
           </button>
-          
-          <button 
+
+          <button
             className={`workspace-nav-btn ${activeTab === 'caderno' ? 'active' : ''}`}
             onClick={() => setActiveTab('caderno')}
           >
             <Book size={18} />
             Meu Caderno
           </button>
-          
+
           <div className="workspace-divider" />
-          
-          <button 
+
+          <button
             className={`workspace-nav-btn ${activeTab === 'gestao' ? 'active' : ''}`}
             onClick={() => setActiveTab('gestao')}
           >
@@ -71,15 +71,15 @@ const LabWorkspace: React.FC = () => {
             Gestão de Estoque
           </button>
 
-          <button 
+          <button
             className={`workspace-nav-btn ${activeTab === 'equipamentos' ? 'active' : ''}`}
             onClick={() => setActiveTab('equipamentos')}
           >
             <Settings size={18} />
             Equipamentos
           </button>
-          
-          <button 
+
+          <button
             className={`workspace-nav-btn ${activeTab === 'configuracoes' ? 'active' : ''}`}
             onClick={() => setActiveTab('configuracoes')}
           >

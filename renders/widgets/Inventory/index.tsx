@@ -92,7 +92,7 @@ const Inventory: React.FC = () => {
     doc.setFontSize(16);
     doc.text("Relatório de Inventário - Omni", 20, 20);
     doc.setFontSize(10);
-    
+
     let y = 30;
     filteredReagents.forEach((item, index) => {
       if (y > 280) {
@@ -146,9 +146,9 @@ const Inventory: React.FC = () => {
       <div className="tool-page-wrapper">
         <div className="tool-container">
 
-          <button className="tool-btn-back" onClick={() => navigate('/lab')}>
+          <button className="tool-btn-back" onClick={() => navigate(-1)}>
             <ArrowLeft size={18} />
-            Voltar para Bancada
+            Voltar
           </button>
 
           <div className="tool-grid-layout">

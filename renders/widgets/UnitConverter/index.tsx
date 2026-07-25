@@ -69,21 +69,21 @@ const UnitConverter: React.FC = () => {
   const convertTemperature = (val: number, from: string, to: string): number => {
     if (from === to) return val;
     let celsius = val;
-    
+
     // Converte de 'from' para Celsius
-    if (from === 'f') celsius = (val - 32) * 5/9;
+    if (from === 'f') celsius = (val - 32) * 5 / 9;
     if (from === 'k') celsius = val - 273.15;
 
     // Converte de Celsius para 'to'
-    if (to === 'f') return (celsius * 9/5) + 32;
+    if (to === 'f') return (celsius * 9 / 5) + 32;
     if (to === 'k') return celsius + 273.15;
-    
+
     return celsius; // to === 'c'
   };
 
   const handleCalculate = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    
+
     const val = parseFloat(inputValue);
     if (isNaN(val)) {
       setResult("Insira um número válido.");
@@ -105,13 +105,13 @@ const UnitConverter: React.FC = () => {
       // Converte para a base e depois para o destino
       const valueInBase = val * fromDef.factor;
       const finalValue = valueInBase / toDef.factor;
-      
+
       // Formatação bonita para evitar 0.0000 ou números científicos feios quando possível
       let formattedResult = finalValue.toFixed(6).replace(/\.?0+$/, '');
       if (finalValue < 0.000001 && finalValue > 0) {
         formattedResult = finalValue.toExponential(4);
       }
-      
+
       setResult(formattedResult);
     }
   };
@@ -119,7 +119,7 @@ const UnitConverter: React.FC = () => {
   // Calcula automaticamente quando os valores mudam
   useEffect(() => {
     if (inputValue) handleCalculate();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue, fromUnit, toUnit]);
 
   const handleSwap = () => {
@@ -132,14 +132,14 @@ const UnitConverter: React.FC = () => {
     <>
       <div className="tool-page-wrapper">
         <div className="tool-container">
-          
-          <button className="tool-btn-back" onClick={() => navigate('/lab')}>
+
+          <button className="tool-btn-back" onClick={() => navigate(-1)}>
             <ArrowLeft size={18} />
-            Voltar para Bancada
+            Voltar
           </button>
 
           <div className="tool-grid-layout">
-            
+
             {/* Coluna Principal: Conversor */}
             <div className="tool-main-panel">
               <div className="tool-header">
@@ -153,7 +153,7 @@ const UnitConverter: React.FC = () => {
               </div>
 
               <div className="tool-card-content">
-                
+
                 {/* Seletor de Categoria */}
                 <div className="tool-mode-selector">
                   <label>Selecione a Grandeza Física</label>
@@ -168,16 +168,16 @@ const UnitConverter: React.FC = () => {
                 </div>
 
                 <div className="converter-work-area">
-                  
+
                   {/* Bloco De (Origem) */}
                   <div className="converter-block">
                     <label>Converter de</label>
                     <div className="converter-input-wrapper">
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         step="any"
-                        value={inputValue} 
-                        onChange={(e) => setInputValue(e.target.value)} 
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
                         placeholder="0.0"
                       />
                       <select value={fromUnit} onChange={(e) => setFromUnit(e.target.value)}>
@@ -227,7 +227,7 @@ const UnitConverter: React.FC = () => {
                 <h3><Info size={18} /> Dicas de Uso</h3>
                 <p>O Conversor Universal detecta automaticamente as mudanças numéricas e atualiza o resultado em tempo real.</p>
                 <div className="tool-formula-box formula-indigo">
-                  <ArrowRightLeft size={24} style={{ margin: '0 auto' }}/>
+                  <ArrowRightLeft size={24} style={{ margin: '0 auto' }} />
                 </div>
                 <ul className="tool-info-list">
                   <li><strong>Sistema Internacional:</strong> Priorize sempre o uso do SI (kg, L, K, Pa) em publicações oficiais.</li>

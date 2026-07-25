@@ -162,7 +162,7 @@ const LabProfile: React.FC = () => {
     return (
       <div className="lab-profile-page" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', gap: '1rem' }}>
         <h2>Laboratório não encontrado</h2>
-        <button className="cmmt-btn-primary" onClick={() => navigate(-1)}>Voltar para Comunidade</button>
+        <button className="cmmt-btn-primary" onClick={() => navigate(-1)}>Voltar</button>
       </div>
     );
   }
@@ -174,7 +174,7 @@ const LabProfile: React.FC = () => {
 
           <button className="tool-btn-back" onClick={() => navigate(-1)}>
             <ArrowLeft size={18} />
-            Voltar para Comunidade
+            Voltar
           </button>
 
           <div className="lab-grid-layout">
