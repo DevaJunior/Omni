@@ -190,7 +190,7 @@ const PublishArticle: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label>Conteúdo Completo (Opcional)</label>
+                <label>Conteúdo Completo (Opcional) <span style={{fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 'normal', marginLeft: '8px'}}>(Suporta formatação Markdown: **negrito**, # Título, - Lista)</span></label>
                 <textarea 
                   name="content" 
                   value={formData.content} 

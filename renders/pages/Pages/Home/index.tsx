@@ -18,6 +18,18 @@ const Home: React.FC = () => {
   const [randomLabs, setRandomLabs] = useState<LabPartner[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isExiting, setIsExiting] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchArticlesAndLabs = async () => {
@@ -35,8 +47,10 @@ const Home: React.FC = () => {
 
         const shuffled = labsData.sort(() => 0.5 - Math.random());
         setRandomLabs(shuffled.slice(0, 5));
+        setHasError(false);
       } catch (err) {
         console.error("Erro ao carregar dados da Home:", err);
+        setHasError(true);
       } finally {
         setIsLoading(false);
       }
@@ -60,11 +74,11 @@ const Home: React.FC = () => {
         ))
       ) : (
         <>
-          <span>Phyton Research</span>
-          <span>Biogen</span>
-          <span>Neurolab</span>
-          <span>Genesis Labs</span>
-          <span>Acqua Solutions</span>
+          <span style={{ cursor: 'default' }}>Phyton Research</span>
+          <span style={{ cursor: 'default' }}>Biogen</span>
+          <span style={{ cursor: 'default' }}>Neurolab</span>
+          <span style={{ cursor: 'default' }}>Genesis Labs</span>
+          <span style={{ cursor: 'default' }}>Acqua Solutions</span>
         </>
       )}
     </>
@@ -77,6 +91,23 @@ const Home: React.FC = () => {
       sliderRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
   };
+
+  const handleScroll = () => {
+    if (sliderRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(Math.ceil(scrollLeft + clientWidth) < scrollWidth);
+    }
+  };
+
+  useEffect(() => {
+    const slider = sliderRef.current;
+    if (slider) {
+      slider.addEventListener('scroll', handleScroll);
+      handleScroll();
+      return () => slider.removeEventListener('scroll', handleScroll);
+    }
+  }, [articles, isLoading]);
 
   return (
     <>
@@ -96,7 +127,7 @@ const Home: React.FC = () => {
                   e.preventDefault();
                   if (searchQuery.trim()) {
                     setIsExiting(true);
-                    setTimeout(() => {
+                    searchTimeoutRef.current = setTimeout(() => {
                       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
                     }, 300);
                   }
@@ -140,10 +171,18 @@ const Home: React.FC = () => {
               </button>
             </div>
             <div className="slider-controls">
-              <button className="control-btn" onClick={() => scroll('left')}>
+              <button 
+                className={`control-btn ${canScrollLeft ? 'active' : ''}`} 
+                onClick={() => scroll('left')}
+                disabled={!canScrollLeft}
+              >
                 <ChevronLeft size={20} />
               </button>
-              <button className="control-btn active" onClick={() => scroll('right')}>
+              <button 
+                className={`control-btn ${canScrollRight ? 'active' : ''}`} 
+                onClick={() => scroll('right')}
+                disabled={!canScrollRight}
+              >
                 <ChevronRight size={20} />
               </button>
             </div>
@@ -156,13 +195,22 @@ const Home: React.FC = () => {
                 <Skeleton type="card" width="300px" height="400px" />
                 <Skeleton type="card" width="300px" height="400px" />
               </div>
+            ) : hasError ? (
+              <div className="home-error-state" style={{ padding: '2rem', textAlign: 'center', width: '100%' }}>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Não foi possível carregar as pesquisas.</p>
+                <button className="btn-outline" onClick={() => window.location.reload()}>Tentar novamente</button>
+              </div>
+            ) : articles.length === 0 ? (
+              <div className="home-empty-state" style={{ padding: '2rem', textAlign: 'center', width: '100%', color: 'var(--text-secondary)' }}>
+                <p>Nenhum artigo publicado no momento.</p>
+              </div>
             ) : (
               articles.map((art) => (
                 <CardResearch
                   key={art.id}
                   article={{
                     id: art.id,
-                    image: art.image || 'https://via.placeholder.com/300x200',
+                    image: art.image || '/src/assets/wallapapers/wpp_cience_000.png',
                     category: art.category || 'Artigo',
                     title: art.title,
                     desc: art.desc || 'Sem descrição.'

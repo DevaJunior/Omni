@@ -48,6 +48,11 @@ import SearchPage from '../renders/pages/Pages/Search';
 import Inbox from '../renders/pages/Pages/Inbox';
 import AdminRoute from '../renders/components/AdminRoute';
 import AdminReports from '../renders/pages/Pages/Admin/Reports';
+import AdminDashboard from '../renders/pages/Pages/Admin/Dashboard';
+import AdminInstitutions from '../renders/pages/Pages/Admin/Institutions';
+import AdminLabs from '../renders/pages/Pages/Admin/Labs';
+import AdminUsers from '../renders/pages/Pages/Admin/Users';
+import AdminLayout from '../renders/components/AdminLayout';
 import MyBench from '../renders/pages/Pages/MyBench';
 
 const App: React.FC = () => {
@@ -58,6 +63,25 @@ const App: React.FC = () => {
         <Routes>
           {/* Rota de Login: Isolada, sem Navbar */}
           <Route path="/login" element={<Login />} />
+
+          {/* Admin Routes: Protegida e com AdminLayout (Sidebar) */}
+          <Route path="/admin/*" element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <LoadingOverlay />
+                <ToastContainer />
+                <GlobalConfirm />
+                <AdminLayout />
+              </AdminRoute>
+            </ProtectedRoute>
+          }>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="institutions" element={<AdminInstitutions />} />
+            <Route path="labs" element={<AdminLabs />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="reports" element={<AdminReports />} />
+            {/* Outras rotas de admin virão aqui depois */}
+          </Route>
 
           {/* Todas as outras rotas: Protegidas e com Navbar */}
           <Route path="*" element={
@@ -109,8 +133,7 @@ const App: React.FC = () => {
                   {/* <Route path="/lab/:id/workspace" element={<ProtectedRoute><LabWorkspace /></ProtectedRoute>} /> */}
                   <Route path="/lab/:id/workspace" element={<ProtectedRoute><MyBench /></ProtectedRoute>} />
 
-                  {/* Rotas Administrativas */}
-                  <Route path="/admin/reports" element={<ProtectedRoute><AdminRoute><AdminReports /></AdminRoute></ProtectedRoute>} />
+                  {/* Rotas Administrativas transferidas para /admin/* */}
 
                   {/* Rota de Migração */}
                   <Route path="/run-seed" element={

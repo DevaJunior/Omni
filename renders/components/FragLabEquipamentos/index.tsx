@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Settings2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import { db } from '../../../src/config/firebaseConfig';
+import React, { useState } from 'react';
+import { Plus, Settings2, CheckCircle2, AlertCircle, Edit2, Trash2, Wrench, Power } from 'lucide-react';
+import { useToastStore } from '../../../src/stores/toastStore';
+import { useConfirmStore } from '../../../src/stores/confirmStore';
+import { useLabEquipments, useCanManageLab } from '../../../src/hooks/useLabEquipment';
+import { deleteEquipment, setEquipmentStatus, getErrorMessage } from '../../../src/services/equipmentService';
+import type { Equipment } from '../../../src/types/equipment';
 import EquipmentModal from '../../modals/EquipmentModal/index';
 import './styles.css';
 
@@ -10,89 +13,178 @@ interface FragLabEquipamentosProps {
 }
 
 const FragLabEquipamentos: React.FC<FragLabEquipamentosProps> = ({ labId }) => {
-  const [equipments, setEquipments] = useState<any[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { addToast } = useToastStore();
+  const { requestConfirm } = useConfirmStore();
+  const { equipments, loading } = useLabEquipments(labId);
+  const canManage = useCanManageLab(labId);
 
-  const fetchEquipments = async () => {
-    if (!labId) return;
-    setLoading(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const handleOpenCreate = () => {
+    setSelectedEquipment(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (eq: Equipment) => {
+    setSelectedEquipment(eq);
+    setIsModalOpen(true);
+  };
+
+  const handleToggleMaintenance = async (eq: Equipment) => {
+    const nextStatus = eq.status === 'Em Manutenção' ? 'Ativo' : 'Em Manutenção';
+    setBusyId(eq.id);
     try {
-      const q = query(
-        collection(db, 'equipments'),
-        where('labId', '==', labId),
-        orderBy('createdAt', 'desc')
+      await setEquipmentStatus(eq.id, nextStatus);
+      addToast(
+        nextStatus === 'Em Manutenção'
+          ? `"${eq.name}" colocado em manutenção.`
+          : `"${eq.name}" reativado para agendamentos.`,
+        'success'
       );
-      const snap = await getDocs(q);
-      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setEquipments(data);
     } catch (error) {
-      console.error("Erro ao buscar equipamentos", error);
+      console.error('Erro ao alterar status:', error);
+      addToast(getErrorMessage(error, 'Erro ao atualizar status do equipamento.'), 'error');
     } finally {
-      setLoading(false);
+      setBusyId(null);
     }
   };
 
-  useEffect(() => {
-    fetchEquipments();
-  }, [labId]);
+  const handleDelete = (eq: Equipment) => {
+    requestConfirm({
+      title: 'Excluir Equipamento',
+      message: `Tem certeza que deseja excluir "${eq.name}"? Esta ação é irreversível e só é permitida se não houver reservas futuras ativas.`,
+      confirmText: 'Excluir',
+      cancelText: 'Cancelar',
+      isDanger: true,
+      onConfirm: async () => {
+        setBusyId(eq.id);
+        try {
+          await deleteEquipment(eq.id);
+          addToast(`"${eq.name}" foi excluído com sucesso.`, 'success');
+        } catch (error) {
+          console.error('Erro ao excluir equipamento:', error);
+          addToast(getErrorMessage(error, 'Não foi possível excluir o equipamento.'), 'error');
+        } finally {
+          setBusyId(null);
+        }
+      },
+    });
+  };
+
+  const statusClass = (status: Equipment['status']) => {
+    switch (status) {
+      case 'Ativo':
+        return 'status-ativo';
+      case 'Em Manutenção':
+        return 'status-manutencao';
+      case 'Desativado':
+        return 'status-desativado';
+      default:
+        return 'status-ativo';
+    }
+  };
 
   return (
     <div className="gestao-equip-tab-container anim-fade-up">
       <div className="gestao-equip-header">
         <div className="header-info">
           <h3>Gestão de Equipamentos e Ferramentas</h3>
-          <p>Cadastre e gerencie as configurações dos recursos do laboratório.</p>
+          <p>Cadastre, configure e gerencie a disponibilidade dos recursos do laboratório.</p>
         </div>
-        <button className="btn-add-equip" onClick={() => setIsModalOpen(true)}>
-          <Plus size={18} />
-          Novo Equipamento
-        </button>
+        {canManage && (
+          <button className="btn-add-equip" onClick={handleOpenCreate} id="btn-new-equipment">
+            <Plus size={18} />
+            Novo Equipamento
+          </button>
+        )}
       </div>
 
       <div className="equipments-list-section">
         {loading ? (
-          <div className="equip-loading">Carregando equipamentos...</div>
+          <div className="equip-loading">Carregando equipamentos do laboratório...</div>
         ) : equipments.length > 0 ? (
           <div className="equipments-grid">
-            {equipments.map((equip) => (
-              <div key={equip.id} className="equipment-card">
-                <div className="equip-card-header">
-                  <div className="equip-icon">
-                    <Settings2 size={24} />
-                  </div>
-                  <span className={`equip-status ${equip.status === 'Ativo' ? 'status-ativo' : 'status-manutencao'}`}>
-                    {equip.status || 'Ativo'}
-                  </span>
-                </div>
-                
-                <h4 className="equip-name">{equip.name}</h4>
-                {equip.description && <p className="equip-desc">{equip.description}</p>}
-                
-                <div className="equip-config">
-                  {equip.allowConcurrent ? (
-                    <div className="config-item allow-multiple">
-                      <CheckCircle2 size={16} />
-                      <span>Uso simultâneo (Máx: {equip.capacity || 2} pessoas)</span>
+            {equipments.map((equip) => {
+              const isBusy = busyId === equip.id;
+              return (
+                <div key={equip.id} className={`equipment-card ${equip.status !== 'Ativo' ? 'card-dimmed' : ''}`}>
+                  <div className="equip-card-header">
+                    <div className="equip-icon">
+                      <Settings2 size={24} />
                     </div>
+                    <span className={`equip-status ${statusClass(equip.status)}`}>
+                      {equip.status || 'Ativo'}
+                    </span>
+                  </div>
+
+                  <h4 className="equip-name">{equip.name}</h4>
+                  {equip.description ? (
+                    <p className="equip-desc">{equip.description}</p>
                   ) : (
-                    <div className="config-item single-user">
-                      <AlertCircle size={16} />
-                      <span>Uso exclusivo (1 pessoa por vez)</span>
+                    <p className="equip-desc equip-desc-muted">Sem descrição cadastrada.</p>
+                  )}
+
+                  <div className="equip-config">
+                    {equip.allowConcurrent ? (
+                      <div className="config-item allow-multiple">
+                        <CheckCircle2 size={16} />
+                        <span>Uso simultâneo (Até {equip.capacity || 2} pessoas)</span>
+                      </div>
+                    ) : (
+                      <div className="config-item single-user">
+                        <AlertCircle size={16} />
+                        <span>Uso exclusivo (1 pessoa por vez)</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {canManage && (
+                    <div className="equip-card-actions">
+                      <button
+                        className="equip-action-btn"
+                        onClick={() => handleOpenEdit(equip)}
+                        disabled={isBusy}
+                        title="Editar configurações"
+                      >
+                        <Edit2 size={14} /> Editar
+                      </button>
+
+                      <button
+                        className={`equip-action-btn ${equip.status === 'Em Manutenção' ? 'btn-reactivate' : 'btn-maintenance'}`}
+                        onClick={() => handleToggleMaintenance(equip)}
+                        disabled={isBusy}
+                        title={equip.status === 'Em Manutenção' ? 'Reativar equipamento' : 'Colocar em manutenção'}
+                      >
+                        {equip.status === 'Em Manutenção' ? <Power size={14} /> : <Wrench size={14} />}
+                        {equip.status === 'Em Manutenção' ? 'Reativar' : 'Manutenção'}
+                      </button>
+
+                      <button
+                        className="equip-action-btn btn-delete"
+                        onClick={() => handleDelete(equip)}
+                        disabled={isBusy}
+                        title="Excluir equipamento"
+                      >
+                        <Trash2 size={14} />
+                      </button>
                     </div>
                   )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="equip-empty-state">
             <Settings2 size={48} className="empty-icon" />
             <h4>Nenhum equipamento cadastrado</h4>
             <p>Adicione ferramentas e equipamentos para permitir que a equipe realize agendamentos.</p>
-            <button className="btn-empty-add" onClick={() => setIsModalOpen(true)}>
-              Cadastrar Primeiro Equipamento
-            </button>
+            {canManage && (
+              <button className="btn-empty-add" onClick={handleOpenCreate}>
+                Cadastrar Primeiro Equipamento
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -101,7 +193,7 @@ const FragLabEquipamentos: React.FC<FragLabEquipamentosProps> = ({ labId }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         labId={labId}
-        onSuccess={fetchEquipments}
+        equipment={selectedEquipment}
       />
     </div>
   );

@@ -6,6 +6,8 @@ import {
 } from 'lucide-react';
 import { learnService } from '../../../../../src/services/learnService';
 import type { StudyNote } from '../../../../../src/types/learn';
+import { useAuth } from '../../../../../src/contexts/AuthContext';
+import { useToastStore } from '../../../../../src/stores/toastStore';
 import Skeleton from '../../../../components/Skeleton';
 import './styles.css';
 import Footer from '../../../../menus/Footer';
@@ -14,6 +16,8 @@ const SUBJECTS = ['Todos', 'Biotecnologia', 'Bioquímica', 'Genética', 'Computa
 
 const Learn: React.FC = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const { addToast } = useToastStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSubject, setActiveSubject] = useState('Todos');
   const [notesState, setNotesState] = useState<StudyNote[]>([]);
@@ -44,10 +48,22 @@ const Learn: React.FC = () => {
     });
   }, [searchTerm, activeSubject, notesState]);
 
-  // Função para evitar que o clique no "Like" também dispare o redirecionamento do card
-  const handleLikeClick = (e: React.MouseEvent) => {
+  // Função para lidar com curtir o resumo na listagem principal
+  const handleLikeClick = async (e: React.MouseEvent, noteId: string) => {
     e.stopPropagation();
-    // A lógica de incrementar o Like viria aqui
+    if (!currentUser) {
+      addToast("Faça login para curtir o resumo.", "warning");
+      return;
+    }
+    try {
+      const { likesCount, liked } = await learnService.toggleLike(noteId, currentUser.uid);
+      setNotesState(prev => prev.map(note => 
+        note.id === noteId ? { ...note, likes: likesCount, likedBy: liked ? [...(note.likedBy || []), currentUser.uid] : (note.likedBy || []).filter(u => u !== currentUser.uid) } : note
+      ));
+    } catch (err) {
+      console.error(err);
+      addToast("Erro ao processar curtida.", "error");
+    }
   };
 
   if (loading) return (
@@ -141,8 +157,8 @@ const Learn: React.FC = () => {
                 >
                   <div className="note-card-header">
                     <span className="note-subject-tag">{note.subject}</span>
-                    <button className="btn-like-icon" title="Curtir este resumo" onClick={handleLikeClick}>
-                      <ThumbsUp size={16} /> {note.likes}
+                    <button className={`btn-like-icon ${note.likedBy?.includes(currentUser?.uid || '') ? 'liked' : ''}`} title="Curtir este resumo" onClick={(e) => handleLikeClick(e, note.id)}>
+                      <ThumbsUp size={16} fill={note.likedBy?.includes(currentUser?.uid || '') ? "currentColor" : "none"} /> {note.likes}
                     </button>
                   </div>
 

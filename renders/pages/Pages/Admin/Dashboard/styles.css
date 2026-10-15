@@ -1,0 +1,106 @@
+.admin-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.dashboard-header h1 {
+  font-size: 1.75rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.admin-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.metric-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.metric-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.users-icon { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.labs-icon { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.inst-icon { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.alert-icon { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+.metric-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-data h3 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.warning-card {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.dashboard-panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 1rem;
+}
+
+.dashboard-panel h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.dashboard-panel p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

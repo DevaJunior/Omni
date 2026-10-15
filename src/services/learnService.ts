@@ -6,7 +6,8 @@ import {
   addDoc, 
   updateDoc, 
   increment,
-  deleteDoc
+  deleteDoc,
+  runTransaction
 } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import { FIREBASE_ROUTES } from '../config/routes';
@@ -47,7 +48,7 @@ export const learnService = {
   },
 
   /**
-   * Incrementa o contador de likes de um resumo
+   * Incrementa o contador de likes de um resumo (legado, para retrocompatibilidade)
    */
   async likeNote(id: string): Promise<void> {
     const noteRef = doc(db, COLLECTION_NAME, id);
@@ -63,6 +64,39 @@ export const learnService = {
     const noteRef = doc(db, COLLECTION_NAME, id);
     await updateDoc(noteRef, {
       likes: increment(-1)
+    });
+  },
+
+  /**
+   * Toggle de Like Transacional e Seguro
+   */
+  async toggleLike(id: string, userId: string): Promise<{ liked: boolean, likesCount: number }> {
+    const noteRef = doc(db, COLLECTION_NAME, id);
+    return await runTransaction(db, async (transaction) => {
+      const noteDoc = await transaction.get(noteRef);
+      if (!noteDoc.exists()) throw new Error("Resumo não existe!");
+      
+      const data = noteDoc.data();
+      const likedBy = data.likedBy || [];
+      let likes = data.likes || 0;
+      
+      const isLiked = likedBy.includes(userId);
+      
+      if (isLiked) {
+        // Remove like
+        transaction.update(noteRef, {
+          likedBy: likedBy.filter((u: string) => u !== userId),
+          likes: likes - 1
+        });
+        return { liked: false, likesCount: likes - 1 };
+      } else {
+        // Adiciona like
+        transaction.update(noteRef, {
+          likedBy: [...likedBy, userId],
+          likes: likes + 1
+        });
+        return { liked: true, likesCount: likes + 1 };
+      }
     });
   },
 

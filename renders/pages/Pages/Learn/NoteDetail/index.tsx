@@ -37,6 +37,9 @@ const NoteDetail: React.FC = () => {
         if (data) {
           setNoteData(data);
           setLikesCount(data.likes || 0);
+          if (currentUser?.uid) {
+            setIsLiked(data.likedBy?.includes(currentUser.uid) || false);
+          }
         }
       } catch (err) {
         console.error("Erro ao carregar resumo", err);
@@ -75,17 +78,18 @@ const NoteDetail: React.FC = () => {
   };
 
   const handleLike = async () => {
-    if (!id) return;
+    if (!id || !currentUser) {
+      addToast("Faça login para curtir o resumo.", "warning");
+      return;
+    }
     const previousLiked = isLiked;
     setIsLiked(!previousLiked);
     setLikesCount(prev => previousLiked ? prev - 1 : prev + 1);
 
     try {
-      if (previousLiked) {
-        await learnService.unlikeNote(id);
-      } else {
-        await learnService.likeNote(id);
-      }
+      const { liked, likesCount: newLikes } = await learnService.toggleLike(id, currentUser.uid);
+      setIsLiked(liked);
+      setLikesCount(newLikes);
     } catch (err) {
       console.error("Erro ao processar like", err);
       // Reverte estado local em caso de erro
@@ -204,9 +208,9 @@ const NoteDetail: React.FC = () => {
                     <ThumbsUp size={20} fill={isLiked ? "currentColor" : "none"} />
                     <span>{likesCount}</span>
                   </button>
-                  <button className="btn-interact">
+                  <button className="btn-interact" title="Comentários">
                     <MessageSquare size={20} />
-                    <span>12</span>
+                    <span>{noteData.comments || 0}</span>
                   </button>
                 </div>
                 <div className="interaction-right">

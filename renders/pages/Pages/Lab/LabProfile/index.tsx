@@ -187,14 +187,16 @@ const LabProfile: React.FC = () => {
                   <img src={labData.logoImage} alt="Logo" className="lab-logo-clean" />
 
                   <div className="lab-title-area">
-                    <span className="lab-badge-blue">LAB</span>
-                    <div className="lab-name-row">
-                      <h1>{labData.name}</h1>
-                      {labData.verified && (
-                        <svg className="lab-verified-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#5d5fef" />
-                        </svg>
-                      )}
+                    <div className="lab-title-text">
+                      <span className="lab-badge-blue">LAB</span>
+                      <div className="lab-name-row">
+                        <h1>{labData.name}</h1>
+                        {labData.verified && (
+                          <svg className="lab-verified-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#5d5fef" />
+                          </svg>
+                        )}
+                      </div>
                     </div>
                     <span className="lab-institution-clean">
                       <Building2 size={16} /> {labData.institution}

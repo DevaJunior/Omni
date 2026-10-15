@@ -52,7 +52,7 @@ const Community: React.FC = () => {
   };
 
   // 2. ESTADOS DO FILTRO E BARRA DE BUSCA INTELIGENTE
-  const [searchFilter, setSearchFilter] = useState<string>('');
+  const [searchFilter, setSearchFilter] = useState<string>('Todos');
   const [searchValue, setSearchValue] = useState<string>('');
   const [showFilterMenu, setShowFilterMenu] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -74,6 +74,10 @@ const Community: React.FC = () => {
     setShowFilterMenu(false);
     setSearchError(false);
     setToastMessage(null);
+
+    if (filter === 'Discussões') handleTabChange('feed');
+    else if (filter === 'Projetos') handleTabChange('projects');
+    else if (filter === 'Todos') handleTabChange('global_feed');
   };
 
   const handleFollowSuccess = (msg: string) => {
@@ -111,15 +115,25 @@ const Community: React.FC = () => {
           </h2>
 
           <div className="cmmt-partners-list">
-            {randomLabs.map(lab => (
-              <span
-                key={lab.id}
-                className="cmmt-partner-link"
-                onClick={() => navigate(`/lab/${lab.id}`)}
-              >
-                {lab.name}
-              </span>
-            ))}
+            {randomLabs.length > 0 ? (
+              randomLabs.map(lab => (
+                <span
+                  key={lab.id}
+                  className="cmmt-partner-link"
+                  onClick={() => navigate(`/lab/${lab.id}`)}
+                >
+                  {lab.name}
+                </span>
+              ))
+            ) : (
+              <>
+                <span className="cmmt-partner-link" style={{ cursor: 'default' }}>Phyton Research</span>
+                <span className="cmmt-partner-link" style={{ cursor: 'default' }}>Biogen</span>
+                <span className="cmmt-partner-link" style={{ cursor: 'default' }}>Neurolab</span>
+                <span className="cmmt-partner-link" style={{ cursor: 'default' }}>Genesis Labs</span>
+                <span className="cmmt-partner-link" style={{ cursor: 'default' }}>Acqua Solutions</span>
+              </>
+            )}
           </div>
         </header>
 

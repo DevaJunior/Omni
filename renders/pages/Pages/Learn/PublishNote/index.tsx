@@ -59,6 +59,24 @@ const PublishNote: React.FC = () => {
         }
       };
       loadNote();
+    } else if (!id) {
+      // Tentar restaurar rascunho local se for nova publicação
+      const draftStr = localStorage.getItem('omni_note_draft');
+      if (draftStr) {
+        try {
+          const draft = JSON.parse(draftStr);
+          if (draft.title || draft.content) {
+            setTitle(draft.title || '');
+            setSubtitle(draft.subtitle || '');
+            setContent(draft.content || '');
+            setSelectedAreas(draft.selectedAreas || []);
+            setSelectedDisciplines(draft.selectedDisciplines || []);
+            addToast("Rascunho local restaurado.", 'info');
+          }
+        } catch (e) {
+          console.error("Erro ao ler rascunho", e);
+        }
+      }
     }
   }, [id, currentUser, navigate, addToast]);
 
@@ -142,6 +160,7 @@ const PublishNote: React.FC = () => {
         addToast("Resumo atualizado com sucesso!", 'success');
       } else {
         await learnService.createNote(newNote);
+        localStorage.removeItem('omni_note_draft'); // Limpa o rascunho após publicar
         addToast("Resumo publicado com sucesso na Comunidade Omni!", 'success');
       }
       navigate('/learn');
@@ -154,12 +173,19 @@ const PublishNote: React.FC = () => {
   };
 
   const handleSaveDraft = () => {
-    if (!title) {
-      addToast("Dê pelo menos um título ao seu resumo antes de salvá-mo como rascunho.", 'info');
+    if (!title && !content) {
+      addToast("Dê pelo menos um título ou algum conteúdo ao seu resumo antes de salvar.", 'info');
       return;
     }
-    addToast("Resumo salvo nos rascunhos locais com sucesso!", 'success');
-    navigate('/learn'); // Pode optar por não navegar caso queira que o usuário continue na tela
+    const draft = {
+      title,
+      subtitle,
+      content,
+      selectedAreas,
+      selectedDisciplines
+    };
+    localStorage.setItem('omni_note_draft', JSON.stringify(draft));
+    addToast("Rascunho salvo no seu navegador com sucesso!", 'success');
   };
 
   // Parser Dinâmico de Markdown para o Preview

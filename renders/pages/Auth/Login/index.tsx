@@ -36,7 +36,14 @@ const Login: React.FC = () => {
       // No Mobile (signInWithRedirect), a página é redirecionada antes desta linha executar.
     } catch (err: unknown) {
       console.error(err);
-      setErrorText("Não foi possível autenticar. Janela foi fechada ou erro de conexão.");
+      const errorCode = (err as any)?.code;
+      if (errorCode === 'auth/popup-closed-by-user') {
+        setErrorText("O login foi cancelado.");
+      } else if (errorCode === 'auth/network-request-failed') {
+        setErrorText("Falha na conexão. Verifique sua internet.");
+      } else {
+        setErrorText("Não foi possível autenticar. Tente novamente.");
+      }
       setIsAuthenticating(false);
     }
   };

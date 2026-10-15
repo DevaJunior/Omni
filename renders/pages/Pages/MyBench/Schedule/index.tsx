@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, ChevronRight } from 'lucide-react';
+import type { EquipmentReservation } from '../../../../../src/types/equipment';
+import { getDateParts, getReservationPeriod, toDateKey } from '../../../../../src/utils/equipmentScheduling';
+import { useNow } from '../../../../../src/hooks/useLabEquipment';
 import './styles.css';
 
 export interface ScheduleItem {
@@ -18,30 +21,15 @@ export interface ReminderItem {
 }
 
 interface ScheduleProps {
+  reservations?: EquipmentReservation[];
   scheduleItems?: ScheduleItem[];
   reminders?: ReminderItem[];
+  loading?: boolean;
   onToggleReminder?: (id: string, checked: boolean) => void;
   onOpenAgenda?: () => void;
+  onOpenReservationModal?: () => void;
+  onOpenFullSchedule?: () => void;
 }
-
-const defaultSchedule: ScheduleItem[] = [
-  {
-    id: '1',
-    month: 'HOJE',
-    day: '19',
-    color: 'blue',
-    title: 'Uso do Espectrofotômetro',
-    time: '14:00 - 16:00'
-  },
-  {
-    id: '2',
-    month: 'SEG',
-    day: '20',
-    color: 'gray',
-    title: 'Reunião LBA',
-    time: '09:00 - 10:30'
-  }
-];
 
 const defaultReminders: ReminderItem[] = [
   { id: 'rem1', text: 'Calibrar pHmetro (bancada 2)', checked: false },
@@ -49,13 +37,18 @@ const defaultReminders: ReminderItem[] = [
 ];
 
 const Schedule: React.FC<ScheduleProps> = ({
-  scheduleItems = defaultSchedule,
+  reservations,
+  scheduleItems,
   reminders = defaultReminders,
+  loading = false,
   onToggleReminder,
-  onOpenAgenda
+  onOpenAgenda,
+  onOpenReservationModal,
+  onOpenFullSchedule,
 }) => {
-  // Local state just to show interactivity if uncontrolled from above
   const [localReminders, setLocalReminders] = useState(reminders);
+  const now = useNow();
+  const today = toDateKey(now);
 
   const handleToggle = (id: string, currentChecked: boolean) => {
     if (onToggleReminder) {
@@ -69,27 +62,92 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   const activeReminders = onToggleReminder ? reminders : localReminders;
 
+  // Se `reservations` foi fornecido (dados reais do Firestore), calcula a lista cronológica real.
+  // Caso contrário, usa `scheduleItems` como fallback.
+  let displayItems: ScheduleItem[] = [];
+
+  if (reservations) {
+    const upcoming = reservations
+      .filter(r => r.status !== 'Cancelado' && getReservationPeriod(r, now) !== 'historico')
+      .slice(0, 4);
+
+    displayItems = upcoming.map(r => {
+      const parts = getDateParts(r.date);
+      const isToday = r.date === today;
+      return {
+        id: r.id,
+        month: isToday ? 'HOJE' : parts.month,
+        day: parts.day,
+        color: isToday ? 'blue' : 'gray',
+        title: r.equipmentName,
+        time: `${r.startTime} - ${r.endTime} · ${r.userName?.split(' ')[0] || ''}`,
+      };
+    });
+  } else if (scheduleItems) {
+    displayItems = scheduleItems;
+  }
+
   return (
     <div className="mybench-card mybench-schedule-card">
-      <div className="schedule-header" style={{ cursor: 'pointer' }} onClick={onOpenAgenda}>
-        <h4>A sua Agenda</h4>
-        <CalendarIcon size={18} className="schedule-icon" />
+      <div className="schedule-header">
+        <div className="schedule-header-title" onClick={onOpenFullSchedule || onOpenAgenda} style={{ cursor: 'pointer' }}>
+          <h4>A sua Agenda</h4>
+          <CalendarIcon size={18} className="schedule-icon" />
+        </div>
+        {onOpenReservationModal && (
+          <button
+            type="button"
+            className="schedule-btn-add"
+            onClick={onOpenReservationModal}
+            id="schedule-quick-add"
+            title="Reservar equipamento"
+          >
+            <Plus size={14} /> Agendar
+          </button>
+        )}
       </div>
 
       <div className="schedule-list">
-        {scheduleItems.map(item => (
-          <div key={item.id} className="schedule-item">
-            <div className={`schedule-date date-${item.color}`}>
-              <span className="date-month">{item.month}</span>
-              <span className="date-day">{item.day}</span>
+        {loading ? (
+          <div className="schedule-empty">Carregando agendamentos...</div>
+        ) : displayItems.length > 0 ? (
+          displayItems.map(item => (
+            <div key={item.id} className="schedule-item">
+              <div className={`schedule-date date-${item.color}`}>
+                <span className="date-month">{item.month}</span>
+                <span className="date-day">{item.day}</span>
+              </div>
+              <div className="schedule-info">
+                <h5>{item.title}</h5>
+                <span>{item.time}</span>
+              </div>
             </div>
-            <div className="schedule-info">
-              <h5>{item.title}</h5>
-              <span>{item.time}</span>
-            </div>
+          ))
+        ) : (
+          <div className="schedule-empty">
+            <p>Nenhum equipamento agendado.</p>
+            {onOpenReservationModal && (
+              <button
+                type="button"
+                className="schedule-empty-btn"
+                onClick={onOpenReservationModal}
+              >
+                <Plus size={14} /> Agendar primeiro equipamento
+              </button>
+            )}
           </div>
-        ))}
+        )}
       </div>
+
+      {onOpenFullSchedule && (
+        <button
+          type="button"
+          className="schedule-view-all-btn"
+          onClick={onOpenFullSchedule}
+        >
+          Ver grade completa de equipamentos <ChevronRight size={14} />
+        </button>
+      )}
 
       <div className="schedule-divider"></div>
 

@@ -25,3 +25,13 @@ export interface IUser {
     role: string;
   }[];
 }
+
+export interface IInstitution {
+  id: string;
+  name: string;
+  domain: string;
+  leaderId?: string;
+  logo?: string;
+  plan: 'free' | 'premium' | 'enterprise';
+  createdAt: string;
+}

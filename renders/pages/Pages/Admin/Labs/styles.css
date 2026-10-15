@@ -1,0 +1,169 @@
+.admin-labs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tabs-container {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+
+.admin-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+}
+
+.admin-tab:hover {
+  color: var(--text-primary);
+}
+
+.admin-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.labs-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-loading-text,
+.admin-empty-text {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+
+.lab-governance-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lab-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.lab-identity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lab-avatar,
+.lab-avatar-fallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.lab-avatar-fallback {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lab-identity h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.lab-institution {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.pending {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.status-badge.approved {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.lab-card-body p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.lab-meta-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.lab-meta-info span {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.lab-meta-info strong {
+  color: var(--text-secondary);
+}
+
+.lab-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.action-buttons-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-outline.danger {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.btn-outline.danger:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+}

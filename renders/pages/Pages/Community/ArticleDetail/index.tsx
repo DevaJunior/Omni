@@ -175,7 +175,7 @@ Existe uma visão altamente romantizada na cultura popular sobre a descoberta ci
 
             <div className="art-authors-section">
               <div className="art-author-avatar">
-                <img src={article.authorAvatar || 'https://github.com/shadcn.png'} alt="Autor" />
+                <img src={article.authorAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.authors || 'Autor')}&background=random`} alt="Autor" />
               </div>
               <div className="art-author-info-group">
                 <span className="art-author-name"><strong>{article.authors}</strong></span>
@@ -287,7 +287,7 @@ Existe uma visão altamente romantizada na cultura popular sobre a descoberta ci
                 <ul className="art-related-list">
                   {article.related.map((rel: any) => (
                     <li key={rel.id}>
-                      <a href={`/article/${rel.id}`}>{rel.title}</a>
+                      <a style={{cursor: 'pointer'}} onClick={(e) => { e.preventDefault(); navigate(`/article/${rel.id}`); }}>{rel.title}</a>
                     </li>
                   ))}
                 </ul>

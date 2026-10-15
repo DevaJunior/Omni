@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
   onAuthStateChanged,
   signOut as firebaseSignOut,
   type User
@@ -58,13 +59,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // --- LOGIN COM GOOGLE (Padrão Spotted: apenas signInWithPopup) ---
+  // --- LOGIN COM GOOGLE ---
   const loginWithGoogle = async () => {
     const { setPersistence, browserLocalPersistence } = await import('firebase/auth');
     await setPersistence(auth, browserLocalPersistence);
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    await ensureUserDocument(result.user);
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      await signInWithRedirect(auth, provider);
+    } else {
+      const result = await signInWithPopup(auth, provider);
+      await ensureUserDocument(result.user);
+    }
   };
 
   const logout = async () => {
@@ -82,16 +90,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (user) {
         await ensureUserDocument(user);
 
+        // -- MODO DESENVOLVIMENTO: Força qualquer usuário logado a virar admin --
+        try {
+          const { updateDoc } = await import('firebase/firestore');
+          await updateDoc(doc(db, FIREBASE_ROUTES.USERS, user.uid), { role: 'admin' });
+        } catch(e) {}
+        // --------------------------------------------------------------------
+
+        let initialLoad = true;
         const userRef = doc(db, FIREBASE_ROUTES.USERS, user.uid);
         unsubscribeFirestore = onSnapshot(userRef, (docSnap) => {
           if (docSnap.exists()) {
             setUserProfile(docSnap.data() as IUser);
           }
+          if (initialLoad) {
+            initialLoad = false;
+            setLoading(false);
+          }
         });
       } else {
         setUserProfile(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
@@ -102,7 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider value={{ currentUser, userProfile, loading, loginWithGoogle, logout }}>
-      {loading ? null : children}
+      {children}
     </AuthContext.Provider>
   );
 };

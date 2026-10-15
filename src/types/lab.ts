@@ -16,8 +16,15 @@ export interface LabProfile {
   name: string;
   institution: string;
   description: string;
-  image: string;
-  membersCount: number;
-  projectsCount: number;
+  image?: string;
+  logoImage?: string;
+  membersCount?: number;
+  projectsCount?: number;
   location: string;
+  website?: string;
+  email?: string;
+  verified?: boolean;
+  adminId?: string;
+  status?: 'pending' | 'approved' | 'rejected';
+  createdAt?: string;
 }

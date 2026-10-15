@@ -407,7 +407,10 @@ const UserProfile: React.FC = () => {
                       </div>
                       <div className="spaces-filter">
                         <button className={spaceFilter === 'all' ? 'active' : ''} onClick={() => setSpaceFilter('all')}>Todos (3)</button>
-                        <button className={spaceFilter === 'colab' ? 'active' : ''} onClick={() => setSpaceFilter('colab')}>Colaborativos</button>
+                        <button className={spaceFilter === 'colab' ? 'active' : ''} onClick={() => setSpaceFilter('colab')}>
+                          <span className="text-desktop">Colaborativos</span>
+                          <span className="text-mobile">Colabs</span>
+                        </button>
                       </div>
                     </div>
 

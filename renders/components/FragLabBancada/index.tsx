@@ -1,49 +1,52 @@
-import React from 'react';
-import { 
-  Package, 
-  CalendarDays, 
-  FileText, 
-  Clock,
-  Calendar,
-  Plus
-} from 'lucide-react';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import { db } from '../../../src/config/firebaseConfig';
+import React, { useMemo, useRef, useState } from 'react';
+import { Package, CalendarDays, FileText, Plus } from 'lucide-react';
+import { useAuth } from '../../../src/contexts/AuthContext';
+import { useCanManageLab, useLabEquipments, useLabReservations, useNow } from '../../../src/hooks/useLabEquipment';
+import { getReservationPeriod, toDateKey } from '../../../src/utils/equipmentScheduling';
 import EquipmentReservationModal from '../../modals/EquipmentReservationModal/index';
+import EquipmentTimeline from '../EquipmentTimeline';
+import EquipmentReservations from '../EquipmentReservations';
 import './styles.css';
 
 interface FragLabBancadaProps {
   labId: string;
 }
 
+interface ModalPreset {
+  equipmentId?: string;
+  date?: string;
+  startTime?: string;
+}
+
 const FragLabBancada: React.FC<FragLabBancadaProps> = ({ labId }) => {
-  const [reservations, setReservations] = React.useState<any[]>([]);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { userProfile } = useAuth();
+  const { equipments } = useLabEquipments(labId);
+  const { reservations, loading } = useLabReservations(labId);
+  const canManage = useCanManageLab(labId);
+  const now = useNow();
 
-  const fetchReservations = async () => {
-    if (!labId) return;
-    try {
-      const q = query(
-        collection(db, 'equipment_reservations'),
-        where('labId', '==', labId),
-        orderBy('createdAt', 'desc')
-      );
-      const snap = await getDocs(q);
-      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setReservations(data);
-    } catch (error) {
-      console.error("Erro ao buscar agendamentos", error);
-    }
+  const [timelineDate, setTimelineDate] = useState(() => toDateKey());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [preset, setPreset] = useState<ModalPreset>({});
+  const scheduleRef = useRef<HTMLDivElement>(null);
+
+  const stats = useMemo(() => {
+    const today = reservations.filter(r => getReservationPeriod(r, now) === 'hoje').length;
+    const mineUpcoming = reservations.filter(
+      r => r.userId === userProfile?.id && getReservationPeriod(r, now) !== 'historico'
+    ).length;
+    return { today, mineUpcoming };
+  }, [reservations, userProfile?.id, now]);
+
+  const openModal = (next: ModalPreset = {}) => {
+    setPreset(next);
+    setIsModalOpen(true);
   };
-
-  React.useEffect(() => {
-    fetchReservations();
-  }, [labId]);
 
   return (
     <div className="bancada-tab-container anim-fade-up">
       <div className="bancada-header-simple">
-        <h3>Bancada & LIMS</h3>
+        <h3>Bancada &amp; LIMS</h3>
         <p>Gestão rápida de inventário, equipamentos e recursos do laboratório.</p>
       </div>
 
@@ -58,15 +61,22 @@ const FragLabBancada: React.FC<FragLabBancadaProps> = ({ labId }) => {
           </div>
         </div>
 
-        <div className="quick-action-card">
+        <button
+          type="button"
+          className="quick-action-card"
+          id="bancada-quick-schedule"
+          onClick={() => scheduleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+        >
           <div className="quick-action-icon icon-blue">
             <CalendarDays size={24} />
           </div>
           <div className="quick-action-info">
             <h4>Agendamentos</h4>
-            <span>Ver quadro de horários</span>
+            <span>
+              {stats.today} hoje · {stats.mineUpcoming} suas pendentes
+            </span>
           </div>
-        </div>
+        </button>
 
         <div className="quick-action-card">
           <div className="quick-action-icon icon-purple">
@@ -79,47 +89,48 @@ const FragLabBancada: React.FC<FragLabBancadaProps> = ({ labId }) => {
         </div>
       </div>
 
-      <div className="bancada-reservations-section">
+      <section className="bancada-reservations-section" ref={scheduleRef}>
         <div className="reservations-header">
-          <h4>Equipamentos: Próximas Reservas</h4>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <button className="text-link-green" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', border: '1px solid #10b981', padding: '0.25rem 0.75rem', borderRadius: '4px' }}>
-              <Plus size={16} /> Agendar
-            </button>
+          <div>
+            <h4>Grade de Equipamentos</h4>
+            <span className="reservations-subtitle">Clique em um horário livre para reservar.</span>
           </div>
+          <button className="bancada-btn-schedule" onClick={() => openModal({ date: timelineDate })} id="bancada-new-reservation">
+            <Plus size={16} /> Agendar
+          </button>
         </div>
-        
-        <div className="reservations-list">
-          {reservations.length > 0 ? reservations.map((res: Record<string, unknown>, index: number) => (
-            <React.Fragment key={(res as any).id}>
-              <div className="reservation-item">
-                <div className="res-left">
-                  <div className="res-icon">
-                    <Clock size={20} />
-                  </div>
-                  <div className="res-info">
-                    <h5>{(res as any).equipmentName}</h5>
-                    <span>Reservado por {(res as any).userName}</span>
-                  </div>
-                </div>
-                <div className="res-right">
-                  <span className={`res-badge ${(res as any).status === 'Agendado' ? 'badge-agendado' : 'badge-em-uso'}`}>{(res as any).status}</span>
-                  <span className="res-time"><Calendar size={14} /> {(res as any).date}, {(res as any).startTime} - {(res as any).endTime}</span>
-                </div>
-              </div>
-              {index < reservations.length - 1 && <div className="res-divider"></div>}
-            </React.Fragment>
-          )) : (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>Nenhum agendamento encontrado para este laboratório.</div>
-          )}
+
+        <EquipmentTimeline
+          equipments={equipments}
+          reservations={reservations}
+          date={timelineDate}
+          onDateChange={setTimelineDate}
+          currentUserId={userProfile?.id}
+          onSlotClick={(equipmentId, date, startTime) => openModal({ equipmentId, date, startTime })}
+        />
+      </section>
+
+      <section className="bancada-reservations-section">
+        <div className="reservations-header">
+          <h4>Reservas</h4>
         </div>
-      </div>
+        <EquipmentReservations
+          reservations={reservations}
+          currentUserId={userProfile?.id}
+          canManage={canManage}
+          loading={loading}
+        />
+      </section>
 
       <EquipmentReservationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         labId={labId}
-        onSuccess={fetchReservations}
+        equipments={equipments}
+        reservations={reservations}
+        initialEquipmentId={preset.equipmentId}
+        initialDate={preset.date}
+        initialStartTime={preset.startTime}
       />
     </div>
   );

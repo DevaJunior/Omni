@@ -100,6 +100,87 @@
   color: #f59e0b;
 }
 
+.status-desativado {
+  background: rgba(100, 116, 139, 0.1);
+  color: #64748b;
+}
+
+.card-dimmed {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  opacity: 0.85;
+}
+
+.equip-desc-muted {
+  font-style: italic;
+  color: #94a3b8 !important;
+}
+
+.equip-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.equip-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.equip-action-btn:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.equip-action-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.equip-action-btn.btn-maintenance {
+  color: #d97706;
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.equip-action-btn.btn-maintenance:hover:not(:disabled) {
+  background: #fef3c7;
+}
+
+.equip-action-btn.btn-reactivate {
+  color: #059669;
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.equip-action-btn.btn-reactivate:hover:not(:disabled) {
+  background: #d1fae5;
+}
+
+.equip-action-btn.btn-delete {
+  color: #dc2626;
+  border-color: #fecaca;
+  background: #ffffff;
+  padding: 0.45rem 0.55rem;
+  margin-left: auto;
+}
+
+.equip-action-btn.btn-delete:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
 .equip-name {
   margin: 0 0 0.5rem 0;
   color: #0f172a;

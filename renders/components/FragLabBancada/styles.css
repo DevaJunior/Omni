@@ -115,6 +115,40 @@
   text-decoration: underline;
 }
 
+button.quick-action-card {
+  font: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+.reservations-subtitle {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.82rem;
+  color: var(--omni-text-secondary, #6b7280);
+}
+
+.bancada-btn-schedule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #ffffff;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bancada-btn-schedule:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.32);
+}
+
 .reservations-list {
   background: var(--omni-surface, #ffffff);
   border: 1px solid var(--omni-border, #e5e7eb);

@@ -1,204 +1,280 @@
 import { useToastStore } from '../../../src/stores/toastStore';
-import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { X, CheckCircle2, AlertTriangle, Clock, Wrench } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../../../src/config/firebaseConfig';
+import { createReservation, getErrorMessage } from '../../../src/services/equipmentService';
+import type { Equipment, EquipmentReservation } from '../../../src/types/equipment';
+import {
+  checkAvailability,
+  getCapacity,
+  isBlocking,
+  minutesToTime,
+  timeToMinutes,
+  toDateKey,
+  validateScheduleWindow,
+} from '../../../src/utils/equipmentScheduling';
 import './styles.css';
 
 interface EquipmentReservationModalProps {
   isOpen: boolean;
   onClose: () => void;
   labId: string;
+  equipments: Equipment[];
+  reservations: EquipmentReservation[];
+  /** Pré-seleção (ex.: clique em um horário livre na timeline). */
+  initialEquipmentId?: string;
+  initialDate?: string;
+  initialStartTime?: string;
   onSuccess?: () => void;
 }
 
-const EquipmentReservationModal: React.FC<EquipmentReservationModalProps> = ({ isOpen, onClose, labId, onSuccess }) => {
+const DEFAULT_DURATION_MIN = 60;
+
+const addMinutes = (time: string, minutes: number) =>
+  minutesToTime(Math.min(timeToMinutes(time) + minutes, 23 * 60 + 59));
+
+const EquipmentReservationModal: React.FC<EquipmentReservationModalProps> = ({
+  isOpen,
+  onClose,
+  labId,
+  equipments,
+  reservations,
+  initialEquipmentId,
+  initialDate,
+  initialStartTime,
+  onSuccess,
+}) => {
   const { addToast } = useToastStore();
   const { userProfile } = useAuth();
-  
-  const [equipments, setEquipments] = useState<any[]>([]);
+
   const [equipmentId, setEquipmentId] = useState('');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingEquipments, setIsLoadingEquipments] = useState(false);
 
+  const activeEquipments = useMemo(() => equipments.filter(eq => eq.status === 'Ativo'), [equipments]);
+  const today = toDateKey();
+
+  // Reinicia o formulário sempre que o modal abre (respeitando pré-seleções).
   useEffect(() => {
-    if (isOpen && labId) {
-      fetchEquipments();
-    }
-  }, [isOpen, labId]);
+    if (!isOpen) return;
+    const preselected = activeEquipments.find(eq => eq.id === initialEquipmentId);
+    setEquipmentId(preselected?.id || activeEquipments[0]?.id || '');
+    setDate(initialDate && initialDate >= today ? initialDate : today);
+    setStartTime(initialStartTime || '');
+    setEndTime(initialStartTime ? addMinutes(initialStartTime, DEFAULT_DURATION_MIN) : '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialEquipmentId, initialDate, initialStartTime]);
 
-  const fetchEquipments = async () => {
-    setIsLoadingEquipments(true);
-    try {
-      const q = query(collection(db, 'equipments'), where('labId', '==', labId));
-      const snap = await getDocs(q);
-      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setEquipments(data);
-      if (data.length > 0 && !equipmentId) {
-        setEquipmentId(data[0].id);
-      }
-    } catch (error) {
-      console.error("Erro ao carregar equipamentos:", error);
-      addToast("Erro ao carregar lista de equipamentos", "error");
-    } finally {
-      setIsLoadingEquipments(false);
-    }
-  };
+  // Caso a lista de equipamentos chegue depois da abertura do modal.
+  useEffect(() => {
+    if (isOpen && !equipmentId && activeEquipments.length > 0) setEquipmentId(activeEquipments[0].id);
+  }, [isOpen, equipmentId, activeEquipments]);
+
+  // Fecha com ESC.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && !isSubmitting && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, isSubmitting, onClose]);
+
+  const selectedEquipment = equipments.find(eq => eq.id === equipmentId);
+  const capacity = selectedEquipment ? getCapacity(selectedEquipment) : 1;
+
+  const occupied = useMemo(
+    () =>
+      reservations.filter(r => r.equipmentId === equipmentId && r.date === date && isBlocking(r)),
+    [reservations, equipmentId, date]
+  );
+
+  const windowError = startTime && endTime ? validateScheduleWindow({ date, startTime, endTime }) : null;
+  const availability =
+    startTime && endTime && !windowError ? checkAvailability(occupied, startTime, endTime, capacity) : null;
 
   if (!isOpen) return null;
+
+  const handleStartChange = (value: string) => {
+    setStartTime(value);
+    if (value && (!endTime || endTime <= value)) setEndTime(addMinutes(value, DEFAULT_DURATION_MIN));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userProfile) {
-      addToast("Você precisa estar logado para agendar um equipamento.", 'info');
+      addToast('Você precisa estar logado para agendar um equipamento.', 'info');
       return;
     }
-
-    if (!equipmentId) {
-      addToast("Selecione um equipamento válido.", 'warning');
+    if (!selectedEquipment) {
+      addToast('Selecione um equipamento válido.', 'warning');
       return;
     }
-
-    if (startTime >= endTime) {
-      addToast("O horário de início deve ser menor que o horário de fim.", 'warning');
+    const error = validateScheduleWindow({ date, startTime, endTime });
+    if (error) {
+      addToast(error, 'warning');
       return;
     }
-
-    const selectedEquipment = equipments.find(eq => eq.id === equipmentId);
-    if (!selectedEquipment) return;
 
     setIsSubmitting(true);
     try {
-      // Fetch reservations for this lab to avoid composite index requirements
-      const q = query(collection(db, 'equipment_reservations'), where('labId', '==', labId));
-      const snap = await getDocs(q);
-      const allReservations = snap.docs.map(doc => doc.data());
-      
-      const overlappingReservations = allReservations.filter(res => {
-        return (
-          res.equipmentId === equipmentId &&
-          res.date === date &&
-          res.status !== 'Cancelado' &&
-          // Overlap logic: StartA < EndB and EndA > StartB
-          (startTime < res.endTime && endTime > res.startTime)
-        );
-      });
-
-      const maxCapacity = selectedEquipment.allowConcurrent ? (selectedEquipment.capacity || 2) : 1;
-
-      if (overlappingReservations.length >= maxCapacity) {
-        addToast(
-          selectedEquipment.allowConcurrent 
-            ? `A capacidade máxima simultânea (${maxCapacity} pessoas) deste equipamento já foi atingida para este horário.`
-            : `Este equipamento é de uso exclusivo e já possui reserva entre os horários solicitados.`, 
-          'error'
-        );
-        setIsSubmitting(false);
-        return; // Block submission
-      }
-
-      await addDoc(collection(db, 'equipment_reservations'), {
+      await createReservation({
         labId,
         userId: userProfile.id,
         userName: userProfile.name,
         equipmentId: selectedEquipment.id,
-        equipmentName: selectedEquipment.name,
         date,
         startTime,
         endTime,
-        status: 'Agendado',
-        createdAt: serverTimestamp()
       });
-
-      addToast("Agendamento realizado com sucesso!", "success");
-      if (onSuccess) onSuccess();
-      
-      // Reset
-      setDate('');
-      setStartTime('');
-      setEndTime('');
+      addToast('Agendamento realizado com sucesso!', 'success');
+      onSuccess?.();
       onClose();
-    } catch (error) {
-      console.error("Erro ao agendar equipamento:", error);
-      addToast("Ocorreu um erro ao agendar o equipamento.", 'error');
+    } catch (err) {
+      console.error('Erro ao agendar equipamento:', err);
+      addToast(getErrorMessage(err, 'Ocorreu um erro ao agendar o equipamento.'), 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const unavailableEquipments = equipments.filter(eq => eq.status !== 'Ativo');
+
   return (
-    <div className="res-modal-overlay">
-      <div className="res-modal-container">
-        <button className="res-modal-close" onClick={onClose}>
+    <div className="res-modal-overlay" onClick={() => !isSubmitting && onClose()}>
+      <div
+        className="res-modal-container"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="res-modal-title"
+        onClick={e => e.stopPropagation()}
+      >
+        <button className="res-modal-close" onClick={onClose} aria-label="Fechar" id="res-modal-close-btn">
           <X size={20} />
         </button>
 
         <div className="res-modal-header">
-          <h2>Agendar Equipamento</h2>
+          <h2 id="res-modal-title">Agendar Equipamento</h2>
           <p>Reserve um horário para utilizar os equipamentos do laboratório.</p>
         </div>
 
         <form className="res-modal-form" onSubmit={handleSubmit}>
           <div className="res-modal-form-group">
-            <label>Equipamento</label>
-            {isLoadingEquipments ? (
-              <div style={{color: '#94a3b8', padding: '0.5rem 0'}}>Carregando...</div>
-            ) : equipments.length > 0 ? (
-              <select 
-                value={equipmentId} 
-                onChange={(e) => setEquipmentId(e.target.value)}
+            <label htmlFor="res-equipment">Equipamento</label>
+            {activeEquipments.length > 0 ? (
+              <select
+                id="res-equipment"
+                value={equipmentId}
+                onChange={e => setEquipmentId(e.target.value)}
                 required
               >
-                {equipments.map(eq => (
-                  <option key={eq.id} value={eq.id}>{eq.name} {eq.allowConcurrent ? '(Simultâneo)' : '(Exclusivo)'}</option>
+                {activeEquipments.map(eq => (
+                  <option key={eq.id} value={eq.id}>
+                    {eq.name} {eq.allowConcurrent ? `(Simultâneo · até ${getCapacity(eq)})` : '(Exclusivo)'}
+                  </option>
+                ))}
+                {unavailableEquipments.map(eq => (
+                  <option key={eq.id} value={eq.id} disabled>
+                    {eq.name} — {eq.status}
+                  </option>
                 ))}
               </select>
             ) : (
-              <div style={{color: '#f8fafc', background: '#334155', padding: '0.75rem', borderRadius: '6px', fontSize: '0.9rem'}}>
-                Nenhum equipamento cadastrado. Acesse a aba "Gestão de Equipamentos".
+              <div className="res-modal-empty">
+                <Wrench size={16} />
+                {equipments.length > 0
+                  ? 'Nenhum equipamento ativo no momento (todos em manutenção ou desativados).'
+                  : 'Nenhum equipamento cadastrado. Peça ao responsável para cadastrar em "Equipamentos".'}
               </div>
             )}
           </div>
 
           <div className="res-modal-form-group">
-            <label>Data</label>
+            <label htmlFor="res-date">Data</label>
             <input
+              id="res-date"
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              min={today}
+              onChange={e => setDate(e.target.value)}
               required
             />
           </div>
 
           <div className="res-modal-form-row">
             <div className="res-modal-form-group">
-              <label>Horário Início</label>
+              <label htmlFor="res-start">Horário Início</label>
               <input
+                id="res-start"
                 type="time"
                 value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
+                onChange={e => handleStartChange(e.target.value)}
                 required
               />
             </div>
             <div className="res-modal-form-group">
-              <label>Horário Fim</label>
+              <label htmlFor="res-end">Horário Fim</label>
               <input
+                id="res-end"
                 type="time"
                 value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
+                min={startTime || undefined}
+                onChange={e => setEndTime(e.target.value)}
                 required
               />
             </div>
           </div>
 
+          {selectedEquipment && date && (
+            <div className="res-occupied">
+              <span className="res-occupied-title">
+                <Clock size={14} /> Ocupação neste dia
+                {capacity > 1 && <em> · capacidade {capacity} simultâneos</em>}
+              </span>
+              {occupied.length > 0 ? (
+                <ul className="res-occupied-list">
+                  {occupied.map(r => (
+                    <li key={r.id} className="res-occupied-chip" title={`Reservado por ${r.userName}`}>
+                      {r.startTime}–{r.endTime}
+                      <span>{r.userName?.split(' ')[0]}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <span className="res-occupied-free">Dia totalmente livre para este equipamento.</span>
+              )}
+            </div>
+          )}
+
+          {windowError && (
+            <div className="res-feedback res-feedback-error">
+              <AlertTriangle size={16} /> {windowError}
+            </div>
+          )}
+          {availability && (
+            <div className={`res-feedback ${availability.ok ? 'res-feedback-ok' : 'res-feedback-error'}`}>
+              {availability.ok ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+              {availability.ok
+                ? capacity > 1
+                  ? `Horário disponível (${capacity - availability.peak} vaga(s) restante(s) no pico).`
+                  : 'Horário disponível.'
+                : capacity > 1
+                  ? `Capacidade de ${capacity} pessoas atingida neste intervalo.`
+                  : 'Conflito: já existe reserva neste intervalo.'}
+            </div>
+          )}
+
           <div className="res-modal-footer">
-            <button type="button" className="res-btn-cancel" onClick={onClose} disabled={isSubmitting}>Cancelar</button>
-            <button type="submit" className="res-btn-confirm" disabled={isSubmitting || equipments.length === 0}>
-              {isSubmitting ? "Agendando..." : "Confirmar Agendamento"}
+            <button type="button" className="res-btn-cancel" onClick={onClose} disabled={isSubmitting} id="res-cancel-btn">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="res-btn-confirm"
+              id="res-confirm-btn"
+              disabled={isSubmitting || activeEquipments.length === 0 || !!windowError || availability?.ok === false}
+            >
+              {isSubmitting ? 'Agendando...' : 'Confirmar Agendamento'}
             </button>
           </div>
         </form>
