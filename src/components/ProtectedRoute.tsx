@@ -2,22 +2,21 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+import OmniLoader from '../../renders/components/OmniLoader';
+
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        background: 'var(--bg)',
-        color: 'var(--primary)'
-      }}>
-        <div className="loading-spinner">Verificando autenticação...</div>
-      </div>
+      <OmniLoader
+        variant="fullscreen"
+        size="lg"
+        icon="atom"
+        message="Verificando Autenticação..."
+        submessage="Validando credenciais e acessos do pesquisador..."
+      />
     );
   }
 

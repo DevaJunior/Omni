@@ -16,6 +16,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../../src/config/firebaseConfig';
 import './styles.css';
 import ShareMenu from '../../../../components/ShareMenu';
+import OmniLoader from '../../../../components/OmniLoader';
 
 const ProjectDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -43,7 +44,17 @@ const ProjectDetail: React.FC = () => {
     fetchProject();
   }, [id]);
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Projeto...</div>;
+  if (loading) {
+    return (
+      <OmniLoader
+        variant="fullscreen"
+        size="lg"
+        message="Carregando Projeto..."
+        submessage="Recuperando objetivos, equipe e vagas da pesquisa..."
+        icon="flask"
+      />
+    );
+  }
   if (!project) return <div style={{ padding: '40px', textAlign: 'center' }}>Projeto não encontrado.</div>;
 
 

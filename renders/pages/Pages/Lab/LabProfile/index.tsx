@@ -24,19 +24,25 @@ import LabTeamTab from '../../../../fragments/Lab/LabTeamTab';
 import Footer from '../../../../menus/Footer';
 import JoinLabModal from './../../../../modals/JoinLabModal/index';
 import ProjectApplicationModal from './../../../../modals/ProjectApplicationModal/index';
+import LabMembersModal from '../../../../modals/LabMembersModal';
+import { useLabMembers } from '../../../../../src/hooks/useLabMembers';
+import OmniLoader from '../../../../components/OmniLoader';
 
 const LabProfile: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'publicacoes' | 'oportunidades' | 'equipe_publica'>('publicacoes');
 
   const { userProfile } = useAuth();
   const [labData, setLabData] = useState<any>(null);
   const [projects, setProjects] = useState<any[]>([]);
-  const [realMembersCount, setRealMembersCount] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  // Hook com membros reais e contagens em tempo real
+  const { members: realMembers, totalCount: realMembersCount, loading: membersLoading } = useLabMembers(id, labData?.adminId);
 
   // Estados do Modal de Candidatura
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
@@ -67,18 +73,6 @@ const LabProfile: React.FC = () => {
           const pSnap = await getDocs(pQuery);
           const pData = pSnap.docs.map(d => ({ id: d.id, ...d.data() }));
           setProjects(pData);
-
-          // Buscar número de membros reais
-          const mQuery = query(collection(db, 'users'), where('lab.id', '==', id));
-          const mSnap = await getDocs(mQuery);
-          let memCount = mSnap.docs.length;
-
-          // Garantir que o admin conta
-          const mems = mSnap.docs.map(d => ({ id: d.id }));
-          if (labSnap.data().adminId && !mems.some(m => m.id === labSnap.data().adminId)) {
-            memCount += 1;
-          }
-          setRealMembersCount(memCount);
         } else {
           setLabData(null);
         }
@@ -152,9 +146,13 @@ const LabProfile: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="lab-profile-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <h2>Carregando laboratório...</h2>
-      </div>
+      <OmniLoader
+        variant="fullscreen"
+        size="lg"
+        icon="flask"
+        message="Carregando Laboratório..."
+        submessage="Buscando informações da infraestrutura, pesquisas e publicações..."
+      />
     );
   }
 
@@ -355,7 +353,9 @@ const LabProfile: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 'equipe_publica' && <LabTeamTab mode="public" labId={labData.id} />}
+              {activeTab === 'equipe_publica' && (
+                <LabTeamTab mode="public" labId={labData.id} />
+              )}
             </div>
 
             {/* COLUNA DIREITA (Sidebar) */}
@@ -411,7 +411,12 @@ const LabProfile: React.FC = () => {
                   <span>Projetos</span>
                   <p>{projects.length}</p>
                 </div>
-                <div className="lab-stat-row">
+                <div
+                  className="lab-stat-row clickable"
+                  onClick={() => setIsMembersModalOpen(true)}
+                  title="Clique para ver os membros e cargos do laboratório"
+                  id="lab-profile-stat-members"
+                >
                   <span>Membros</span>
                   <p>{realMembersCount}</p>
                 </div>
@@ -422,6 +427,14 @@ const LabProfile: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <LabMembersModal
+        isOpen={isMembersModalOpen}
+        onClose={() => setIsMembersModalOpen(false)}
+        members={realMembers}
+        labName={labData.name}
+        loading={membersLoading}
+      />
 
       <JoinLabModal
         isOpen={isModalOpen}

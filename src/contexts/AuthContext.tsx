@@ -76,19 +76,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
+    if (currentUser) {
+      try {
+        const { updateDoc } = await import('firebase/firestore');
+        await updateDoc(doc(db, FIREBASE_ROUTES.USERS, currentUser.uid), {
+          isOnline: false,
+          lastActive: Date.now()
+        });
+      } catch (e) {}
+    }
     setUserProfile(null);
     await firebaseSignOut(auth);
   };
 
-  // --- MONITORAMENTO GLOBAL ---
+  // --- MONITORAMENTO GLOBAL & PRESENÇA ---
   useEffect(() => {
     let unsubscribeFirestore: (() => void) | undefined;
+
+    const handleBeforeUnload = () => {
+      if (currentUser?.uid) {
+        // Marcador rápido de offline
+        navigator.sendBeacon?.(
+          '/api/presence', // Fallback se houver backend, caso contrário o Firestore já tem timeout de 15min
+          JSON.stringify({ uid: currentUser.uid, status: 'offline' })
+        );
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
 
       if (user) {
         await ensureUserDocument(user);
+
+        // Marca usuário como online e atualiza timestamp de atividade
+        try {
+          const { updateDoc } = await import('firebase/firestore');
+          await updateDoc(doc(db, FIREBASE_ROUTES.USERS, user.uid), {
+            isOnline: true,
+            lastActive: Date.now()
+          });
+        } catch (e) {}
 
         // -- MODO DESENVOLVIMENTO: Força qualquer usuário logado a virar admin --
         try {
@@ -115,6 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       unsubscribeAuth();
       if (unsubscribeFirestore) unsubscribeFirestore();
     };

@@ -24,6 +24,7 @@ export interface IUser {
     name: string;
     role: string;
   }[];
+  publicBookmarks?: boolean;
 }
 
 export interface IInstitution {

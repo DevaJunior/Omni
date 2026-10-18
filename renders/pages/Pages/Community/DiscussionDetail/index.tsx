@@ -20,6 +20,7 @@ import ConfirmModal from '../../../../components/ConfirmModal';
 import CardDiscussion from '../../../../components/Cards/CardDiscussion';
 import CardButtonOptions from '../../../../components/Cards/CardButtonOptions';
 import { Edit, Trash2, Flag } from 'lucide-react';
+import OmniLoader from '../../../../components/OmniLoader';
 import './styles.css';
 
 const ReplyItem = ({
@@ -418,7 +419,17 @@ const DiscussionDetail: React.FC = () => {
     }
   };
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando postagem...</div>;
+  if (loading) {
+    return (
+      <OmniLoader
+        variant="fullscreen"
+        size="lg"
+        message="Carregando Discussão..."
+        submessage="Recuperando argumentos, respostas e participantes da discussão..."
+        icon="atom"
+      />
+    );
+  }
   if (!discussion) return <div style={{ padding: '40px', textAlign: 'center' }}>Discussão não encontrada.</div>;
 
 

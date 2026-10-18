@@ -7,6 +7,7 @@ import { useCommunityStore } from '../../../../src/store/useCommunityStore';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import ConfirmModal from '../../../../renders/components/ConfirmModal';
 import CardDiscussion from '../../../../renders/components/Cards/CardDiscussion';
+import OmniLoader from '../../../components/OmniLoader';
 import './styles.css';
 
 // Modal simples de edição inline
@@ -108,7 +109,17 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
     }
   };
 
-  if (!discussions.isLoaded && discussions.data.length === 0) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Discussões...</div>;
+  if (!discussions.isLoaded && discussions.data.length === 0) {
+    return (
+      <OmniLoader
+        variant="section"
+        size="md"
+        message="Carregando Discussões..."
+        submessage="Sincronizando debates e ideias da comunidade científica..."
+        icon="atom"
+      />
+    );
+  }
 
   const handleOpenThread = (id: string | number) => {
     // Salva scroll antes de ir pro detalhe

@@ -4,6 +4,7 @@ import { adminService } from '../../../../../src/services/adminService';
 import type { LabProfile } from '../../../../../src/types/lab';
 import { useToastStore } from '../../../../../src/stores/toastStore';
 import { useConfirmStore } from '../../../../../src/stores/confirmStore';
+import OmniLoader from '../../../../components/OmniLoader';
 import './styles.css';
 
 const AdminLabs: React.FC = () => {
@@ -94,7 +95,14 @@ const AdminLabs: React.FC = () => {
 
       <div className="labs-grid">
         {loading ? (
-          <div className="admin-loading-text">Carregando laboratórios...</div>
+          <OmniLoader
+            variant="section"
+            size="sm"
+            message="Carregando laboratórios..."
+            submessage="Sincronizando entidades cadastradas..."
+            icon="flask"
+            showLine={false}
+          />
         ) : displayedLabs.length === 0 ? (
           <div className="admin-empty-text">Nenhum laboratório encontrado nesta aba.</div>
         ) : (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Trash2, Edit2, ShieldAlert, Check, X as XIcon, Plus, Copy, CheckCircle2 } from 'lucide-react';
 import { collection, query, where, getDocs, doc, updateDoc, getDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../../../../src/config/firebaseConfig';
@@ -7,6 +8,7 @@ import { useToastStore } from '../../../../src/stores/toastStore';
 import { useConfirmStore } from '../../../../src/stores/confirmStore';
 import Skeleton from '../../../components/Skeleton';
 import NewRoleModal from '../../../modals/NewRoleModal';
+import { labService } from '../../../../src/services/labService';
 import './styles.css';
 
 interface LabTeamTabProps {
@@ -15,10 +17,11 @@ interface LabTeamTabProps {
 }
 
 const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
+  const navigate = useNavigate();
   const { userProfile } = useAuth();
   const { addToast } = useToastStore();
   const { requestConfirm } = useConfirmStore();
-  const [activeTab, setActiveTab] = useState<'membros' | 'solicitacoes' | 'hierarquia'>('solicitacoes');
+  const [activeTab, setActiveTab] = useState<'membros' | 'solicitacoes' | 'hierarquia'>('membros');
 
   // Estados de dados
   const [members, setMembers] = useState<any[]>([]);
@@ -37,7 +40,7 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
   useEffect(() => {
     if (!labId) return;
     fetchData();
-  }, [labId, activeTab]);
+  }, [labId, activeTab, mode]);
 
   const fetchData = async () => {
     if (!labId) return;
@@ -45,40 +48,28 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
     try {
       const labDoc = await getDoc(doc(db, 'labs', labId));
       let currentRoles: Record<string, unknown>[] = [];
+      let adminId = '';
       if (labDoc.exists()) {
-        currentRoles = labDoc.data().customRoles || [];
+        const labData = labDoc.data();
+        currentRoles = labData.customRoles || [];
+        adminId = labData.adminId || '';
         setRoles(currentRoles);
       }
 
-      if (activeTab === 'membros') {
-        try {
-          const q = query(collection(db, 'users'), where('lab.id', '==', labId));
-          const snap = await getDocs(q);
-          let mems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          
-          // Garante que o Admin/Criador apareça na lista caso a query falhe ou não o retorne
-          if (userProfile && userProfile.lab?.id === labId) {
-            if (!mems.some(m => m.id === userProfile.id)) {
-              mems.unshift(userProfile);
-            }
-          }
-          setMembers(mems);
-        } catch (e) {
-          console.error("Erro ao buscar membros:", e);
-          if (userProfile && userProfile.lab?.id === labId) {
-            setMembers([userProfile]);
-          } else {
-            setMembers([]);
-          }
-        }
+      // Sempre busca membros se estiver no modo público OU se a aba for membros
+      if (mode === 'public' || activeTab === 'membros') {
+        const mems = await labService.getLabMembers(labId, adminId, userProfile);
+        setMembers(mems);
       }
-      else if (activeTab === 'solicitacoes') {
+
+      // Busca solicitações no modo de gestão para atualizar badge
+      if (mode !== 'public') {
         const q = query(collection(db, 'lab_requests'), where('labId', '==', labId), where('status', '==', 'pending'));
         const snap = await getDocs(q);
         setRequests(snap.docs.map(d => ({ reqId: d.id, ...d.data() })));
       }
     } catch (err) {
-      console.error(err);
+      console.error("Erro ao carregar equipe do laboratório:", err);
     } finally {
       setLoading(false);
     }
@@ -232,20 +223,46 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
           </div>
         </div>
         <div className="lab-team-list">
-          {members.map(member => (
-            <div key={member.id} className="lab-team-card public-hover">
-              <div className="member-avatar">
-                <img src={member.avatar || "https://ui-avatars.com/api/?name=" + member.name.replace(' ', '+')} alt={member.name} />
-              </div>
-              <div className="member-info">
-                <h4>{member.name}</h4>
-                <span>{member.email}</span>
-              </div>
-              <div className="member-role">
-                {getRoleBadge(member.lab?.role)}
-              </div>
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px 0' }}>
+              <Skeleton type="card" height="75px" />
+              <Skeleton type="card" height="75px" />
             </div>
-          ))}
+          ) : members.length === 0 ? (
+            <p className="empty-msg" style={{ padding: '2rem 0', color: '#64748b' }}>
+              Nenhum membro listado no momento.
+            </p>
+          ) : (
+            members.map(member => (
+              <div
+                key={member.id}
+                className="lab-team-card public-hover"
+                onClick={() => navigate(`/profile/${member.id}`)}
+                title={`Ver perfil de ${member.name}`}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    navigate(`/profile/${member.id}`);
+                  }
+                }}
+              >
+                <div className="member-avatar">
+                  <img
+                    src={member.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(member.name || 'User')}
+                    alt={member.name}
+                  />
+                </div>
+                <div className="member-info">
+                  <h4>{member.name}</h4>
+                  <span>{member.headline || member.department || member.email}</span>
+                </div>
+                <div className="member-role">
+                  {getRoleBadge(member.role || member.lab?.role)}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     );
@@ -295,10 +312,20 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
                 <div className="lab-team-list">
                   {members.length === 0 ? <p className="empty-msg">Nenhum membro encontrado.</p> : members.map(member => (
                     <div key={member.id} className="lab-team-card">
-                      <div className="member-avatar">
-                        <img src={member.avatar || "https://ui-avatars.com/api/?name=" + member.name.replace(' ', '+')} alt={member.name} />
+                      <div
+                        className="member-avatar"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => navigate(`/profile/${member.id}`)}
+                        title={`Ver perfil de ${member.name}`}
+                      >
+                        <img src={member.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(member.name || 'User')} alt={member.name} />
                       </div>
-                      <div className="member-info">
+                      <div
+                        className="member-info"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => navigate(`/profile/${member.id}`)}
+                        title={`Ver perfil de ${member.name}`}
+                      >
                         <h4>{member.name}</h4>
                         <span>{member.email}</span>
                       </div>
@@ -306,19 +333,19 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
                         {isAdmin && member.id !== userProfile?.id ? (
                           <select 
                             className="role-select"
-                            value={member.lab?.role || 'Membro'}
+                            value={member.role || member.lab?.role || 'Membro'}
                             onChange={(e) => handleChangeRole(member.id, e.target.value)}
                           >
                             {roles.map(r => (
                               <option key={r.name} value={r.name}>{r.name}</option>
                             ))}
                             {/* Fallback caso a role atual do membro não esteja na lista */}
-                            {!roles.some(r => r.name === member.lab?.role) && (
-                              <option value={member.lab?.role}>{member.lab?.role}</option>
+                            {!roles.some(r => r.name === (member.role || member.lab?.role)) && (
+                              <option value={member.role || member.lab?.role}>{member.role || member.lab?.role || 'Membro'}</option>
                             )}
                           </select>
                         ) : (
-                          getRoleBadge(member.lab?.role)
+                          getRoleBadge(member.role || member.lab?.role)
                         )}
                       </div>
                       {isAdmin && member.id !== userProfile?.id && (

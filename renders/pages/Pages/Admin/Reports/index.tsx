@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { learnService } from '../../../../../src/services/learnService';
 import { useToastStore } from '../../../../../src/stores/toastStore';
 import { useConfirmStore } from '../../../../../src/stores/confirmStore';
+import OmniLoader from '../../../../components/OmniLoader';
 import './styles.css';
 
 const AdminReports: React.FC = () => {
@@ -92,7 +93,14 @@ const AdminReports: React.FC = () => {
 
       <div className="reports-grid">
         {loading ? (
-          <div className="admin-loading-text">Carregando denúncias...</div>
+          <OmniLoader
+            variant="section"
+            size="sm"
+            message="Carregando denúncias..."
+            submessage="Sincronizando moderação da comunidade..."
+            icon="atom"
+            showLine={false}
+          />
         ) : filteredReports.length === 0 ? (
           <div className="admin-empty-text">
             {activeTab === 'pending' ? "Nenhuma denúncia pendente. A comunidade está em paz!" : "Nenhuma denúncia resolvida encontrada."}

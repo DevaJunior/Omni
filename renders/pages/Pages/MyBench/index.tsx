@@ -16,6 +16,8 @@ import InventoryModal from '../../../modals/InventoryModal';
 import AgendaModal from '../../../modals/AgendaModal';
 import NotesModal from '../../../modals/NotesModal';
 import EquipmentReservationModal from '../../../modals/EquipmentReservationModal';
+import LabMembersModal from '../../../modals/LabMembersModal';
+import { useLabMembers } from '../../../../src/hooks/useLabMembers';
 import './styles.css';
 
 type WorkspaceTab = 'bancada' | 'reservas' | 'equipamentos';
@@ -30,12 +32,14 @@ const MyBench: React.FC = () => {
 
   const { equipments } = useLabEquipments(labId);
   const { reservations, loading: reservationsLoading } = useLabReservations(labId);
+  const { members, onlineMembers, onlineCount, loading: membersLoading } = useLabMembers(labId);
 
   const [activeTab, setActiveTab] = useState<WorkspaceTab>('bancada');
   const [isInventoryModalOpen, setInventoryModalOpen] = useState(false);
   const [isAgendaModalOpen, setAgendaModalOpen] = useState(false);
   const [isNotesModalOpen, setNotesModalOpen] = useState(false);
   const [isReservationModalOpen, setReservationModalOpen] = useState(false);
+  const [isMembersModalOpen, setMembersModalOpen] = useState(false);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
   const firstName = userProfile?.name?.trim().split(' ')[0] || 'Pesquisador';
@@ -82,7 +86,14 @@ const MyBench: React.FC = () => {
         {activeTab === 'bancada' && (
           <div className="anim-fade-up">
             {/* HEADER */}
-            <Header userName={firstName} labStatus="Aberto" onlineMembersCount={4} />
+            <Header
+              userName={firstName}
+              labStatus="Aberto"
+              onlineMembersCount={onlineCount}
+              onlineMembers={onlineMembers}
+              allMembers={members}
+              onOpenMembersModal={() => setMembersModalOpen(true)}
+            />
 
             {/* MAIN GRID */}
             <div className="mybench-grid">
@@ -175,6 +186,14 @@ const MyBench: React.FC = () => {
         isOpen={isNotesModalOpen}
         onClose={() => setNotesModalOpen(false)}
         initialNoteId={selectedNoteId}
+      />
+
+      <LabMembersModal
+        isOpen={isMembersModalOpen}
+        onClose={() => setMembersModalOpen(false)}
+        members={members}
+        labName={userProfile?.lab?.name || 'Laboratório'}
+        loading={membersLoading}
       />
     </div>
   );

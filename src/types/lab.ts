@@ -28,3 +28,16 @@ export interface LabProfile {
   status?: 'pending' | 'approved' | 'rejected';
   createdAt?: string;
 }
+
+export interface LabMember {
+  id: string;
+  name: string;
+  email?: string;
+  avatar?: string;
+  headline?: string;
+  role?: string;
+  isOnline?: boolean;
+  isAdmin?: boolean;
+  department?: string;
+  lastActive?: any;
+}

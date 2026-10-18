@@ -1,18 +1,29 @@
 import React from 'react';
+import type { LabMember } from '../../../../../src/types/lab';
 import './styles.css';
 
 interface HeaderProps {
   userName?: string;
   labStatus?: 'Aberto' | 'Fechado' | 'Manutenção';
   onlineMembersCount?: number;
-  // TODO: Add avatars or online members list when the API is ready
+  onlineMembers?: LabMember[];
+  allMembers?: LabMember[];
+  onOpenMembersModal?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   userName = 'Devair',
   labStatus = 'Aberto',
-  onlineMembersCount = 4
+  onlineMembersCount = 1,
+  onlineMembers = [],
+  allMembers = [],
+  onOpenMembersModal
 }) => {
+  // Exibir avatares dos membros online (ou dos primeiros membros do lab)
+  const membersToDisplay = onlineMembers.length > 0 ? onlineMembers : allMembers;
+  const displayAvatars = membersToDisplay.slice(0, 3);
+  const remainingCount = membersToDisplay.length - displayAvatars.length;
+
   return (
     <header className="mybench-header">
       <span className="mybench-header-kicker">VISÃO GERAL</span>
@@ -27,11 +38,40 @@ const Header: React.FC<HeaderProps> = ({
           <span className="status-text">Lab {labStatus}</span>
         </div>
         <div className="mybench-status-divider"></div>
-        <div className="mybench-status-members">
-          <span className="members-text">{onlineMembersCount} Membros Online</span>
+        <div
+          className={`mybench-status-members ${onOpenMembersModal ? 'clickable' : ''}`}
+          onClick={onOpenMembersModal}
+          title={onOpenMembersModal ? "Clique para ver membros e cargos do laboratório" : undefined}
+          role={onOpenMembersModal ? "button" : undefined}
+          tabIndex={onOpenMembersModal ? 0 : undefined}
+          onKeyDown={e => {
+            if (onOpenMembersModal && (e.key === 'Enter' || e.key === ' ')) {
+              onOpenMembersModal();
+            }
+          }}
+        >
+          <span className="members-text">
+            {onlineMembersCount} {onlineMembersCount === 1 ? 'Membro Online' : 'Membros Online'}
+          </span>
           <div className="members-avatars">
-            <div className="avatar-circle"></div>
-            <div className="avatar-circle"></div>
+            {displayAvatars.length > 0 ? (
+              displayAvatars.map((member) => (
+                <img
+                  key={member.id}
+                  src={member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name || 'User')}&background=random`}
+                  alt={member.name}
+                  className="avatar-img"
+                  title={`${member.name} (${member.role || 'Membro'})${member.isOnline ? ' - Online' : ''}`}
+                />
+              ))
+            ) : (
+              <div className="avatar-circle"></div>
+            )}
+            {remainingCount > 0 && (
+              <div className="avatar-circle avatar-more" title={`+${remainingCount} membros`}>
+                +{remainingCount}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import CreateProjectModal from '../../../../renders/modals/CreateProjectModal';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
+import OmniLoader from '../../../components/OmniLoader';
 import './styles.css';
 
 interface ProjectsTabProps {
@@ -55,7 +56,17 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({ searchQuery = '', onClear }) 
     }
   }, [projects.isLoaded]);
 
-  if (!projects.isLoaded && projects.data.length === 0) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Projetos...</div>;
+  if (!projects.isLoaded && projects.data.length === 0) {
+    return (
+      <OmniLoader
+        variant="section"
+        size="md"
+        message="Carregando Projetos..."
+        submessage="Sincronizando editais e oportunidades de pesquisa..."
+        icon="flask"
+      />
+    );
+  }
 
   const handleViewProject = (id: string | number) => {
     // Salva scroll antes de ir pro detalhe

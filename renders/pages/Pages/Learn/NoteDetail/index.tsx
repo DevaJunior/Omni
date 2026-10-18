@@ -11,6 +11,7 @@ import './styles.css';
 import MarkdownRenderer from '../../../../../src/components/MarkdownRenderer';
 import Footer from '../../../../menus/Footer';
 import ReportModal from '../../../../components/Modals/ReportModal';
+import OmniLoader from '../../../../components/OmniLoader';
 
 const NoteDetail: React.FC = () => {
   const { id } = useParams();
@@ -136,7 +137,17 @@ const NoteDetail: React.FC = () => {
     }
   };
 
-  if (loading) return <div style={{ padding: '100px', textAlign: 'center' }}>Carregando estudo...</div>;
+  if (loading) {
+    return (
+      <OmniLoader
+        variant="fullscreen"
+        size="lg"
+        message="Carregando Estudo..."
+        submessage="Recuperando anotações, fichamentos e materiais de estudo..."
+        icon="sparkles"
+      />
+    );
+  }
   if (!noteData) return <div style={{ padding: '100px', textAlign: 'center' }}>Resumo não encontrado.</div>;
 
   return (

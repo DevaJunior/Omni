@@ -20,6 +20,7 @@ import { useAuth } from '../../../../../src/contexts/AuthContext';
 import html2pdf from 'html2pdf.js';
 import MarkdownRenderer from '../../../../../src/components/MarkdownRenderer';
 import { ArticlePDFTemplate } from './ArticlePDFTemplate';
+import OmniLoader from '../../../../components/OmniLoader';
 import './styles.css';
 
 const ArticleDetail: React.FC = () => {
@@ -148,7 +149,17 @@ Existe uma visão altamente romantizada na cultura popular sobre a descoberta ci
     }
   };
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Artigo...</div>;
+  if (loading) {
+    return (
+      <OmniLoader
+        variant="fullscreen"
+        size="lg"
+        message="Carregando Artigo..."
+        submessage="Recuperando publicação, metadados e referências..."
+        icon="sparkles"
+      />
+    );
+  }
   if (!article) return <div style={{ padding: '40px', textAlign: 'center' }}>Artigo não encontrado.</div>;
 
 

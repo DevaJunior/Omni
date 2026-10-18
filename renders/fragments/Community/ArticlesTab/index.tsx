@@ -4,6 +4,7 @@ import { BookOpen, Calendar, Users, Download, ExternalLink, Bookmark, MessageSqu
 import { communityService } from '../../../../src/services/communityService';
 import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import { useCommunityStore } from '../../../../src/store/useCommunityStore';
+import OmniLoader from '../../../components/OmniLoader';
 import './styles.css';
 
 type SortOption = 'recent' | 'impact' | 'likes';
@@ -68,7 +69,17 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({ searchQuery = '', onClear }) 
     navigate(`/article/${id}`);
   };
 
-  if (!articles.isLoaded && articles.data.length === 0) return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Artigos...</div>;
+  if (!articles.isLoaded && articles.data.length === 0) {
+    return (
+      <OmniLoader
+        variant="section"
+        size="md"
+        message="Carregando Artigos..."
+        submessage="Sincronizando publicações e produções acadêmicas..."
+        icon="sparkles"
+      />
+    );
+  }
 
   if (sortedArticles.length === 0 && searchQuery !== '') {
     return (

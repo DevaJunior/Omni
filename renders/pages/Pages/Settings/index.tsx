@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../../../../src/contexts/AuthContext';
+import { useToastStore } from '../../../../src/stores/toastStore';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../../src/config/firebaseConfig';
 import './styles.css';
@@ -21,6 +22,7 @@ type SettingsSection = 'profile' | 'security' | 'notifications' | 'privacy' | 'a
 const Settings: React.FC = () => {
   const [activeSection, setActiveSection] = useState<SettingsSection>('profile');
   const { currentUser, userProfile, logout } = useAuth();
+  const { addToast } = useToastStore();
   const navigate = useNavigate();
 
   // --- ESTADO DO FORMULÁRIO DE PERFIL ---
@@ -31,7 +33,9 @@ const Settings: React.FC = () => {
     location: '',
     website: '',
   });
+  const [publicBookmarks, setPublicBookmarks] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSavingPrivacy, setIsSavingPrivacy] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   // --- 2FA STATE ---
@@ -46,6 +50,7 @@ const Settings: React.FC = () => {
         location: userProfile.location || '',
         website: userProfile.website || '',
       });
+      setPublicBookmarks(userProfile.publicBookmarks ?? false);
     }
   }, [userProfile]);
 
@@ -83,6 +88,23 @@ const Settings: React.FC = () => {
       navigate('/login');
     } catch (error) {
       console.error('Erro ao sair:', error);
+    }
+  };
+
+  const handleSavePrivacy = async () => {
+    if (!currentUser) return;
+    setIsSavingPrivacy(true);
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, {
+        publicBookmarks: publicBookmarks,
+      });
+      addToast('Preferências de privacidade atualizadas com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao atualizar privacidade:', error);
+      addToast('Erro ao atualizar configurações de privacidade.', 'error');
+    } finally {
+      setIsSavingPrivacy(false);
     }
   };
 
@@ -277,13 +299,30 @@ const Settings: React.FC = () => {
         return (
           <div className="section-fade-in">
             <h2 className="section-title">Privacidade</h2>
-            <p className="section-description">Gerencie a visibilidade dos seus dados e atividades.</p>
+            <p className="section-description">Gerencie a visibilidade dos seus dados, coleções e atividades para outros pesquisadores.</p>
             
             <div className="settings-card-sub overflow-hidden no-padding">
               <div className="form-group-toggle">
                 <div>
+                  <h4>Coleções Públicas</h4>
+                  <p className="section-description mb-0">Permitir que outros pesquisadores vejam sua aba "Coleções" com artigos e discussões salvos no seu perfil.</p>
+                </div>
+                <label className="custom-toggle">
+                  <input
+                    type="checkbox"
+                    checked={publicBookmarks}
+                    onChange={(e) => setPublicBookmarks(e.target.checked)}
+                  />
+                  <span className="toggle-mark"></span>
+                </label>
+              </div>
+
+              <hr className="settings-divider" />
+
+              <div className="form-group-toggle">
+                <div>
                   <h4>Perfil Público</h4>
-                  <p className="section-description mb-0">Permitir que usuários não logados encontrem seu perfil.</p>
+                  <p className="section-description mb-0">Permitir que usuários encontrem seu perfil na busca da comunidade.</p>
                 </div>
                 <label className="custom-toggle">
                   <input type="checkbox" defaultChecked />
@@ -318,7 +357,9 @@ const Settings: React.FC = () => {
               </div>
             </div>
             
-            <button className="save-button mt-24">Atualizar Privacidade</button>
+            <button className="save-button mt-24" onClick={handleSavePrivacy} disabled={isSavingPrivacy}>
+              {isSavingPrivacy ? 'Salvando...' : 'Atualizar Privacidade'}
+            </button>
           </div>
         );
 

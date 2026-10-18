@@ -10,6 +10,7 @@ import CardDiscussion from '../../../../renders/components/Cards/CardDiscussion'
 import CardResearch from '../../../../renders/components/Cards/CardResearch';
 import CardProjectOportunity from '../../../../renders/components/Cards/CardProjectOportunity';
 import CardArticle from '../../../../renders/components/Cards/CardArticle';
+import OmniLoader from '../../../components/OmniLoader';
 import '../ArticlesTab/styles.css';
 import '../FeedTab/styles.css';
 
@@ -187,7 +188,15 @@ const GlobalFeedTab: React.FC<GlobalFeedTabProps> = ({ searchQuery = '', onClear
     });
 
   if (!globalFeed.isLoaded && globalFeed.data.length === 0) {
-    return <div style={{ padding: '40px', textAlign: 'center' }}>Carregando Feed...</div>;
+    return (
+      <OmniLoader
+        variant="section"
+        size="md"
+        message="Carregando Feed Global..."
+        submessage="Compilando publicações, discussões e projetos recentes..."
+        icon="sparkles"
+      />
+    );
   }
 
   const renderCard = (item: any, index: number) => {

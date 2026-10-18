@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Users, Building, FlaskConical, AlertTriangle, TrendingUp } from 'lucide-react';
 import './styles.css';
 import { adminService, type AdminMetrics } from '../../../../../src/services/adminService';
+import OmniLoader from '../../../../components/OmniLoader';
 
 const AdminDashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
@@ -22,7 +23,15 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div className="admin-loading">Carregando métricas...</div>;
+    return (
+      <OmniLoader
+        variant="section"
+        size="lg"
+        message="Carregando Métricas..."
+        submessage="Consolidando dados de governança e atividade da plataforma..."
+        icon="atom"
+      />
+    );
   }
 
   return (

@@ -400,6 +400,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
+    gap: 16px;
+}
+
+.form-group-toggle > div:first-child {
+    flex: 1;
+    min-width: 0;
 }
 
 .form-group-toggle h4 {
@@ -418,16 +424,26 @@
 
 .custom-toggle {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 22px;
     height: 22px;
+    min-width: 22px;
+    max-width: 22px;
+    min-height: 22px;
+    max-height: 22px;
+    flex-shrink: 0;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 .custom-toggle input {
     opacity: 0;
     width: 0;
     height: 0;
+    position: absolute;
+    pointer-events: none;
 }
 
 .toggle-mark {
@@ -436,10 +452,17 @@
     left: 0;
     right: 0;
     bottom: 0;
+    width: 22px;
+    height: 22px;
+    box-sizing: border-box;
     background-color: #fff;
     border: 2px solid #cbd5e1;
     border-radius: 6px;
-    transition: .2s;
+    transition: all .2s ease;
+}
+
+.custom-toggle:hover .toggle-mark {
+    border-color: #94a3b8;
 }
 
 .custom-toggle input:checked+.toggle-mark {
@@ -458,13 +481,14 @@
 }
 
 .custom-toggle .toggle-mark:after {
-    left: 7px;
-    top: 3px;
-    width: 4px;
+    left: 6.5px;
+    top: 2.5px;
+    width: 5px;
     height: 10px;
     border: solid white;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
+    box-sizing: border-box;
 }
 
 /* Custom Radio */

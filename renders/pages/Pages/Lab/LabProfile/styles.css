@@ -415,6 +415,45 @@
   color: var(--omni-primary);
 }
 
+.lab-stat-row.clickable {
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 10px;
+  margin: -4px -10px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.lab-stat-row.clickable:hover {
+  background: rgba(93, 95, 239, 0.08);
+  transform: translateX(2px);
+}
+
+.lab-stat-row.clickable:hover span {
+  color: #5d5fef;
+}
+
+.lab-stat-row.clickable .clickable-stat-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lab-stat-row.clickable .stat-hint-badge {
+  font-size: 0.7rem;
+  background: rgba(93, 95, 239, 0.12);
+  color: #5d5fef;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.lab-stat-row.clickable:hover .stat-hint-badge {
+  background: #5d5fef;
+  color: #ffffff;
+}
+
 /* Espaço do Pesquisador Card */
 .researcher-space-card {
   background: linear-gradient(145deg, #ffffff, #fcfdfd);

@@ -33,6 +33,7 @@ import Footer from '../../../menus/Footer';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { bookmarkService, type IBookmark } from '../../../../src/services/bookmarkService';
 import type { IUser } from '../../../../src/types';
+import OmniLoader from '../../../components/OmniLoader';
 
 
 const UserProfile: React.FC = () => {
@@ -87,8 +88,14 @@ const UserProfile: React.FC = () => {
         const nData = nSnap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
         setUserNotes(nData.sort((a: { date: string }, b: { date: string }) => parseDateStr(b.date) - parseDateStr(a.date)));
 
-        const bks = await bookmarkService.getUserBookmarks(userData.id);
-        setUserBookmarks(bks);
+        const isOwner = Boolean(currentUser && (!id || id === currentUser.uid || userData.id === currentUser.uid));
+        const canFetchBookmarks = isOwner || Boolean(userData.publicBookmarks);
+        if (canFetchBookmarks) {
+          const bks = await bookmarkService.getUserBookmarks(userData.id);
+          setUserBookmarks(bks);
+        } else {
+          setUserBookmarks([]);
+        }
 
         // Buscar Laboratórios Afiliados Dinamicamente
         const userLabsList = userData.labs && userData.labs.length > 0 
@@ -142,7 +149,7 @@ const UserProfile: React.FC = () => {
       }
     };
     fetchUserContent();
-  }, [userData]);
+  }, [userData, currentUser, id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -178,11 +185,24 @@ const UserProfile: React.FC = () => {
     fetchUser();
   }, [id, currentUser]);
 
+  const isOwnProfile = Boolean(currentUser && (!id || id === currentUser.uid || userData?.id === currentUser.uid));
+  const isCollectionsVisible = isOwnProfile || Boolean(userData?.publicBookmarks);
+
+  useEffect(() => {
+    if (!isCollectionsVisible && activeTab === 'colecoes') {
+      setActiveTab('visao-geral');
+    }
+  }, [isCollectionsVisible, activeTab]);
+
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#a5a6f6' }}>
-        <h2>Carregando Perfil...</h2>
-      </div>
+      <OmniLoader
+        variant="fullscreen"
+        size="lg"
+        message="Carregando Perfil..."
+        submessage="Sincronizando dados, pesquisas e publicações do pesquisador..."
+        icon="atom"
+      />
     );
   }
 
@@ -196,8 +216,6 @@ const UserProfile: React.FC = () => {
 
   // Fallbacks para campos que podem ser nulos em contas novas
   const lab = userData.lab || { name: 'Comunidade Omni', role: 'Pesquisador' };
-
-  const isOwnProfile = !id || id === currentUser?.uid;
 
   const handleFileUpload = async (file: File, type: 'avatar' | 'cover') => {
     if (!currentUser || !userData) return;
@@ -361,12 +379,14 @@ const UserProfile: React.FC = () => {
                 >
                   <Code2 size={18} /> Projetos
                 </button>
-                <button
-                  className={`tab-btn ${activeTab === 'colecoes' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('colecoes')}
-                >
-                  <Bookmark size={18} /> Coleções
-                </button>
+                {isCollectionsVisible && (
+                  <button
+                    className={`tab-btn ${activeTab === 'colecoes' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('colecoes')}
+                  >
+                    <Bookmark size={18} /> {isOwnProfile ? 'Coleções' : 'Coleções Públicas'}
+                  </button>
+                )}
 
                 <div className="tab-spacer"></div>
 
@@ -400,93 +420,96 @@ const UserProfile: React.FC = () => {
                       <p className="profile-bio-text">{userData.bio || "Este usuário ainda não escreveu uma bio."}</p>
                     </div>
 
-                    <div className="spaces-section-header mt-4">
-                      <div className="spaces-title-area">
-                        <h3>Meus Espaços</h3>
-                        <p>Laboratórios, projetos colaborativos e áreas privadas.</p>
-                      </div>
-                      <div className="spaces-filter">
-                        <button className={spaceFilter === 'all' ? 'active' : ''} onClick={() => setSpaceFilter('all')}>Todos (3)</button>
-                        <button className={spaceFilter === 'colab' ? 'active' : ''} onClick={() => setSpaceFilter('colab')}>
-                          <span className="text-desktop">Colaborativos</span>
-                          <span className="text-mobile">Colabs</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="spaces-grid mb-4" style={{ marginBottom: '2rem' }}>
-                      {/* Laboratórios Dinâmicos do Firebase */}
-                      {affiliatedLabs.map((labItem, idx) => (
-                        <div key={idx} className={`space-card ${idx === 0 ? 'highlight' : ''}`}>
-                          <div className="space-card-header">
-                            <div className="space-icon-group">
-                              <div className="space-icon-wrapper">
-                                {idx === 0 ? <Beaker size={24} /> : <Building2 size={24} />}
-                              </div>
-                              <div className="space-info">
-                                <h4>{labItem.name}</h4>
-                                <p>{labItem.institution}</p>
-                              </div>
-                            </div>
-                            <button className="space-options-btn"><MoreVertical size={20} /></button>
+                    {/* MEUS ESPAÇOS - Apenas para o perfil do próprio usuário logado */}
+                    {isOwnProfile && (
+                      <>
+                        <div className="spaces-section-header mt-4">
+                          <div className="spaces-title-area">
+                            <h3>Meus Espaços</h3>
+                            <p>Laboratórios, projetos colaborativos e áreas privadas.</p>
                           </div>
-                          <div className="space-card-footer">
-                            <div>
-                              <span className="space-role-label">PAPEL</span>
-                              <span className="space-role-value">{labItem.role || 'Membro'}</span>
-                            </div>
-                            <div className="space-actions">
-                              {idx === 0 ? (
-                                <div className="space-members-group">
-                                  <img src="https://i.pravatar.cc/150?img=32" alt="Membro" className="space-member-avatar" />
-                                  <img src="https://i.pravatar.cc/150?img=12" alt="Membro" className="space-member-avatar" />
-                                  <div className="space-member-count">+{Math.max(0, labItem.membersCount - 2)}</div>
+                          <div className="spaces-filter">
+                            <button className={spaceFilter === 'all' ? 'active' : ''} onClick={() => setSpaceFilter('all')}>
+                              Todos ({affiliatedLabs.length + 1})
+                            </button>
+                            <button className={spaceFilter === 'colab' ? 'active' : ''} onClick={() => setSpaceFilter('colab')}>
+                              <span className="text-desktop">Colaborativos</span>
+                              <span className="text-mobile">Colabs</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="spaces-grid mb-4" style={{ marginBottom: '2rem' }}>
+                          {/* Laboratórios Dinâmicos do Firebase */}
+                          {affiliatedLabs.map((labItem, idx) => (
+                            <div key={idx} className={`space-card ${idx === 0 ? 'highlight' : ''}`}>
+                              <div className="space-card-header">
+                                <div className="space-icon-group">
+                                  <div className="space-icon-wrapper">
+                                    {idx === 0 ? <Beaker size={24} /> : <Building2 size={24} />}
+                                  </div>
+                                  <div className="space-info">
+                                    <h4>{labItem.name}</h4>
+                                    <p>{labItem.institution}</p>
+                                  </div>
                                 </div>
-                              ) : (
-                                <div className="space-members-text">
-                                  <Users size={14} /> {labItem.membersCount}
+                                <button className="space-options-btn"><MoreVertical size={20} /></button>
+                              </div>
+                              <div className="space-card-footer">
+                                <div>
+                                  <span className="space-role-label">PAPEL</span>
+                                  <span className="space-role-value">{labItem.role || 'Membro'}</span>
                                 </div>
-                              )}
-                              <button className={`btn-open-space ${idx === 0 ? 'primary' : ''}`} onClick={() => navigate(`/lab/${labItem.id}`)}>
-                                {idx === 0 ? <ArrowRight size={18} /> : 'Abrir'}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-
-                      {/* Workspace Pessoal (se for o próprio perfil) */}
-                      {isOwnProfile && (
-                        <div className="space-card">
-                          <div className="space-card-header">
-                            <div className="space-icon-group">
-                              <div className="space-icon-wrapper">
-                                <Lock size={24} />
-                              </div>
-                              <div className="space-info">
-                                <h4>Workspace Pessoal</h4>
-                                <p>Rascunhos & Dados Privados</p>
+                                <div className="space-actions">
+                                  {idx === 0 ? (
+                                    <div className="space-members-group">
+                                      <img src="https://i.pravatar.cc/150?img=32" alt="Membro" className="space-member-avatar" />
+                                      <img src="https://i.pravatar.cc/150?img=12" alt="Membro" className="space-member-avatar" />
+                                      <div className="space-member-count">+{Math.max(0, labItem.membersCount - 2)}</div>
+                                    </div>
+                                  ) : (
+                                    <div className="space-members-text">
+                                      <Users size={14} /> {labItem.membersCount}
+                                    </div>
+                                  )}
+                                  <button className={`btn-open-space ${idx === 0 ? 'primary' : ''}`} onClick={() => navigate(`/lab/${labItem.id}`)}>
+                                    {idx === 0 ? <ArrowRight size={18} /> : 'Abrir'}
+                                  </button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div className="space-card-footer">
-                            <div>
-                              <span className="space-role-label">ACESSO</span>
-                              <div className="space-access-value"><div className="space-access-dot"></div>Privado</div>
-                            </div>
-                            <button className="btn-open-space" onClick={() => navigate(`/lab/${currentUser?.uid}/workspace`)}>Abrir</button>
-                          </div>
-                        </div>
-                      )}
+                          ))}
 
-                      {/* Novo Espaço (se for o próprio perfil) */}
-                      {isOwnProfile && (
-                        <div className="space-card new-space" onClick={() => setIsSpaceModalOpen(true)}>
-                          <Plus size={32} className="new-space-icon" />
-                          <span className="new-space-text">Novo Espaço</span>
+                          {/* Workspace Pessoal */}
+                          <div className="space-card">
+                            <div className="space-card-header">
+                              <div className="space-icon-group">
+                                <div className="space-icon-wrapper">
+                                  <Lock size={24} />
+                                </div>
+                                <div className="space-info">
+                                  <h4>Workspace Pessoal</h4>
+                                  <p>Rascunhos & Dados Privados</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="space-card-footer">
+                              <div>
+                                <span className="space-role-label">ACESSO</span>
+                                <div className="space-access-value"><div className="space-access-dot"></div>Privado</div>
+                              </div>
+                              <button className="btn-open-space" onClick={() => navigate(`/lab/${currentUser?.uid}/workspace`)}>Abrir</button>
+                            </div>
+                          </div>
+
+                          {/* Novo Espaço */}
+                          <div className="space-card new-space" onClick={() => setIsSpaceModalOpen(true)}>
+                            <Plus size={32} className="new-space-icon" />
+                            <span className="new-space-text">Novo Espaço</span>
+                          </div>
                         </div>
-                      )}
-                    </div>
+                      </>
+                    )}
 
                     <div className="content-card mt-4">
                       <h3 className="card-section-title">Atividade Recente</h3>
@@ -587,7 +610,7 @@ const UserProfile: React.FC = () => {
                 )}
 
                 {/* ABA: COLEÇÕES */}
-                {activeTab === 'colecoes' && (
+                {activeTab === 'colecoes' && isCollectionsVisible && (
                   <div className="anim-fade-up">
                     {userBookmarks.length > 0 ? (
                       userBookmarks.map(bk => (
@@ -601,17 +624,19 @@ const UserProfile: React.FC = () => {
                             <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', textTransform: 'capitalize' }}>
                               {bk.type === 'note' ? 'Nota' : bk.type === 'discussion' ? 'Discussão' : 'Artigo'}
                             </span>
-                            <button 
-                              className="btn-interact-icon" 
-                              style={{ color: 'var(--primary)' }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setBookmarkToRemove(bk);
-                              }}
-                              title="Remover das Coleções"
-                            >
-                              <Bookmark size={20} fill="currentColor" />
-                            </button>
+                            {isOwnProfile && (
+                              <button 
+                                className="btn-interact-icon" 
+                                style={{ color: 'var(--primary)' }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setBookmarkToRemove(bk);
+                                }}
+                                title="Remover das Coleções"
+                              >
+                                <Bookmark size={20} fill="currentColor" />
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))
@@ -619,7 +644,11 @@ const UserProfile: React.FC = () => {
                       <div className="empty-state-card">
                         <Bookmark size={48} />
                         <h3>Nenhum item salvo</h3>
-                        <p>Os artigos, projetos e discussões que você salvar aparecerão aqui para fácil acesso.</p>
+                        <p>
+                          {isOwnProfile
+                            ? 'Os artigos, projetos e discussões que você salvar aparecerão aqui para fácil acesso.'
+                            : `${userData.name || 'Este pesquisador'} ainda não possui itens salvos em suas coleções públicas.`}
+                        </p>
                       </div>
                     )}
                   </div>
