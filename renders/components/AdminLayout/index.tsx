@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, Building, FlaskConical, ShieldAlert, LogOut } from 'lucide-react';
 import './styles.css';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { handleImageError, DEFAULT_IMAGES } from '../../../src/utils/imageUtils';
 
 const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -45,7 +46,12 @@ const AdminLayout: React.FC = () => {
 
         <div className="admin-footer">
           <div className="admin-user-info">
-            <img src={userProfile?.avatar || 'https://via.placeholder.com/40'} alt="Avatar" className="admin-avatar" />
+            <img
+              src={userProfile?.avatar || DEFAULT_IMAGES.avatar(userProfile?.name)}
+              alt="Avatar"
+              className="admin-avatar"
+              onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(userProfile?.name))}
+            />
             <div className="admin-details">
               <span className="admin-name">{userProfile?.name}</span>
               <span className="admin-role">Super Admin</span>

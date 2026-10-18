@@ -1,4 +1,5 @@
 import React from 'react';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../../src/utils/imageUtils';
 import './styles.css';
 
 export interface Message {
@@ -48,7 +49,11 @@ const Communications: React.FC<CommunicationsProps> = ({
           <div key={msg.id} className="comm-item">
             {msg.senderAvatarUrl ? (
               <div className="comm-avatar avatar-img">
-                <img src={msg.senderAvatarUrl} alt={msg.senderName} />
+                <img
+                  src={msg.senderAvatarUrl}
+                  alt={msg.senderName}
+                  onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(msg.senderName))}
+                />
               </div>
             ) : (
               <div className="comm-avatar avatar-gray">

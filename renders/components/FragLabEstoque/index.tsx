@@ -7,6 +7,7 @@ import { useToastStore } from '../../../src/stores/toastStore';
 import { useConfirmStore } from '../../../src/stores/confirmStore';
 import Skeleton from '../../components/Skeleton';
 import NewRoleModal from '../../modals/NewRoleModal';
+import { handleImageError, DEFAULT_IMAGES } from '../../../src/utils/imageUtils';
 import './styles.css';
 
 interface FragLabEstoqueProps {
@@ -235,7 +236,11 @@ const FragLabEstoque: React.FC<FragLabEstoqueProps> = ({ mode = 'manage', labId 
           {members.map(member => (
             <div key={member.id} className="lab-team-card public-hover">
               <div className="member-avatar">
-                <img src={member.avatar || "https://ui-avatars.com/api/?name=" + member.name.replace(' ', '+')} alt={member.name} />
+                <img
+                  src={member.avatar || DEFAULT_IMAGES.avatar(member.name)}
+                  alt={member.name}
+                  onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(member.name))}
+                />
               </div>
               <div className="member-info">
                 <h4>{member.name}</h4>
@@ -296,7 +301,11 @@ const FragLabEstoque: React.FC<FragLabEstoqueProps> = ({ mode = 'manage', labId 
                   {members.length === 0 ? <p className="empty-msg">Nenhum membro encontrado.</p> : members.map(member => (
                     <div key={member.id} className="lab-team-card">
                       <div className="member-avatar">
-                        <img src={member.avatar || "https://ui-avatars.com/api/?name=" + member.name.replace(' ', '+')} alt={member.name} />
+                        <img
+                          src={member.avatar || DEFAULT_IMAGES.avatar(member.name)}
+                          alt={member.name}
+                          onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(member.name))}
+                        />
                       </div>
                       <div className="member-info">
                         <h4>{member.name}</h4>

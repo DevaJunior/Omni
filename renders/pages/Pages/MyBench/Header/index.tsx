@@ -1,5 +1,6 @@
 import React from 'react';
 import type { LabMember } from '../../../../../src/types/lab';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../../src/utils/imageUtils';
 import './styles.css';
 
 interface HeaderProps {
@@ -58,10 +59,11 @@ const Header: React.FC<HeaderProps> = ({
               displayAvatars.map((member) => (
                 <img
                   key={member.id}
-                  src={member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name || 'User')}&background=random`}
+                  src={member.avatar || DEFAULT_IMAGES.avatar(member.name)}
                   alt={member.name}
                   className="avatar-img"
                   title={`${member.name} (${member.role || 'Membro'})${member.isOnline ? ' - Online' : ''}`}
+                  onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(member.name))}
                 />
               ))
             ) : (

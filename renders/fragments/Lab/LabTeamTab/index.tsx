@@ -9,6 +9,7 @@ import { useConfirmStore } from '../../../../src/stores/confirmStore';
 import Skeleton from '../../../components/Skeleton';
 import NewRoleModal from '../../../modals/NewRoleModal';
 import { labService } from '../../../../src/services/labService';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../src/utils/imageUtils';
 import './styles.css';
 
 interface LabTeamTabProps {
@@ -249,8 +250,9 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
               >
                 <div className="member-avatar">
                   <img
-                    src={member.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(member.name || 'User')}
+                    src={member.avatar || DEFAULT_IMAGES.avatar(member.name)}
                     alt={member.name}
+                    onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(member.name))}
                   />
                 </div>
                 <div className="member-info">
@@ -318,7 +320,11 @@ const LabTeamTab: React.FC<LabTeamTabProps> = ({ mode = 'manage', labId }) => {
                         onClick={() => navigate(`/profile/${member.id}`)}
                         title={`Ver perfil de ${member.name}`}
                       >
-                        <img src={member.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(member.name || 'User')} alt={member.name} />
+                        <img
+                          src={member.avatar || DEFAULT_IMAGES.avatar(member.name)}
+                          alt={member.name}
+                          onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(member.name))}
+                        />
                       </div>
                       <div
                         className="member-info"

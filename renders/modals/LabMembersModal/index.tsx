@@ -13,6 +13,7 @@ import {
 import { useAuth } from '../../../src/contexts/AuthContext';
 import type { LabMember } from '../../../src/types/lab';
 import OmniLoader from '../../components/OmniLoader';
+import { handleImageError, DEFAULT_IMAGES } from '../../../src/utils/imageUtils';
 import './styles.css';
 
 interface LabMembersModalProps {
@@ -168,9 +169,10 @@ const LabMembersModal: React.FC<LabMembersModalProps> = ({
                   <div className="lmm-member-left">
                     <div className="lmm-avatar-wrapper">
                       <img
-                        src={member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name || 'User')}&background=random`}
+                        src={member.avatar || DEFAULT_IMAGES.avatar(member.name)}
                         alt={member.name}
                         className="lmm-avatar"
+                        onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(member.name))}
                       />
                       <span
                         className={`lmm-status-dot ${member.isOnline ? 'online' : 'offline'}`}

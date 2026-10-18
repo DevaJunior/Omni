@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 // Importando de diferentes pacotes dentro do react-icons
 import { FiShare2, FiCopy, FiCheck } from "react-icons/fi";
+import { handleImageError, DEFAULT_IMAGES } from "../../../src/utils/imageUtils";
 import './styles.css';
 
 type ShareMenuProps = {
@@ -75,7 +76,11 @@ const ShareMenu: React.FC<ShareMenuProps> = ({ url, text, image, }) => {
           
           {image && (
             <div className="share-image-preview">
-              <img src={image} alt="Preview do compartilhamento" />
+              <img
+                src={image}
+                alt="Preview do compartilhamento"
+                onError={(e) => handleImageError(e, DEFAULT_IMAGES.researchFallback)}
+              />
             </div>
           )}
 

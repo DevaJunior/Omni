@@ -23,6 +23,7 @@ import { useAuth } from '../../../../../src/contexts/AuthContext';
 import LabTeamTab from '../../../../fragments/Lab/LabTeamTab';
 import Footer from '../../../../menus/Footer';
 import JoinLabModal from './../../../../modals/JoinLabModal/index';
+import { normalizeImageUrl, handleImageError, DEFAULT_IMAGES } from '../../../../../src/utils/imageUtils';
 import ProjectApplicationModal from './../../../../modals/ProjectApplicationModal/index';
 import LabMembersModal from '../../../../modals/LabMembersModal';
 import { useLabMembers } from '../../../../../src/hooks/useLabMembers';
@@ -182,7 +183,12 @@ const LabProfile: React.FC = () => {
 
               <div className="lab-header-card-clean">
                 <div className="lab-header-top-row">
-                  <img src={labData.logoImage} alt="Logo" className="lab-logo-clean" />
+                  <img
+                    src={normalizeImageUrl(labData.logoImage, DEFAULT_IMAGES.labLogo)}
+                    alt={labData.name || "Logo"}
+                    className="lab-logo-clean"
+                    onError={(e) => handleImageError(e, DEFAULT_IMAGES.labLogo)}
+                  />
 
                   <div className="lab-title-area">
                     <div className="lab-title-text">

@@ -1,5 +1,6 @@
 import React from 'react';
 import './styles.css';
+import { normalizeImageUrl, handleImageError, DEFAULT_IMAGES } from '../../../../src/utils/imageUtils';
 
 export interface FeaturedArticleData {
   id: string | number;
@@ -17,10 +18,17 @@ interface CardResearchProps {
 }
 
 const CardResearch: React.FC<CardResearchProps> = ({ article, onReadMore, style, maxLines = 4 }) => {
+  const imageUrl = normalizeImageUrl(article.image, DEFAULT_IMAGES.research);
+
   return (
     <article className="cmmt-visual-card" style={style}>
       <div className="cmmt-visual-image">
-        <img src={article.image} alt={article.title} />
+        <img
+          src={imageUrl}
+          alt={article.title}
+          loading="lazy"
+          onError={(e) => handleImageError(e, DEFAULT_IMAGES.researchFallback)}
+        />
         <span className="cmmt-visual-badge">{article.category}</span>
       </div>
       <div className="cmmt-visual-info">

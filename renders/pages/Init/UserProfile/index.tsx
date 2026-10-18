@@ -34,6 +34,7 @@ import { useAuth } from '../../../../src/contexts/AuthContext';
 import { bookmarkService, type IBookmark } from '../../../../src/services/bookmarkService';
 import type { IUser } from '../../../../src/types';
 import OmniLoader from '../../../components/OmniLoader';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../src/utils/imageUtils';
 
 
 const UserProfile: React.FC = () => {
@@ -260,9 +261,10 @@ const UserProfile: React.FC = () => {
           {/* HEADER / COVER */}
           <div className="profile-cover-card">
             <img
-              src={userData.cover || "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80"}
+              src={userData.cover || DEFAULT_IMAGES.cover}
               alt="Capa do Perfil"
               className="profile-cover-img"
+              onError={(e) => handleImageError(e, DEFAULT_IMAGES.cover)}
             />
             {isOwnProfile && (
               <label className="btn-edit-cover" style={{ cursor: 'pointer' }}>
@@ -284,15 +286,21 @@ const UserProfile: React.FC = () => {
 
             {/* SIDEBAR ESQUERDA: Info Pessoal */}
             <aside className="profile-sidebar">
-              <div className="profile-avatar-wrapper" style={{ position: 'relative' }}>
-                <img src={userData.avatar || "https://ui-avatars.com/api/?name=" + (userData.name || "User")} alt={userData.name} className="profile-avatar" />
+              <div className="profile-avatar-wrapper">
+                <div className="profile-avatar-img-box">
+                  <img
+                    src={userData.avatar || DEFAULT_IMAGES.avatar(userData.name)}
+                    alt={userData.name}
+                    className="profile-avatar"
+                    onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(userData.name))}
+                  />
+                </div>
                 {isOwnProfile && (
                   <label
                     className="btn-edit-avatar"
-                    style={{ position: 'absolute', bottom: '0', right: '0', background: '#5d5fef', color: '#fff', padding: '6px', borderRadius: '50%', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
                     title="Editar foto de perfil"
                   >
-                    <Edit3 size={16} />
+                    <Edit3 size={18} />
                     <input
                       type="file"
                       accept="image/*"

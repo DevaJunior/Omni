@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Heart, MessageSquare, Trash2, Edit, Flag } from 'lucide-react';
 //import ShareMenu from '../ShareMenu';
 import CardButtonOptions from '../CardButtonOptions';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../src/utils/imageUtils';
 import './styles.css';
 
 export interface PostData {
@@ -75,6 +76,7 @@ const CardDiscussion: React.FC<CardDiscussionProps> = ({
             src={avatarSrc}
             alt={post.author}
             className="cmmt-disc-avatar"
+            onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(post.author))}
             onClick={(e) => {
               e.stopPropagation();
               if (post.authorId) navigate(`/profile/${post.authorId}`);

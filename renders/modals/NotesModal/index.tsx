@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Search, Plus, FileText, Edit2, Trash2, Save, XCircle, Image as ImageIcon } from 'lucide-react';
+import { handleImageError, DEFAULT_IMAGES } from '../../../src/utils/imageUtils';
 import './styles.css';
 
 export interface NoteImage {
@@ -196,7 +197,11 @@ const NotesModal: React.FC<NotesModalProps> = ({ isOpen, onClose, initialNoteId 
         if (imageObj) {
           return (
             <div key={index} className="notes-inline-image">
-              <img src={imageObj.url} alt={`Anexo ${imgId}`} />
+              <img
+                src={imageObj.url}
+                alt={`Anexo ${imgId}`}
+                onError={(e) => handleImageError(e, DEFAULT_IMAGES.researchFallback)}
+              />
             </div>
           );
         }
@@ -372,7 +377,11 @@ const NotesModal: React.FC<NotesModalProps> = ({ isOpen, onClose, initialNoteId 
                     <div className="editor-images-preview">
                       {formData.images.map((imgObj, idx) => (
                         <div key={idx} className="image-preview-item" title={`Tag: [Anexo: ${imgObj.id}]`}>
-                          <img src={imgObj.url} alt="Preview" />
+                          <img
+                            src={imgObj.url}
+                            alt="Preview"
+                            onError={(e) => handleImageError(e, DEFAULT_IMAGES.researchFallback)}
+                          />
                           <div className="image-preview-tag">
                             {imgObj.id}
                           </div>

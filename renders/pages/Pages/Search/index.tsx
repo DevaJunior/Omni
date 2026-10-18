@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Search as SearchIcon, BookOpen, Users, ArrowRight,  X, TrendingUp, FileText } from 'lucide-react';
 import { searchService, type SearchResult } from '../../../../src/services/searchService';
-
+import { normalizeImageUrl, handleImageError, DEFAULT_IMAGES } from '../../../../src/utils/imageUtils';
 
 import Skeleton from '../../../components/Skeleton';
 import './styles.css';
@@ -114,7 +114,12 @@ const SearchPage: React.FC = () => {
             <Link to={res.url} key={res.id} style={{ textDecoration: 'none' }}>
               <div className="search-result-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', transition: 'all 0.2s ease', cursor: 'pointer' }}>
                 {res.image ? (
-                  <img src={res.image} alt={res.title} style={{ width: '64px', height: '64px', borderRadius: res.type === 'user' ? '50%' : '8px', objectFit: 'cover' }} />
+                  <img
+                    src={normalizeImageUrl(res.image, res.type === 'user' ? DEFAULT_IMAGES.avatar(res.title) : DEFAULT_IMAGES.research)}
+                    alt={res.title}
+                    style={{ width: '64px', height: '64px', borderRadius: res.type === 'user' ? '50%' : '8px', objectFit: 'cover' }}
+                    onError={(e) => handleImageError(e, res.type === 'user' ? DEFAULT_IMAGES.avatar(res.title) : DEFAULT_IMAGES.researchFallback)}
+                  />
                 ) : (
                   <div style={{ width: '64px', height: '64px', borderRadius: res.type === 'user' ? '50%' : '8px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
                     {res.type === 'user' ? <Users size={32} /> : <BookOpen size={32} />}

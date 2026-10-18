@@ -73,13 +73,17 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
           title = titleMatch[2].trim();
         }
 
+        if (url.startsWith('/src/assets/wallapapers/')) {
+          url = url.replace('/src/assets/wallapapers/', '/assets/wallpapers/');
+        }
+
         const figureTitle = title ? `<div class="md-figure-title">${title}</div>` : '';
         const figureSource = source ? `<figcaption class="md-figure-source">Fonte: ${source.trim()}</figcaption>` : '';
 
         return `
           <figure class="md-figure-container">
             ${figureTitle}
-            <img src="${url}" alt="${alt.trim()}" class="md-image" />
+            <img src="${url}" alt="${alt.trim()}" class="md-image" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&q=80&w=800';" />
             ${figureSource}
           </figure>
         `;

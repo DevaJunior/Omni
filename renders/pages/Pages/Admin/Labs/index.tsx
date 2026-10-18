@@ -5,6 +5,7 @@ import type { LabProfile } from '../../../../../src/types/lab';
 import { useToastStore } from '../../../../../src/stores/toastStore';
 import { useConfirmStore } from '../../../../../src/stores/confirmStore';
 import OmniLoader from '../../../../components/OmniLoader';
+import { normalizeImageUrl, handleImageError, DEFAULT_IMAGES } from '../../../../../src/utils/imageUtils';
 import './styles.css';
 
 const AdminLabs: React.FC = () => {
@@ -111,7 +112,12 @@ const AdminLabs: React.FC = () => {
               <div className="lab-card-header">
                 <div className="lab-identity">
                   {lab.logoImage || lab.image ? (
-                    <img src={lab.logoImage || lab.image} alt={lab.name} className="lab-avatar" />
+                    <img
+                      src={normalizeImageUrl(lab.logoImage || lab.image, DEFAULT_IMAGES.labLogo)}
+                      alt={lab.name}
+                      className="lab-avatar"
+                      onError={(e) => handleImageError(e, DEFAULT_IMAGES.labLogo)}
+                    />
                   ) : (
                     <div className="lab-avatar-fallback"><FlaskConical size={20} /></div>
                   )}

@@ -12,6 +12,7 @@ import { useAuth } from '../../../src/contexts/AuthContext';
 import NewPostModal from '../../modals/NewPostModal';
 import ConfirmModal from '../../components/ConfirmModal';
 import Skeleton from '../../components/Skeleton';
+import { handleImageError, DEFAULT_IMAGES } from '../../../src/utils/imageUtils';
 import './styles.css';
 
 interface FragLabAreaComumProps {
@@ -214,7 +215,13 @@ const FragLabAreaComum: React.FC<FragLabAreaComumProps> = ({ labId }) => {
                 <div className="post-header">
                   <div className="post-author-info">
                     {post.authorAvatar ? (
-                      <div className="author-avatar"><img src={post.authorAvatar} alt={post.authorName} /></div>
+                      <div className="author-avatar">
+                        <img
+                          src={post.authorAvatar}
+                          alt={post.authorName}
+                          onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(post.authorName))}
+                        />
+                      </div>
                     ) : (
                       <div className="author-avatar avatar-purple">{getInitials(post.authorName)}</div>
                     )}
@@ -261,7 +268,11 @@ const FragLabAreaComum: React.FC<FragLabAreaComumProps> = ({ labId }) => {
                         <div key={(comment as any).id} className="comment-item">
                           <div className="comment-avatar">
                             {comment.authorAvatar ? (
-                              <img src={(comment as any).authorAvatar || ''} alt={(comment as any).authorName || ''} />
+                              <img
+                                src={(comment as any).authorAvatar || ''}
+                                alt={(comment as any).authorName || ''}
+                                onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar((comment as any).authorName))}
+                              />
                             ) : (
                               <div className="avatar-placeholder">{getInitials((comment as any).authorName || '')}</div>
                             )}

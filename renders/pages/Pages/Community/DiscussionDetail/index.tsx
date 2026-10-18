@@ -21,6 +21,7 @@ import CardDiscussion from '../../../../components/Cards/CardDiscussion';
 import CardButtonOptions from '../../../../components/Cards/CardButtonOptions';
 import { Edit, Trash2, Flag } from 'lucide-react';
 import OmniLoader from '../../../../components/OmniLoader';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../../src/utils/imageUtils';
 import './styles.css';
 
 const ReplyItem = ({
@@ -40,9 +41,10 @@ const ReplyItem = ({
   return (
     <div className={`disc-comment-item ${reply.isAuthor ? 'author-highlight' : ''}`}>
       <img
-        src={reply.avatar}
+        src={reply.avatar || DEFAULT_IMAGES.avatar(reply.author)}
         alt={reply.author}
         className="disc-comment-avatar"
+        onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(reply.author))}
         onClick={(e) => { e.stopPropagation(); if (reply.authorId) navigate(`/profile/${reply.authorId}`); }}
         style={{ cursor: 'pointer' }}
       />
@@ -612,9 +614,10 @@ const DiscussionDetail: React.FC = () => {
                 style={authorProfile?.cover ? { backgroundImage: `url(${authorProfile.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
               ></div>
               <img
-                src={authorProfile?.avatar || discussion.avatar}
+                src={authorProfile?.avatar || discussion.avatar || DEFAULT_IMAGES.avatar(discussion.author)}
                 alt={discussion.author}
                 className="disc-author-profile-pic"
+                onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(discussion.author))}
                 onClick={(e) => { e.stopPropagation(); navigate(`/profile/${discussion.authorId}`); }}
                 style={{ cursor: 'pointer' }}
               />

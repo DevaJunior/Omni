@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { communityService } from '../../../src/services/communityService';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { handleImageError, DEFAULT_IMAGES } from '../../../src/utils/imageUtils';
 import './styles.css';
 
 interface NetworkSuggestionsProps {
@@ -47,7 +48,12 @@ const NetworkSuggestions: React.FC<NetworkSuggestionsProps> = ({ isMobile = fals
               style={{ cursor: 'pointer' }}
             >
               {user.avatar ? (
-                <img src={user.avatar} alt={user.name || 'User'} className="frag_sugestnetowrk-user-avatar-img" />
+                <img
+                  src={user.avatar}
+                  alt={user.name || 'User'}
+                  className="frag_sugestnetowrk-user-avatar-img"
+                  onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(user.name))}
+                />
               ) : (
                 <div className="frag_sugestnetowrk-user-avatar-placeholder">
                   {user.name ? user.name.substring(0, 2).toUpperCase() : 'US'}

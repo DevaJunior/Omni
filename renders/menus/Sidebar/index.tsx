@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Users, BookOpen, FileText, Beaker, Settings, LogOut, LayoutGrid, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { handleImageError, DEFAULT_IMAGES } from '../../../src/utils/imageUtils';
 import './styles.css';
 
 interface SidebarProps {
@@ -50,7 +51,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
         {/* Header */}
         <div className="sidebar-top" onClick={() => { onClose(); navigate('/profile'); }}>
-          <img src={userPhoto} alt="User Avatar" className="sidebar-avatar" />
+          <img
+            src={userPhoto}
+            alt="User Avatar"
+            className="sidebar-avatar"
+            onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(userProfile?.name || currentUser.displayName || 'User'))}
+          />
           <div className="sidebar-user-info">
             <strong>{userProfile?.name || currentUser.displayName || 'Usuário'}</strong>
             <span>{userProfile?.role || 'Pesquisador'}</span>

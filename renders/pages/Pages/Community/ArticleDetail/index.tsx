@@ -21,6 +21,7 @@ import html2pdf from 'html2pdf.js';
 import MarkdownRenderer from '../../../../../src/components/MarkdownRenderer';
 import { ArticlePDFTemplate } from './ArticlePDFTemplate';
 import OmniLoader from '../../../../components/OmniLoader';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../../src/utils/imageUtils';
 import './styles.css';
 
 const ArticleDetail: React.FC = () => {
@@ -186,7 +187,11 @@ Existe uma visão altamente romantizada na cultura popular sobre a descoberta ci
 
             <div className="art-authors-section">
               <div className="art-author-avatar">
-                <img src={article.authorAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.authors || 'Autor')}&background=random`} alt="Autor" />
+                <img
+                  src={article.authorAvatar || DEFAULT_IMAGES.avatar(article.authors || 'Autor')}
+                  alt="Autor"
+                  onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(article.authors || 'Autor'))}
+                />
               </div>
               <div className="art-author-info-group">
                 <span className="art-author-name"><strong>{article.authors}</strong></span>

@@ -5,6 +5,7 @@ import type { IUser } from '../../../../../src/types';
 import { useToastStore } from '../../../../../src/stores/toastStore';
 import { useConfirmStore } from '../../../../../src/stores/confirmStore';
 import { useAuth } from '../../../../../src/contexts/AuthContext';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../../src/utils/imageUtils';
 import './styles.css';
 
 const AdminUsers: React.FC = () => {
@@ -102,7 +103,12 @@ const AdminUsers: React.FC = () => {
                 <tr key={u.id}>
                   <td>
                     <div className="user-cell">
-                      <img src={u.avatar || 'https://via.placeholder.com/40'} alt={u.name} className="user-avatar" />
+                      <img
+                        src={u.avatar || DEFAULT_IMAGES.avatar(u.name)}
+                        alt={u.name}
+                        className="user-avatar"
+                        onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(u.name))}
+                      />
                       <div className="user-meta">
                         <span className="user-name">{u.name}</span>
                         <span className="user-headline">{u.headline || 'Sem biografia'}</span>

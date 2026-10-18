@@ -210,7 +210,7 @@ const Home: React.FC = () => {
                   key={art.id}
                   article={{
                     id: art.id,
-                    image: art.image || '/src/assets/wallapapers/wpp_cience_000.png',
+                    image: art.image || '/assets/wallpapers/wpp_cience_000.png',
                     category: art.category || 'Artigo',
                     title: art.title,
                     desc: art.desc || 'Sem descrição.'

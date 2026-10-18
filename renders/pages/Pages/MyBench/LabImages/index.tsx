@@ -1,5 +1,6 @@
 import React from 'react';
 import './styles.css';
+import { normalizeImageUrl, handleImageError, DEFAULT_IMAGES } from '../../../../../src/utils/imageUtils';
 
 export interface LabImage {
   id: string;
@@ -17,7 +18,7 @@ interface LabImagesProps {
 const defaultImages: LabImage[] = [
   {
     id: '1',
-    url: '/src/assets/wallapapers/wpp_cience_000.png',
+    url: '/assets/wallpapers/wpp_cience_000.png',
     alt: 'Cells'
   }
 ];
@@ -46,7 +47,11 @@ const LabImages: React.FC<LabImagesProps> = ({
             onClick={() => onViewImage?.(img.id)}
             style={{ cursor: onViewImage ? 'pointer' : 'default' }}
           >
-            <img src={img.url} alt={img.alt} />
+            <img
+              src={normalizeImageUrl(img.url, DEFAULT_IMAGES.research)}
+              alt={img.alt}
+              onError={(e) => handleImageError(e, DEFAULT_IMAGES.researchFallback)}
+            />
           </div>
         ))}
         

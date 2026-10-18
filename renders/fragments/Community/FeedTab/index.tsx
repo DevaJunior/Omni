@@ -8,6 +8,7 @@ import EmptyStateSearch from '../../../../renders/components/EmptyStateSearch';
 import ConfirmModal from '../../../../renders/components/ConfirmModal';
 import CardDiscussion from '../../../../renders/components/Cards/CardDiscussion';
 import OmniLoader from '../../../components/OmniLoader';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../src/utils/imageUtils';
 import './styles.css';
 
 // Modal simples de edição inline
@@ -207,7 +208,12 @@ const FeedTab: React.FC<FeedTabProps> = ({ searchQuery = '', onClear }) => {
       {/* Formulário de Nova Discussão */}
       <div className="cmmt-create-post">
         <div className="cmmt-create-post-header">
-          <img src={userProfile?.avatar || currentUser?.photoURL || `https://ui-avatars.com/api/?name=Você`} alt="Avatar" className="cmmt-author-avatar" />
+          <img
+            src={userProfile?.avatar || currentUser?.photoURL || DEFAULT_IMAGES.avatar('Você')}
+            alt="Avatar"
+            className="cmmt-author-avatar"
+            onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(userProfile?.name || 'Você'))}
+          />
           <textarea
             className="cmmt-create-post-input"
             placeholder="Inicie uma discussão ou faça uma pergunta..."

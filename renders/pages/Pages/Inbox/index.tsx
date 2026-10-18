@@ -4,6 +4,7 @@ import { Send, Image as ImageIcon, Search, Info, Edit, Phone, Video, X, Papercli
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { chatService } from '../../../../src/services/chatService';
 import type { ChatRoom, ChatMessage } from '../../../../src/services/chatService';
+import { handleImageError, DEFAULT_IMAGES } from '../../../../src/utils/imageUtils';
 import './styles.css';
 
 const Inbox: React.FC = () => {
@@ -160,7 +161,12 @@ const Inbox: React.FC = () => {
                 onClick={() => setActiveChatId(chat.id)}
               >
                 <div className="inbox-contact-avatar-wrapper">
-                  <img src={contact.avatar} alt={contact.name} className="inbox-contact-avatar" />
+                  <img
+                    src={contact.avatar || DEFAULT_IMAGES.avatar(contact.name)}
+                    alt={contact.name}
+                    className="inbox-contact-avatar"
+                    onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(contact.name))}
+                  />
                   <span className="inbox-online-dot"></span>
                 </div>
                 <div className="inbox-contact-info">
@@ -196,7 +202,12 @@ const Inbox: React.FC = () => {
                 <button className="inbox-mobile-back-btn" onClick={() => { setActiveChatId(null); setShowDetails(false); }}>
                   <ArrowLeft size={20} />
                 </button>
-                <img src={getContactInfo(activeChat).avatar} alt={getContactInfo(activeChat).name} className="inbox-chat-header-avatar" />
+                <img
+                  src={getContactInfo(activeChat).avatar || DEFAULT_IMAGES.avatar(getContactInfo(activeChat).name)}
+                  alt={getContactInfo(activeChat).name}
+                  className="inbox-chat-header-avatar"
+                  onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(getContactInfo(activeChat).name))}
+                />
                 <div>
                   <h3>{contactInfo.name}</h3>
                   <div className="inbox-chat-status">
@@ -302,7 +313,12 @@ const Inbox: React.FC = () => {
           </header>
 
           <div className="inbox-details-profile">
-            <img src={contactInfo.avatar} alt={contactInfo.name} className="inbox-details-avatar" />
+            <img
+              src={contactInfo.avatar || DEFAULT_IMAGES.avatar(contactInfo.name)}
+              alt={contactInfo.name}
+              className="inbox-details-avatar"
+              onError={(e) => handleImageError(e, DEFAULT_IMAGES.avatar(contactInfo.name))}
+            />
             <h4>{contactInfo.name}</h4>
             <p className="inbox-details-role">{contactInfo.headline}</p>
             <p className="inbox-details-dept">{contactInfo.department}</p>
